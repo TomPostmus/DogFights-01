@@ -9,7 +9,8 @@ player = noone
 physical = false
 
 // Rotation
-rotation = 0
+if (!variable_instance_exists(id, "rotation")) // check if rotation is not given as creation struct
+	rotation = 0
 
 // Draw callback
 draw_callback = undefined
@@ -72,15 +73,18 @@ function create_physical_body() {
 	var appearance = player.appearance
 	
 	// TODO create in rotation
-	
+
 	trunk = create_groundhigh(x, y, appearance.trunk_phybody_obj)
-	head = create_groundhigh(x + appearance.head_offset, y,  appearance.head_phybody_obj)
+	trunk.phy_rotation = -rotation
+	head = create_groundhigh(x + lengthdir_x(appearance.head_offset, rotation), y + lengthdir_y(appearance.head_offset, rotation),  appearance.head_phybody_obj)
+	head.phy_rotation = -rotation
+	
 	trunk_head_weld = physics_joint_weld_create(trunk, head, head.x, head.y, 0, 40, 3, false)
 	trunk_head_revolute = physics_joint_revolute_create(trunk, head, head.x, head.y, -appearance.head_rotation_limit, appearance.head_rotation_limit, true, 0, 0, false, false)
 	
 	hitmask_trunk = create_groundhigh(x, y, appearance.trunk_hitmask_obj)
 	hitmask_trunk.player = player
-	hitmask_head = create_groundhigh(x + appearance.head_offset, y, appearance.head_hitmask_obj)
+	hitmask_head = create_groundhigh(x + lengthdir_x(appearance.head_offset, rotation), y + lengthdir_y(appearance.head_offset, rotation), appearance.head_hitmask_obj)
 	hitmask_head.player = player
 	hitmask_arm_left = create_groundhigh(x, y, obj_hitmask_arm_left)
 	hitmask_arm_left.player = player

@@ -9,7 +9,7 @@ for (var i = 0; i < instance_number(obj_player_local); i ++) {
 		} else {
 			respawn_timer[? player] -= 1 // decrease timer
 			if respawn_timer[? player] == 0 { // check if elapsed
-				spawn_player(player)  // do spawn
+				random_spawn_player(player)  // do spawn
 				respawn_timer[? player] = -1  // disable timer
 			}
 		}

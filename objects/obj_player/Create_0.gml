@@ -12,6 +12,7 @@ camera = create_camera(0, 0, obj_camera)
 
 // Player id, id of player in game
 player_id = undefined
+team_id = undefined
 
 // Inventory
 
@@ -21,12 +22,13 @@ alive = false				//if type dog, whether alive or dead, or not yet spawned
 movement_mode = undefined	//control mode of dog, e.g. walking or driving
 
 // Spawn player
-function spawn(_spawn_x, spawn_y) {
+function spawn(_spawn_x, spawn_y, spawn_rot) {
 	if type == "dog" {
 		alive = true
 		hp.init_hp()
 		
-		body = create_groundhigh(_spawn_x, spawn_y, obj_body)
+		var _vars = {rotation: spawn_rot} // var struct to give to creation
+		body = create_groundhigh(_spawn_x, spawn_y, obj_body, _vars)
 		body.player = id
 		body.set_physical(true)
 		

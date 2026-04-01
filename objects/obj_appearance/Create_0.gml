@@ -99,8 +99,8 @@ function set_leg_angle(_leg_angle) {
 
 // Create particles at bullet hit
 function bullet_hit(_bullet, _normal_dir) {
-	var _orig_x = _bullet.x + lengthdir_x(4, _bullet.rotation)
-	var _orig_y = _bullet.y + lengthdir_y(4, _bullet.rotation)
+	var _orig_x = _bullet.x + lengthdir_x(7, _bullet.rotation)
+	var _orig_y = _bullet.y + lengthdir_y(7, _bullet.rotation)
 	var _rev_dir =  _bullet.rotation + 180 // reverse direction of bullet
 	var _pt_dir = _rev_dir//_rev_dir + angle_difference(_rev_dir, _normal_dir) / 2 // average of bullet direction and normal impact direction
 	part_type_direction(global.pt_hit, _pt_dir - 17, _pt_dir + 17, 0, 0)  // set direction of particle type
