@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"room_set_viewports",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"room_set_viewports",
+  "parent":{
+    "name":"cameras_and_views",
+    "path":"folders/Code/cameras_and_views.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

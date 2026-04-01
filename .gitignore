@@ -1,0 +1,59 @@
+# === GameMaker Studio 2 ===
+
+# User-specific config (do NOT share)
+*.yydebug
+*.yyp.user
+*.yyp.user.lock
+
+# IDE / local settings
+*.resource_order
+*.cache
+*.config
+
+# Build outputs
+/build/
+/bin/
+/output/
+
+# Compiled / temp files
+*.win
+*.exe
+*.app
+*.apk
+*.aab
+*.ipa
+*.zip
+
+# Texture cache (auto-generated)
+*.yyz
+*.yymps
+*.texcache
+
+# Runtime / VM cache
+*.yyc
+*.gmez
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.old
+
+# Temporary files
+*.tmp
+
+# Local asset compiler cache (important!)
+/cache/
+
+# Ignore platform-specific exports
+*.html
+*.wasm
+*.js.map
+
+# Ignore Steam / Opera GX export leftovers (if applicable)
+/steam_appid.txt

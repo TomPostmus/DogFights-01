@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"http_get_kaas",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"http_get_kaas",
+  "parent":{
+    "name":"networking",
+    "path":"folders/Code/games_and_networking/networking.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

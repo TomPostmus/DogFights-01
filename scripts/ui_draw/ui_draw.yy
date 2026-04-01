@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ui_draw",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ui_draw",
+  "parent":{
+    "name":"scripts",
+    "path":"folders/OldUI/scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

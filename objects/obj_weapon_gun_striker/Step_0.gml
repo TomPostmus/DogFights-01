@@ -1,0 +1,94 @@
+event_inherited()
+
+// Update weapon state
+if (instance_exists(player) && instance_exists(player.body)) {
+	var init = state != state_prev
+	state_prev = state
+	var body = player.body
+	
+	if (state == "idle") {
+		// Init
+		if (init) {
+			new_anim_draw_order("arm_right", "arm_left", "weapon")
+		}
+		
+		// Set arms animation
+		with (anim_components[? "arm_right"]) {pos_x=16.60; pos_y=4.60; rotation=0; sprite=spr_pip_hand; index=0; is_visible=true; }
+		with (anim_components[? "arm_left"]) {pos_x=25.20; pos_y=5.40; rotation=0; sprite=spr_pip_hand; index=0; is_visible=true; }
+		with (anim_components[? "weapon"]) {pos_x=18.40; pos_y=4.80; rotation=0; sprite=spr_striker; index=0; is_visible=true; update_wcomponents()}
+		
+		// State guards
+		if (ammo_mag == 0 && ammo_reserve > 0) {				// automatic reload on empty mag
+			state = "reload_start"
+		} else if (stats.mag_size - ammo_mag > 0 &&
+			ammo_reserve > 0 && player.input.input_reload) {	// manual reload on reload input
+			state = "reload_start"
+		} else if (trigger && fire_ready) {						// fire shot
+			fire()
+		}
+	} else if (state == "reload_start") {
+		// Init
+		if (init) {
+			anim_reset()
+		}
+		
+		// Animation
+		anim_striker_reload_start()
+		anim_frame_prev = anim_frame
+		anim_frame ++
+		
+		// Sounds
+		if (anim_check_frame(53)) {
+			reload_sound(snd_insert_shell)
+		}
+		
+		// State guards
+		if (anim_end) {
+			reload()
+			state = "reload_insert"
+			if (ammo_mag == stats.mag_size || ammo_reserve == 0) {
+				state = "reload_end"
+			}
+		}
+	} else if (state == "reload_insert") {
+		// Init
+		if (init) {
+			anim_reset()
+		}
+		
+		// Animation
+		anim_striker_reload_insert()
+		anim_frame_prev = anim_frame
+		anim_frame ++
+		
+		// Sounds
+		if (anim_check_frame(19)) {
+			reload_sound(snd_insert_shell)
+		}
+		
+		// State guards
+		if (anim_end) {
+			reload()
+			if (ammo_mag == stats.mag_size || ammo_reserve == 0) {
+				state = "reload_end"
+			} else {
+				anim_reset() // loop insert action
+			}
+		}
+	} else if (state == "reload_end") {
+		// Init
+		if (init) {
+			anim_reset()
+		}
+		
+		// Animation
+		anim_striker_reload_end()
+		anim_frame_prev = anim_frame
+		anim_frame ++
+		
+		// State guards
+		if (anim_end) {
+			state = "idle"
+		}
+	}
+}

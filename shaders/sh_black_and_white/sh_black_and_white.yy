@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"sh_black_and_white",
+  "name":"sh_black_and_white",
+  "parent":{
+    "name":"OldUI",
+    "path":"folders/OldUI.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

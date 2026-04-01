@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ranges_overlap",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ranges_overlap",
+  "parent":{
+    "name":"math",
+    "path":"folders/Code/helper_functions/math.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"send_buffer_udp",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"send_buffer_udp",
+  "parent":{
+    "name":"networking",
+    "path":"folders/Code/games_and_networking/networking.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

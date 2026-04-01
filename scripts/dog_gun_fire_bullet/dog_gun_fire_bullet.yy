@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"dog_gun_fire_bullet",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"dog_gun_fire_bullet",
+  "parent":{
+    "name":"old_player_code",
+    "path":"folders/Code/player/old_player_code.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

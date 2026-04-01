@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ui_window_red_primary_button",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ui_window_red_primary_button",
+  "parent":{
+    "name":"styles",
+    "path":"folders/OldUI/scripts/styles.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

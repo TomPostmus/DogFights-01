@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"dog_draw_weapon",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"dog_draw_weapon",
+  "parent":{
+    "name":"old_player_code",
+    "path":"folders/Code/player/old_player_code.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

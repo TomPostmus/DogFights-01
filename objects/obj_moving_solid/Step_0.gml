@@ -1,0 +1,1 @@
+phy_speed_x = moving_h_dir * 1

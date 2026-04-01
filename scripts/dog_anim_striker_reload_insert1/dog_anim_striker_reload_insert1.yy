@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"dog_anim_striker_reload_insert1",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"dog_anim_striker_reload_insert1",
+  "parent":{
+    "name":"animations",
+    "path":"folders/Code/player/old_player_code/appearances/animations.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

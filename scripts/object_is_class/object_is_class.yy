@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"object_is_class",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"object_is_class",
+  "parent":{
+    "name":"misc",
+    "path":"folders/Code/helper_functions/misc.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"weapon_gun_usp_stats",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"weapon_gun_usp_stats",
+  "parent":{
+    "name":"old_player_code",
+    "path":"folders/Code/player/old_player_code.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

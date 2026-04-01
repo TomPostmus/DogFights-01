@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"dog_anim_striker_idle",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"dog_anim_striker_idle",
+  "parent":{
+    "name":"animations",
+    "path":"folders/Code/player/old_player_code/appearances/animations.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

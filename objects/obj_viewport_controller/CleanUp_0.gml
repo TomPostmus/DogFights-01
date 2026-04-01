@@ -1,0 +1,2 @@
+ds_list_destroy(global.active_viewports)
+ds_map_destroy(global.viewport_to_camera)

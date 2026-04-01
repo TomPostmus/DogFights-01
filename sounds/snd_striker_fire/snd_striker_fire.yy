@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_striker_fire",
+  "audioGroupId":{
+    "name":"agroup_local_sounds",
+    "path":"audiogroups/agroup_local_sounds",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":1,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":2.298175,
+  "exportDir":"",
+  "name":"snd_striker_fire",
+  "parent":{
+    "name":"sounds",
+    "path":"folders/AssetsWeaponsAndPlayer/sounds.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_striker_fire",
+  "volume":1.0,
+}

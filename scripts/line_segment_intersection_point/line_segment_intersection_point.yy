@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"line_segment_intersection_point",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"line_segment_intersection_point",
+  "parent":{
+    "name":"math",
+    "path":"folders/Code/helper_functions/math.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

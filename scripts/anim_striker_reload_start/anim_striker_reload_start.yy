@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"anim_striker_reload_start",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"anim_striker_reload_start",
+  "parent":{
+    "name":"animations",
+    "path":"folders/Code/player/weapons/animations.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

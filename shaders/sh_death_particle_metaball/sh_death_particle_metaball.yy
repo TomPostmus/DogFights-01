@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"sh_death_particle_metaball",
+  "name":"sh_death_particle_metaball",
+  "parent":{
+    "name":"ingame_engine",
+    "path":"folders/Code/ingame_engine.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"weapon_get_input_handler",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"weapon_get_input_handler",
+  "parent":{
+    "name":"old_player_code",
+    "path":"folders/Code/player/old_player_code.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

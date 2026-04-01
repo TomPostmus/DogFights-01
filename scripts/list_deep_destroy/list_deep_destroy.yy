@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"list_deep_destroy",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"list_deep_destroy",
+  "parent":{
+    "name":"misc",
+    "path":"folders/Code/helper_functions/misc.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

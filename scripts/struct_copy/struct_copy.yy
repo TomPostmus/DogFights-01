@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"struct_copy",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"struct_copy",
+  "parent":{
+    "name":"misc",
+    "path":"folders/Code/helper_functions/misc.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

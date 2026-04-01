@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ui_focus_window",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ui_focus_window",
+  "parent":{
+    "name":"scripts",
+    "path":"folders/OldUI/scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

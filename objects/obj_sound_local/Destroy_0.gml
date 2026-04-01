@@ -1,0 +1,1 @@
+if (emitter != undefined && audio_emitter_exists(emitter)) audio_emitter_free(emitter)

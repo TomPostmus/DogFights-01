@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ui_dropdown_add_option",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ui_dropdown_add_option",
+  "parent":{
+    "name":"scripts",
+    "path":"folders/OldUI/scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

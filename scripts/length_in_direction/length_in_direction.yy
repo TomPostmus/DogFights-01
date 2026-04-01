@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"length_in_direction",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"length_in_direction",
+  "parent":{
+    "name":"math",
+    "path":"folders/Code/helper_functions/math.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

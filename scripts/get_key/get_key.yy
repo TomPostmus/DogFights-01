@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"get_key",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"get_key",
+  "parent":{
+    "name":"keys",
+    "path":"folders/Code/settings_and_ui/keys.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

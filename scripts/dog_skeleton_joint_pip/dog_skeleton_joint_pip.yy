@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"dog_skeleton_joint_pip",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"dog_skeleton_joint_pip",
+  "parent":{
+    "name":"appearances",
+    "path":"folders/Code/player/old_player_code/appearances.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"vec3",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"vec3",
+  "parent":{
+    "name":"math",
+    "path":"folders/Code/helper_functions/math.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"anim_lupara_selectfire",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"anim_lupara_selectfire",
+  "parent":{
+    "name":"animations",
+    "path":"folders/Code/player/weapons/animations.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

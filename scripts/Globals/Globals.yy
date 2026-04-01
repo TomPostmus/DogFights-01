@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"Globals",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Globals",
+  "parent":{
+    "name":"DogFights",
+    "path":"DogFights.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

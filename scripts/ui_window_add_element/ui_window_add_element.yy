@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ui_window_add_element",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ui_window_add_element",
+  "parent":{
+    "name":"ui_window",
+    "path":"folders/OldUI/scripts/ui_window.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

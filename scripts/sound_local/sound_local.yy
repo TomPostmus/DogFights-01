@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"sound_local",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"sound_local",
+  "parent":{
+    "name":"local_sound",
+    "path":"folders/Code/ingame_engine/local_sound.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

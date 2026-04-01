@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_usp_magin",
+  "audioGroupId":{
+    "name":"agroup_local_sounds",
+    "path":"audiogroups/agroup_local_sounds",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":0.388197,
+  "exportDir":"",
+  "name":"snd_usp_magin",
+  "parent":{
+    "name":"sounds",
+    "path":"folders/AssetsWeaponsAndPlayer/sounds.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_usp_magin.wav",
+  "volume":1.0,
+}

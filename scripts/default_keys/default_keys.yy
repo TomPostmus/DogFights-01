@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"default_keys",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"default_keys",
+  "parent":{
+    "name":"keys",
+    "path":"folders/Code/settings_and_ui/keys.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

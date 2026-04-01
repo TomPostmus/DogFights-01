@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"anim_usp_leveraction",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"anim_usp_leveraction",
+  "parent":{
+    "name":"animations",
+    "path":"folders/Code/player/weapons/animations.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

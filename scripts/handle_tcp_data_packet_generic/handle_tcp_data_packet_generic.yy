@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"handle_tcp_data_packet_generic",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"handle_tcp_data_packet_generic",
+  "parent":{
+    "name":"networking",
+    "path":"folders/Code/games_and_networking/networking.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

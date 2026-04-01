@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"create_packet_player_movement",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"create_packet_player_movement",
+  "parent":{
+    "name":"packet_generators",
+    "path":"folders/Code/games_and_networking/networking/packet_generators.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"generate_room_index_list",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"generate_room_index_list",
+  "parent":{
+    "name":"networking",
+    "path":"folders/Code/games_and_networking/networking.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"gun_reload",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"gun_reload",
+  "parent":{
+    "name":"old_player_code",
+    "path":"folders/Code/player/old_player_code.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"create_physics",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"create_physics",
+  "parent":{
+    "name":"layer_create_functions",
+    "path":"folders/Code/helper_functions/layer_create_functions.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

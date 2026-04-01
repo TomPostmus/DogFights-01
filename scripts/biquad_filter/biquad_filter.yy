@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"biquad_filter",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"biquad_filter",
+  "parent":{
+    "name":"misc",
+    "path":"folders/Code/helper_functions/misc.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

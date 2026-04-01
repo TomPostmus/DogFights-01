@@ -1,0 +1,1 @@
+destroy_physical_body()

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"handle_udp_data_packet_player",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"handle_udp_data_packet_player",
+  "parent":{
+    "name":"networking",
+    "path":"folders/Code/games_and_networking/networking.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

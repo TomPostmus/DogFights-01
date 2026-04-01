@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"point_on_line",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"point_on_line",
+  "parent":{
+    "name":"math",
+    "path":"folders/Code/helper_functions/math.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

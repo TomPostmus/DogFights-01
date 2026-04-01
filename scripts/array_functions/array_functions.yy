@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"array_functions",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"array_functions",
+  "parent":{
+    "name":"misc",
+    "path":"folders/Code/helper_functions/misc.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

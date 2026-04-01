@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"player_default_appearance",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"player_default_appearance",
+  "parent":{
+    "name":"old_player_code",
+    "path":"folders/Code/player/old_player_code.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"dog_draw_appearance_pip",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"dog_draw_appearance_pip",
+  "parent":{
+    "name":"appearances",
+    "path":"folders/Code/player/old_player_code/appearances.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

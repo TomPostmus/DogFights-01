@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ui_window_icon_to_map",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ui_window_icon_to_map",
+  "parent":{
+    "name":"ui_window",
+    "path":"folders/OldUI/scripts/ui_window.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

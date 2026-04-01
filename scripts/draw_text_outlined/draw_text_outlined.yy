@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"draw_text_outlined",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"draw_text_outlined",
+  "parent":{
+    "name":"OldUI",
+    "path":"folders/OldUI.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

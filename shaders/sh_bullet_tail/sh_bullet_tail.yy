@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"sh_bullet_tail",
+  "name":"sh_bullet_tail",
+  "parent":{
+    "name":"bullets",
+    "path":"folders/Code/player/weapons/bullets.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}
