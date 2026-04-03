@@ -441,6 +441,7 @@
     {"id":{"name":"spr_table1_small","path":"sprites/spr_table1_small/spr_table1_small.yy",},},
     {"id":{"name":"spr_table1","path":"sprites/spr_table1/spr_table1.yy",},},
     {"id":{"name":"spr_table2","path":"sprites/spr_table2/spr_table2.yy",},},
+    {"id":{"name":"spr_team_collar","path":"sprites/spr_team_collar/spr_team_collar.yy",},},
     {"id":{"name":"spr_team_spawn","path":"sprites/spr_team_spawn/spr_team_spawn.yy",},},
     {"id":{"name":"spr_tractor_blue","path":"sprites/spr_tractor_blue/spr_tractor_blue.yy",},},
     {"id":{"name":"spr_tractor_green","path":"sprites/spr_tractor_green/spr_tractor_green.yy",},},

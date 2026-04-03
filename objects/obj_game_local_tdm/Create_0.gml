@@ -1,6 +1,8 @@
 event_inherited()
 
+friendly_fire = false
 teams_number = 2 // how many teams
+team_colors = [c_red, c_blue, c_green] // team identification colors
 var _players_number = instance_number(obj_player)
 var _team_size = floor(_players_number / teams_number) // floored average size of teams
 var _remainder = _players_number - _team_size * teams_number // how many remaining players (after dividing in equal portions)
@@ -15,15 +17,9 @@ for (var i = 0; i < teams_number; i ++) { // determine distribution
 	}
 }
 
-// Populate teams
-teams = array_create(teams_number) // array of teams (lists) of players
-var _player_i = 0 // index of player inst
-for (var i = 0; i < teams_number; i ++) {
-	teams[i] = ds_list_create()
-	repeat (team_sizes[i]) {
-		var _player = instance_find(obj_player, _player_i) // find next player
-		ds_list_add(teams[i], _player) // add to team
-		_player.team_id = i // set team id of player
-		_player_i += 1
+// Register damage, check team ids and decide whether to deal damage
+function register_damage(_p_affected, _p_affector, _damage) {
+	if (_p_affected.team_id != _p_affector.team_id || friendly_fire) {
+		_p_affected.hp.add_hp(-_damage)
 	}
 }

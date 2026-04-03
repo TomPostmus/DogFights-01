@@ -39,9 +39,16 @@ function spawn(_spawn_x, spawn_y, spawn_rot) {
 	}
 }
 
+// Set team that player belongs to
+function set_team(_team_id, _team_color) {
+	team_id = _team_id
+	appearance.team_collar = true // enable team identification collar
+	appearance.team_color = _team_color
+}
+
 // Hit by _bullet on _body_part ("head", "trunk", "arm_left", etc...)
 function hit(_bullet, _body_part) {
-	hp.add_hp(-_bullet.damage)
+	obj_game.register_damage(id, _bullet.player, _bullet.damage)
 	
 	if (body.physical) {
 		if (_body_part == "head") { // for head hit apply impulse to head

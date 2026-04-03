@@ -26,6 +26,10 @@ tail_offset = -11							//offset from trunk center to tail over x-axis
 
 head_rotation_limit = 80					//maximal angle of head with trunk
 
+// Team collar
+team_collar = false // whether not to wear team identification collar
+team_color = c_white // the color that represents team
+
 // Animation state
 anim_body = 0
 anim_head = 0
@@ -76,6 +80,10 @@ function draw(_body) {
 	
 	// Draw body
 	draw_sprite_ext(spr_body, anim_body, _body.get_x(), _body.get_y(), 1, 1, _body.get_trunk_rotation(), c_white, 1)
+	
+	// Draw team collar if enabled
+	if (team_collar)
+		draw_sprite_ext(spr_team_collar, 0, _body.get_x(), _body.get_y(), 1, 1, _body.get_trunk_rotation(), team_color, 1)
 	
 	// Draw head
 	draw_sprite_ext(spr_head, anim_head, _body.get_x() + lengthdir_x(head_offset - head_kickback, _body.get_trunk_rotation()), _body.get_y() + lengthdir_y(head_offset - head_kickback, _body.get_trunk_rotation()), 1, 1, _body.get_head_rotation(), c_white, 1)

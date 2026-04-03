@@ -19,3 +19,8 @@ function random_spawn_player(player) {
 	}
 	player.spawn(spawn_x, spawn_y, spawn_rot)
 }
+
+// Register damage, check team ids and decide whether to deal damage
+function register_damage(_p_affected, _p_affector, _damage) {
+	_p_affected.hp.add_hp(-_damage)
+}
