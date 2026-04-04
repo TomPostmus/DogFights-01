@@ -54,6 +54,7 @@
     {"$GMFolder":"","%Name":"local_sound","folderPath":"folders/Code/ingame_engine/local_sound.yy","name":"local_sound","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"physics_parents","folderPath":"folders/Code/ingame_engine/physics_parents.yy","name":"physics_parents","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"player","folderPath":"folders/Code/player.yy","name":"player","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"ai_player_functions","folderPath":"folders/Code/player/ai_player_functions.yy","name":"ai_player_functions","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"body_phybodies","folderPath":"folders/Code/player/body_phybodies.yy","name":"body_phybodies","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"hitmasks","folderPath":"folders/Code/player/hitmasks.yy","name":"hitmasks","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"old_player_code","folderPath":"folders/Code/player/old_player_code.yy","name":"old_player_code","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -80,7 +81,7 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.14.4.221",
+    "IDEVersion":"2024.14.4.222",
   },
   "name":"DogFights",
   "resources":[
@@ -272,6 +273,7 @@
     {"id":{"name":"point_on_line","path":"scripts/point_on_line/point_on_line.yy",},},
     {"id":{"name":"print","path":"scripts/print/print.yy",},},
     {"id":{"name":"ranges_overlap","path":"scripts/ranges_overlap/ranges_overlap.yy",},},
+    {"id":{"name":"reeds_shepp_path_planning","path":"scripts/reeds_shepp_path_planning/reeds_shepp_path_planning.yy",},},
     {"id":{"name":"room_set_viewports","path":"scripts/room_set_viewports/room_set_viewports.yy",},},
     {"id":{"name":"send_buffer_tcp","path":"scripts/send_buffer_tcp/send_buffer_tcp.yy",},},
     {"id":{"name":"send_buffer_udp","path":"scripts/send_buffer_udp/send_buffer_udp.yy",},},

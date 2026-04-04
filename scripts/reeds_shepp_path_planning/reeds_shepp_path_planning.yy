@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"reeds_shepp_path_planning",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"reeds_shepp_path_planning",
+  "parent":{
+    "name":"ai_player_functions",
+    "path":"folders/Code/player/ai_player_functions.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
