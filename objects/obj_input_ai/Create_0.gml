@@ -26,22 +26,21 @@ rs_path = undefined // current RS path we're walking
 rs_start = undefined // start pose for RS path
 rs_target = undefined // target pose for RS path
 
-// Draw arc from start point _x, _y, returns end point
+// Draw arc for RS path from start point _x, _y, returns end point
 // Draws line segments with a certain precision for an arc starting at _start_ang (direction in line direction)
-// ending and _end_ang, with radius _r. _steering determines if its a left (1) or right (-1) steering arc
-function draw_arc(_x, _y, _start_ang, _end_ang, _r, _steering) {
-	var _center_x = _x + lengthdir_x(_r, _start_ang + _steering * 90) // center location of arc
-	var _center_y = _y + lengthdir_y(_r, _start_ang + _steering * 90) // either left or right from start pos (depending on left or right steering)
+// with an arc length l (in radians) radius _r. _steering determines if its a left (1) or right (-1) steering arc
+// _gear determines if it is going forwards or backwards
+function draw_arc(_x, _y, _start_ang, _l, _r, _steering, _gear) {
 	
 	var _precision = 2 // precision in degrees of arc drawing
-	var _l = angle_difference(_end_ang, _start_ang) // length of arc in degrees (not actual length)
+	_l = radtodeg(_l) // convert to degrees
 	
 	var _d_start = 0 // start of line segment
-	var _d_end = _precision // end of line segment
+	var _d_end = _gear * _steering * _precision // end of line segment
 	var _last_iter = false
 	while (true) {
-		if (_d_end > _l) {
-			_d_end = _l // cap at length
+		if (abs(_d_end) > _l) {
+			_d_end = _gear * _steering * _l // cap at length
 			_last_iter = true
 		}
 		
@@ -55,8 +54,8 @@ function draw_arc(_x, _y, _start_ang, _end_ang, _r, _steering) {
 		if (_last_iter)
 			break
 			
-		_d_start += _precision
-		_d_end += _precision
+		_d_start += _gear * _steering * _precision
+		_d_end += _gear * _steering * _precision
 		
 	}
 	
