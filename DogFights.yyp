@@ -159,6 +159,7 @@
     {"id":{"name":"obj_player_remote","path":"objects/obj_player_remote/obj_player_remote.yy",},},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"obj_sound_local","path":"objects/obj_sound_local/obj_sound_local.yy",},},
+    {"id":{"name":"obj_turn_radius_measuringtape","path":"objects/obj_turn_radius_measuringtape/obj_turn_radius_measuringtape.yy",},},
     {"id":{"name":"obj_ui_button","path":"objects/obj_ui_button/obj_ui_button.yy",},},
     {"id":{"name":"obj_ui_container","path":"objects/obj_ui_container/obj_ui_container.yy",},},
     {"id":{"name":"obj_ui_cycle","path":"objects/obj_ui_cycle/obj_ui_cycle.yy",},},

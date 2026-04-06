@@ -138,7 +138,7 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 	x = _x // starting position of arc in world
 	y = _y
 	th = _th // starting angle of arc
-	l = _l // arc length in degrees (can be from 0 to 360)
+	l = _l // arc length in degrees (can be from 0 to 180)
 	r = _r // arc radius
 	steering = _steering // left or right steering
 	gear = _gear // forwards or backward arc

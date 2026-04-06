@@ -159,10 +159,11 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	
 	// Walk holonomic path by lower level RS path segments
 	if (holpath != undefined && path_exists(holpath)) {
-		// Make RS path to reachable path point in holonomic
+		// Make RS path to reachable path point in holonomic path
 		if (rs_path == undefined) {
 			var _holpath_total = path_get_number(holpath)
-			var _pt_lookahead = min(10, _holpath_total) // how many path points to initially look ahead
+			var _lookahead = min(10, _holpath_total) // how many path points to initially look ahead
+			var _pt_lookahead = holpath_point + _lookahead
 			while (true) {
 				var _pt_x = path_get_point_x(holpath, _pt_lookahead)
 				var _pt_y = path_get_point_y(holpath, _pt_lookahead)
@@ -180,15 +181,93 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				rs_start = [body.get_x(), body.get_y(), body.get_rotation()]
 				rs_target = [_pt_x, _pt_y, _pt_th]
 				rs_path = rs_optimal_path(rs_start, rs_target, rs_min_r)
+				rs_path_elem_i = 0
 				if (!rs_path_free(rs_path)) {
-					if (_pt_lookahead == 1) { // if 
+					if (_lookahead == 1) { // if lookahead is already one give up on path
 						rs_path = undefined
+						reset_path()
+						break
 					}
-					_pt_lookahead = ceil(_pt_lookahead / 2) // look at new point halfway
+					_lookahead = ceil(_lookahead / 2) // look at new point halfway
+					_pt_lookahead = holpath_point + _lookahead
 				} else { // free path found
+					holpath_point = _pt_lookahead
 					break // break while loop
 				}				
 				
+			}
+		}
+		
+		// Walk RS path
+		if (rs_path != undefined) {
+			var _p_elem = rs_path[|rs_path_elem_i] // get current path element
+			if (_p_elem.steering == RS_STRAIGHT || _p_elem.l < 10) { // walk line segment
+				
+				move_input = _p_elem.gear // move according to gear
+				turn_input = 0
+				
+				// Steering correction
+				var _to_player_dir = point_direction(_p_elem.x, _p_elem.y, body.get_x(), body.get_y()) // direction and distance from line base to player
+				var _to_player_dist = point_distance(_p_elem.x, _p_elem.y, body.get_x(), body.get_y())
+				var _center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, _p_elem.th)) // offset of player from line (treat this lengthdir_y as a sin())
+				var _correction_tolerance = 5 // tolerance outside which to start correcting
+				if (_center_offset > _correction_tolerance) { // deviated too much on left side
+					turn_input = _p_elem.gear // steer to right (or left if in reverse gear)
+				} else if (_center_offset < -_correction_tolerance) { // deviated too much on right side
+					turn_input = -_p_elem.gear // steer to left (or right if in reverse gear)
+				} else {
+					turn_input = input_dir(_p_elem.th)
+				}
+				
+				// Abort path
+				var _commitance_tolerance = 30 // tolerance outisde which to give up path
+				if (abs(_center_offset) > _commitance_tolerance) {
+					rs_path = undefined // give up path
+					reset_path()
+				}
+				
+				// Track progression
+				var _l = _p_elem.l ? _p_elem.steering == RS_STRAIGHT : (_p_elem.l * _p_elem.r)
+				var _progression = _p_elem.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, _p_elem.th)) // progression on line (treat this lengthdir_x as cosine)
+				if (_progression >= _p_elem.l) { // if progression exceeds is on line segment length
+					rs_path_elem_i ++ // move to next path element
+				}
+				
+			} else { // walk arc segment
+				
+				move_input = _p_elem.gear // move according to gear and steering
+				turn_input = _p_elem.gear * _p_elem.steering
+				
+				// Steering correction
+				var _to_player_dist = point_distance(_p_elem.center_x, _p_elem.center_y, body.get_x(), body.get_y()) // distance and direction from arc center to player
+				var _to_player_dir = point_direction(_p_elem.center_x, _p_elem.center_y, body.get_x(), body.get_y())
+				
+				//var _offset_tolerance = 5
+				//if (_p_elem.r - _to_player_dist > _offset_tolerance) { // deviated too on inside of arc
+				//	turn_input = 0 // stop steering, simply move straight until in center again
+				//} else if (_p_elem.r - _to_player_dist < -_offset_tolerance) // deviated too on outside of arc
+				//  and (abs(angle_difference(_to_player_dir + 90 * _p_elem.steering, body.get_rotation())) > 5) { 
+				//	move_input = 0 // stop movement, wait until angle is within acceptable limits
+				
+				//}
+				
+				// Abort path
+				var _commitance_tolerance = 30 // tolerance outisde which to give up path
+				if (abs(_p_elem.r - _to_player_dist) > _commitance_tolerance) {
+					rs_path = undefined // give up path
+					reset_path()
+				}
+				
+				// Track progression
+				var _progression = _p_elem.steering * _p_elem.gear * angle_difference(_to_player_dir + 90 * _p_elem.steering, _p_elem.th) // difference from arc starting angle to where player is on arc
+				if (_progression >= _p_elem.l) {
+					rs_path_elem_i ++ // move to next path element
+				}
+			}
+			
+			// Check if completed path
+			if (rs_path != undefined && rs_path_elem_i >= ds_list_size(rs_path)) {
+				rs_path = undefined // reset
 			}
 		}
 	}

@@ -26,10 +26,11 @@ holpath_point = 0
 holpath_cell_size = 16
 
 // Reeds Shepp path planning
-rs_min_r = 30 // minimum turning radius for RS
+rs_min_r = 47 // minimum turning radius for RS
 rs_path = undefined // current RS path we're walking
 rs_start = undefined // start pose for RS path
 rs_target = undefined // target pose for RS path
+rs_path_elem_i = 0 // index of RS we're currently walking
 
 //Function to generate motion-planning grid
 function generate_mp_grid(_cell_size) {
@@ -126,21 +127,21 @@ function rs_path_free(_rs_path) {
 		if (_p_elem.steering == RS_STRAIGHT) { // line path element
 			
 			for (var j = 0; j < array_length(_obstr_objects); j ++) {
-				if (instance_exists(collision_line(_p_elem.x, _p_elem.y, _p_elem.x_end, _p_elem.y_end, _obstr_objects[i], false, true))) // check center line
+				if (instance_exists(collision_line(_p_elem.x, _p_elem.y, _p_elem.x_end, _p_elem.y_end, _obstr_objects[j], false, true))) // check center line
 					return false
 				if (instance_exists(collision_line(
 					_p_elem.x + lengthdir_x(_check_width, _p_elem.th + 90), 
 					_p_elem.y + lengthdir_y(_check_width, _p_elem.th + 90), 
 					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th + 90), 
 					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th + 90), 
-					_obstr_objects[i], false, true))) // check left line
+					_obstr_objects[j], false, true))) // check left line
 					return false
 				if (instance_exists(collision_line(
 					_p_elem.x + lengthdir_x(_check_width, _p_elem.th - 90), 
 					_p_elem.y + lengthdir_y(_check_width, _p_elem.th - 90), 
 					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th - 90), 
 					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th - 90), 
-					_obstr_objects[i], false, true))) // check right line
+					_obstr_objects[j], false, true))) // check right line
 					return false
 			}
 			
@@ -162,21 +163,21 @@ function rs_path_free(_rs_path) {
 						center_x + lengthdir_x(r, th - steering * 90 + _d_start),
 						center_y + lengthdir_y(r, th - steering * 90 + _d_start),
 						center_x + lengthdir_x(r, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r, th - steering * 90 + _d_end), _obstr_objects[i], false, true))) // check center line
+						center_y + lengthdir_y(r, th - steering * 90 + _d_end), _obstr_objects[j], false, true))) // check center line
 						return false
 						
 					if (instance_exists(collision_line(
 						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_start), // draw from center
 						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_start),
 						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_end), _obstr_objects[i], false, true))) // check outer line
+						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_end), _obstr_objects[j], false, true))) // check outer line
 						return false
 						
 					if (instance_exists(collision_line(
 						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_start), // draw from center
 						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_start),
 						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_end), _obstr_objects[i], false, true))) // check inner line
+						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_end), _obstr_objects[j], false, true))) // check inner line
 						return false
 		
 					if (_last_iter)
@@ -220,8 +221,8 @@ function shoot_path(_target_x, _target_y) {
 	var body = player.body
 	
 	// Try making a walk path to target
-	walk_path(_target_x, _target_y)
-	var walk_path_length = path != undefined ? path_get_length(path) : infinity
+	create_holonomic_path(_target_x, _target_y)
+	var walk_path_length = holpath != undefined ? path_get_length(holpath) : infinity
 		
 	// Make path that goes over low objects, and try to find a line of fire on it
 	// If found, chose this path
@@ -238,7 +239,7 @@ function shoot_path(_target_x, _target_y) {
 			if (line_shootable_arbitrary(point_x, point_y, _target_x, _target_y)) { // if line of fire found
 				if (shoot_path_length < walk_path_length) { // if it is shorter, replace path with shoot path
 					reset_path() // remove old path
-					path = shoot_path // set new path
+					holpath = shoot_path // set new path
 					break // break loop
 				}
 			}
@@ -253,7 +254,7 @@ function shoot_path(_target_x, _target_y) {
 			if (traversal_point > path_get_number(shoot_path) - 1) // traversed entire path, stop
 				break
 		}
-		if (shoot_path != path) // shoot_path was not chosen, delete it
+		if (shoot_path != holpath) // shoot_path was not chosen, delete it
 			path_delete(shoot_path)
 	}
 }
