@@ -124,11 +124,12 @@ function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
 	steering = 0 // no steering
 	gear = _gear // forwards or backward arc
 	
+	x_end = x + lengthdir_x(gear * l, th) // end position of line
+	y_end = y + lengthdir_y(gear * l, th)
+	
 	// Draw this line segment
 	static draw = function() {
-		var _x_end = x + lengthdir_x(gear * l, th) // end position of line
-		var _y_end = y + lengthdir_y(gear * l, th)
-		draw_line(x, y, _x_end, _y_end)
+		draw_line(x, y, x_end, y_end)
 	}
 }
 
@@ -147,7 +148,7 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 	
 	// Draw this arc
 	static draw = function() {
-		var _precision = 2 // precision in degrees of arc drawing
+		var _precision = 10 // precision in degrees of arc drawing
 		var _d_start = 0 // start of line segment
 		var _d_end = gear * steering * _precision // end of line segment
 		var _last_iter = false
@@ -184,7 +185,7 @@ function rs_optimal_path(_start_p, _end_p, _min_r){
 	//var _path_fns = [rs_path_1, rs_path_2, rs_path_3, rs_path_4,
 	//				 rs_path_5, rs_path_6, rs_path_7, rs_path_8,
 	//				 rs_path_9, rs_path_10, rs_path_11, rs_path_12] // array of 12 path type functions 
-	var _path_fns = [rs_path_2]
+	var _path_fns = [rs_path_1]
 	
 	// Conversion to starting pose frame (normalized frame in starting pose)
 	var _new_end_p = rs_change_of_basis(_start_p, _end_p, _min_r) // change basis of end, such that (0, 0, 0) is start
@@ -194,9 +195,9 @@ function rs_optimal_path(_start_p, _end_p, _min_r){
 	
 	// Get four path variants for each path type
 	ds_list_add(_paths,  _path_fns[0](_x, _y, _th))
-	//ds_list_add(_paths, rs_reflect(_path_fns[0](_x, -_y, -_th)))
-	//ds_list_add(_paths, rs_reverse(_path_fns[0](-_x, _y, -_th)))
-	//ds_list_add(_paths, rs_reflect(rs_reverse(_path_fns[0](-_x, -_y, _th))))
+	ds_list_add(_paths, rs_reflect(_path_fns[0](_x, -_y, -_th)))
+	ds_list_add(_paths, rs_reverse(_path_fns[0](-_x, _y, -_th)))
+	ds_list_add(_paths, rs_reflect(rs_reverse(_path_fns[0](-_x, -_y, _th))))
 	
 	// Remove empty paths
 	for (var i = 0; i < ds_list_size(_paths); i ++) {

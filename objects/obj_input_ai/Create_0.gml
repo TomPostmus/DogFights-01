@@ -6,8 +6,6 @@ targets = ds_list_create()	// list of bodies that are potential targets
 target = noone				// current target (body object)
 scope_w = 640
 scope_h = 320
-path = undefined
-path_point = 0
 trigger_timer = 0			// timer that turns input_attack true on zero
 
 state = "explore"
@@ -20,51 +18,18 @@ fight_or_flight = ""		// when conflict, whether to fight, flight or await
 path_recompute_timer = 0	// timer to recompute path when dealing with dynamic goal
 path_recompute_time = 20	// number of steps between each path recompute
 
+// Holonomic path
+// This is a path that is used for the higher level motion planning
+// RS path is used for lower level motion
+holpath = undefined
+holpath_point = 0
+holpath_cell_size = 16
+
 // Reeds Shepp path planning
 rs_min_r = 30 // minimum turning radius for RS
 rs_path = undefined // current RS path we're walking
 rs_start = undefined // start pose for RS path
 rs_target = undefined // target pose for RS path
-
-// Draw arc for RS path from start point _x, _y, returns end point
-// Draws line segments with a certain precision for an arc starting at _start_ang (direction in line direction)
-// with an arc length l (in radians) radius _r. _steering determines if its a left (1) or right (-1) steering arc
-// _gear determines if it is going forwards or backwards
-function draw_arc(_x, _y, _start_ang, _l, _r, _steering, _gear) {
-	
-	var _precision = 2 // precision in degrees of arc drawing
-	_l = radtodeg(_l) // convert to degrees
-	
-	var _d_start = 0 // start of line segment
-	var _d_end = _gear * _steering * _precision // end of line segment
-	var _last_iter = false
-	while (true) {
-		if (abs(_d_end) > _l) {
-			_d_end = _gear * _steering * _l // cap at length
-			_last_iter = true
-		}
-		
-		draw_line( // draw line segment
-			_center_x + lengthdir_x(_r, _start_ang - _steering * 90 + _d_start),
-			_center_y + lengthdir_y(_r, _start_ang - _steering * 90 + _d_start),
-			_center_x + lengthdir_x(_r, _start_ang - _steering * 90 + _d_end),
-			_center_y + lengthdir_y(_r, _start_ang - _steering * 90 + _d_end)
-		)
-		
-		if (_last_iter)
-			break
-			
-		_d_start += _gear * _steering * _precision
-		_d_end += _gear * _steering * _precision
-		
-	}
-	
-	// return end point
-	return [
-			_center_x + lengthdir_x(_r, _start_ang - _steering * 90 + _d_end),
-			_center_y + lengthdir_y(_r, _start_ang - _steering * 90 + _d_end)
-	]
-}
 
 //Function to generate motion-planning grid
 function generate_mp_grid(_cell_size) {
@@ -91,7 +56,7 @@ function generate_mp_grid_high(_cell_size) {
 }
 
 //Define motion-planning grids
-grid = generate_mp_grid(16)
+grid = generate_mp_grid(holpath_cell_size)
 grid_high = generate_mp_grid_high(8)
 
 // Function to check whether line to target is not obstructed (by walls)
@@ -152,24 +117,100 @@ function line_shootable_arbitrary(_point_x, _point_y, _target_x, _target_y) {
 	return true
 }
 
-// Reset path
-function reset_path() {
-	if (path != undefined)
-		path_delete(path)
-	path = undefined
+// Check if an RS path is free of collisions by player
+function rs_path_free(_rs_path) {
+	var _obstr_objects = tag_get_asset_ids("AIObstruction", asset_object)
+	var _check_width = 5 // assumed width of player, check left and right from center line at _check_width away
+	for (var i = 0; i < ds_list_size(_rs_path); i ++) {
+		var _p_elem = _rs_path[|i]
+		if (_p_elem.steering == RS_STRAIGHT) { // line path element
+			
+			for (var j = 0; j < array_length(_obstr_objects); j ++) {
+				if (instance_exists(collision_line(_p_elem.x, _p_elem.y, _p_elem.x_end, _p_elem.y_end, _obstr_objects[i], false, true))) // check center line
+					return false
+				if (instance_exists(collision_line(
+					_p_elem.x + lengthdir_x(_check_width, _p_elem.th + 90), 
+					_p_elem.y + lengthdir_y(_check_width, _p_elem.th + 90), 
+					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th + 90), 
+					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th + 90), 
+					_obstr_objects[i], false, true))) // check left line
+					return false
+				if (instance_exists(collision_line(
+					_p_elem.x + lengthdir_x(_check_width, _p_elem.th - 90), 
+					_p_elem.y + lengthdir_y(_check_width, _p_elem.th - 90), 
+					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th - 90), 
+					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th - 90), 
+					_obstr_objects[i], false, true))) // check right line
+					return false
+			}
+			
+		} else { // arc path element
+			
+			with (_p_elem) {
+			for (var j = 0; j < array_length(_obstr_objects); j ++) {
+				var _precision = 20 // precision in degrees of arc drawing
+				var _d_start = 0 // start of line segment
+				var _d_end = gear * steering * _precision // end of line segment
+				var _last_iter = false
+				while (true) {
+					if (abs(_d_end) > l) {
+						_d_end = gear * steering * l // cap at length
+						_last_iter = true
+					}
+					
+					if (instance_exists(collision_line(
+						center_x + lengthdir_x(r, th - steering * 90 + _d_start),
+						center_y + lengthdir_y(r, th - steering * 90 + _d_start),
+						center_x + lengthdir_x(r, th - steering * 90 + _d_end),
+						center_y + lengthdir_y(r, th - steering * 90 + _d_end), _obstr_objects[i], false, true))) // check center line
+						return false
+						
+					if (instance_exists(collision_line(
+						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_start), // draw from center
+						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_start),
+						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_end),
+						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_end), _obstr_objects[i], false, true))) // check outer line
+						return false
+						
+					if (instance_exists(collision_line(
+						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_start), // draw from center
+						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_start),
+						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_end),
+						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_end), _obstr_objects[i], false, true))) // check inner line
+						return false
+		
+					if (_last_iter)
+						break
+			
+					_d_start += gear * steering * _precision
+					_d_end += gear * steering * _precision
+		
+				}	
+			}}
+			
+		}
+	}
+	return true
 }
 
-// Create walk path
-function walk_path(_target_x, _target_y) {
+// Reset path
+function reset_path() {
+	if (holpath != undefined)
+		path_delete(holpath)
+	holpath = undefined
+}
+
+// Create holonomic path to target
+function create_holonomic_path(_target_x, _target_y) {
 	var body = player.body
 	
 	reset_path()
 	
-	path = path_add()
-	path_point = 0			// reset path point counter
-	if (!mp_grid_path(grid, path, body.get_x(), body.get_y(), _target_x, _target_y, false)) { // try making path
-		path_delete(path)
-		path = undefined
+	holpath = path_add()
+	holpath_point = 0			// reset path point counter
+	if (!mp_grid_path(grid, holpath, body.get_x(), body.get_y(), _target_x, _target_y, false)) { // try making path
+		path_delete(holpath)
+		holpath = undefined
 	}
 }
 

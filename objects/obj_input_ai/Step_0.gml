@@ -50,12 +50,12 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	
 	// Execute decision tree state
 	if (!conflict) { // explore state
-		if (path == undefined && irandom(100) == 0) {
+		if (holpath == undefined && irandom(100) == 0) {
 			if (instance_number(obj_ai_path_point) > 0) {
 				var path_point_marker = instance_find(obj_ai_path_point, irandom(instance_number(obj_ai_path_point)-1));
-				walk_path(path_point_marker.x, path_point_marker.y)
+				create_holonomic_path(path_point_marker.x, path_point_marker.y)
 			} else {
-				walk_path(random(room_width), random(room_width))
+				create_holonomic_path(random(room_width), random(room_width))
 			}
 		}
 	} else if (conflict && instance_exists(target)) { // conflict state
@@ -157,7 +157,43 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	//	}
 	//}
 	
-	//Walk along path
+	// Walk holonomic path by lower level RS path segments
+	if (holpath != undefined && path_exists(holpath)) {
+		// Make RS path to reachable path point in holonomic
+		if (rs_path == undefined) {
+			var _holpath_total = path_get_number(holpath)
+			var _pt_lookahead = min(10, _holpath_total) // how many path points to initially look ahead
+			while (true) {
+				var _pt_x = path_get_point_x(holpath, _pt_lookahead)
+				var _pt_y = path_get_point_y(holpath, _pt_lookahead)
+				var _pt_th = 0 // angle of path point (angle to next pt or from pt)
+				if (_pt_lookahead + 1 < _holpath_total) { // if next pt exists
+					var _next_pt_x = path_get_point_x(holpath, _pt_lookahead + 1)
+					var _next_pt_y = path_get_point_y(holpath, _pt_lookahead + 1)
+					_pt_th = point_direction(_pt_x, _pt_y, _next_pt_x, _next_pt_y) // compute angle to next pt
+				} else if (_pt_lookahead - 1 >= 0) { // else if previous pt exists
+					var _prev_pt_x = path_get_point_x(holpath, _pt_lookahead - 1)
+					var _prev_pt_y = path_get_point_y(holpath, _pt_lookahead - 1)
+					_pt_th = point_direction(_prev_pt_x, _prev_pt_y, _pt_x, _pt_y) // comput angle from previous pt
+				}
+				
+				rs_start = [body.get_x(), body.get_y(), body.get_rotation()]
+				rs_target = [_pt_x, _pt_y, _pt_th]
+				rs_path = rs_optimal_path(rs_start, rs_target, rs_min_r)
+				if (!rs_path_free(rs_path)) {
+					if (_pt_lookahead == 1) { // if 
+						rs_path = undefined
+					}
+					_pt_lookahead = ceil(_pt_lookahead / 2) // look at new point halfway
+				} else { // free path found
+					break // break while loop
+				}				
+				
+			}
+		}
+	}
+	
+	// Walk along path
 	//if (path != undefined) {
 	//	var path_point_distance = point_distance(body.get_x(), body.get_y(), path_get_point_x(path, path_point), path_get_point_y(path, path_point));
 	//	var path_point_direction = point_direction(body.get_x(), body.get_y(), path_get_point_x(path, path_point), path_get_point_y(path, path_point));
