@@ -222,25 +222,27 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				// Abort path
 				var _commitance_tolerance = 30 // tolerance outisde which to give up path
 				if (abs(_center_offset) > _commitance_tolerance) {
-					rs_path = undefined // give up path
-					reset_path()
+					reset_path() // give up path
 				}
 				
 				// Track progression
+				var _completion_tolerance = 5 // tolerance on when path element is considered to be completed
 				var _l = _p_elem.l ? _p_elem.steering == RS_STRAIGHT : (_p_elem.l * _p_elem.r)
 				var _progression = _p_elem.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, _p_elem.th)) // progression on line (treat this lengthdir_x as cosine)
-				if (_progression >= _p_elem.l) { // if progression exceeds is on line segment length
+				if (_progression >=  max(0, _p_elem.l - _completion_tolerance)) { // if progression exceeds is on line segment length
 					rs_path_elem_i ++ // move to next path element
 				}
 				
 			} else { // walk arc segment
 				
 				move_input = _p_elem.gear // move according to gear and steering
-				turn_input = _p_elem.gear * _p_elem.steering
+				//turn_input = _p_elem.gear * _p_elem.steering
 				
 				// Steering correction
 				var _to_player_dist = point_distance(_p_elem.center_x, _p_elem.center_y, body.get_x(), body.get_y()) // distance and direction from arc center to player
 				var _to_player_dir = point_direction(_p_elem.center_x, _p_elem.center_y, body.get_x(), body.get_y())
+				var _arc_angle = _to_player_dir + 90 * _p_elem.steering // what the angle of the arc is from player progression
+				turn_input = input_dir(_arc_angle)
 				
 				//var _offset_tolerance = 5
 				//if (_p_elem.r - _to_player_dist > _offset_tolerance) { // deviated too on inside of arc
@@ -254,20 +256,31 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				// Abort path
 				var _commitance_tolerance = 30 // tolerance outisde which to give up path
 				if (abs(_p_elem.r - _to_player_dist) > _commitance_tolerance) {
-					rs_path = undefined // give up path
-					reset_path()
+					reset_path() // give up path
 				}
 				
 				// Track progression
+				var _completion_tolerance = 5 // tolerance on when path element is considered to be completed
 				var _progression = _p_elem.steering * _p_elem.gear * angle_difference(_to_player_dir + 90 * _p_elem.steering, _p_elem.th) // difference from arc starting angle to where player is on arc
-				if (_progression >= _p_elem.l) {
+				if (_progression >= max(0, _p_elem.l - _completion_tolerance)) {
 					rs_path_elem_i ++ // move to next path element
 				}
 			}
 			
-			// Check if completed path
+			// Check if completed RS path
 			if (rs_path != undefined && rs_path_elem_i >= ds_list_size(rs_path)) {
 				rs_path = undefined // reset
+			}
+		}
+		
+		// Check if holonomic path is completed
+		if (holpath != undefined && path_exists(holpath)) {
+			var _path_end_x = path_get_point_x(holpath, path_get_number(holpath)-1)
+			var _path_end_y = path_get_point_y(holpath, path_get_number(holpath)-1)
+			var _dist = point_distance(body.get_x(), body.get_y(), _path_end_x, _path_end_y)
+			var _holpath_completion_tolerance = 15
+			if (_dist <= _holpath_completion_tolerance) {
+				reset_path()
 			}
 		}
 	}

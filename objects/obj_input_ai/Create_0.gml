@@ -26,7 +26,7 @@ holpath_point = 0
 holpath_cell_size = 16
 
 // Reeds Shepp path planning
-rs_min_r = 47 // minimum turning radius for RS
+rs_min_r = 50//47 // minimum turning radius for RS
 rs_path = undefined // current RS path we're walking
 rs_start = undefined // start pose for RS path
 rs_target = undefined // target pose for RS path
@@ -199,6 +199,7 @@ function reset_path() {
 	if (holpath != undefined)
 		path_delete(holpath)
 	holpath = undefined
+	rs_path = undefined // reset RS path also
 }
 
 // Create holonomic path to target
