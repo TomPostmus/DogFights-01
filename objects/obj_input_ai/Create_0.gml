@@ -25,6 +25,13 @@ holpath = undefined
 holpath_point = 0
 holpath_cell_size = 16
 
+// A* river
+astriver = undefined // rows of the 2D map (map in maps) that contain A* river cells, the map is dynamic in size, since cells are added to it dynamically
+astriver_rows = ds_list_create() // list to track which rows are used in 2D A* river map
+astriver_cols = ds_list_create() // list to track which columns are used in 2D A* river map
+astriver_radius = 6 // how many cells the river spreads around the original A* path in each direction
+astriver_build_i = 0 // at which point we're currently building
+
 // Reeds Shepp path planning
 rs_min_r = 50//47 // minimum turning radius for RS
 rs_path = undefined // current RS path we're walking
@@ -194,12 +201,63 @@ function rs_path_free(_rs_path) {
 	return true
 }
 
+// Initialize A* river based on path
+function astr_init(_path) {
+	astriver = ds_map_create()
+	ds_list_clear(astriver_rows) // clear tracking lists of which rows and cols are used
+	ds_list_clear(astriver_cols)
+	astriver_build_i = 0 // reset building index
+	
+	var _length = path_get_length(_path)
+	var _th = 0 // angle of current path cell
+	for (var i = 0; i < path_get_number(_path); i++) { // loop through path points
+		var _pt_x = path_get_point_x(_path, i) // path point location
+		var _pt_y = path_get_point_y(_path, i)
+		var _cell_x = floor(_pt_x / holpath_cell_size) // find x and y index in grid of cell
+		var _cell_y = floor(_pt_y / holpath_cell_size)
+		
+		// Compute cost
+		var _cost = _length - i * holpath_cell_size // cost of cell (this breaks if I change path to allow diagonals in future, since I assume distance increases cell size with each path point)
+		
+		// Compute theta angle
+		if (i < path_get_number(_path)-1) {
+			var _pt_next_x = path_get_point_x(_path, i+1)
+			var _pt_next_y = path_get_point_y(_path, i+1)
+			var _cell_next_x = floor(_pt_next_x / holpath_cell_size)
+			var _cell_next_y = floor(_pt_next_y / holpath_cell_size)
+			_th = point_direction(_pt_x, _pt_y, _pt_next_x, _pt_next_y) // direction to next pt (from current pt)
+		} // otherwise, for last path cell old _th value is used
+		
+		// Add to A* river 2D dynamic map
+		if (!ds_map_exists(astriver, _cell_y)) { // check if row exists in 2D A* river map
+			astriver[?_cell_y] = ds_map_create() // if not, create map
+			ds_list_add(astriver_rows, _cell_y) // keep track that this row is being used
+		}
+		
+		astriver[?_cell_y][?_cell_x] = _th // theta angle in this cell
+		ds_list_add(astriver_cols, _cell_x) // keep track that this column is being used
+	}
+}
+
+// Reset A* river
+function astr_reset() {
+	if (astriver != undefined) {
+		for (var i = 0; i < ds_list_size(astriver_rows); i ++) { // destroy row maps in dynamic A* river 2D map
+			var _row = astriver_rows[|i]
+			ds_map_destroy(astriver[?_row])
+		}
+		ds_map_destroy(astriver)
+		astriver = undefined
+	}
+}
+
 // Reset path
 function reset_path() {
 	if (holpath != undefined)
 		path_delete(holpath)
 	holpath = undefined
 	rs_path = undefined // reset RS path also
+	astr_reset()
 }
 
 // Create holonomic path to target
@@ -210,10 +268,12 @@ function create_holonomic_path(_target_x, _target_y) {
 	
 	holpath = path_add()
 	holpath_point = 0			// reset path point counter
-	if (!mp_grid_path(grid, holpath, body.get_x(), body.get_y(), _target_x, _target_y, false)) { // try making path
+	if (!mp_grid_path(grid, holpath, body.get_x(), body.get_y(), _target_x, _target_y, true)) { // try making path
 		path_delete(holpath)
 		holpath = undefined
 	}
+	
+	astr_init(holpath) // initialize A* river
 }
 
 // Choose shortest out of 2 paths: a path for walking to the target,
