@@ -114,6 +114,33 @@ function rs_path_2(_x, _y, _th) {
 	return _path
 }
 
+// Stationary turn in path (kink in path)
+function rs_turn_element(_x, _y, _th, _th_end) constructor {
+	x = _x // starting position of line in world
+	y = _y
+	th = _th // angle (orientation of line)
+	l = 0 // line length in pixels
+	steering = 0 // no steering
+	gear = 0 // no gear
+	
+	x_end = x
+	y_end = y
+	th_end = _th_end
+	
+	links = ds_list_create() // branches linked to this node
+	
+	// Draw this kink (little circle)
+	static draw = function() {
+		draw_circle(x, y, 4, false)
+	}
+	
+	// Cleanup
+	static destroy = function() {
+		for (var i = 0; i < ds_list_size(links); i ++)
+			links[|i].destroy() // destroy child elements
+		ds_list_destroy(links)
+	}
+}
 
 // Straight line path element constructor in world frame
 function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
@@ -126,10 +153,20 @@ function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
 	
 	x_end = x + lengthdir_x(gear * l, th) // end position of line
 	y_end = y + lengthdir_y(gear * l, th)
+	th_end = th
+	
+	links = ds_list_create() // branches linked to this node
 	
 	// Draw this line segment
 	static draw = function() {
 		draw_line(x, y, x_end, y_end)
+	}
+	
+	// Cleanup
+	static destroy = function() {
+		for (var i = 0; i < ds_list_size(links); i ++)
+			links[|i].destroy() // destroy child elements
+		ds_list_destroy(links)
 	}
 }
 
@@ -145,6 +182,12 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 	
 	center_x = _x + lengthdir_x(_r, _th + _steering * 90) // center position of arc
 	center_y = _y + lengthdir_y(_r, _th + _steering * 90) // either left or right from start pos (depending on left or right steering)
+	
+	x_end = center_x + lengthdir_x(r, th - steering * 90 + gear * l)
+	y_end = center_y + lengthdir_x(r, th - steering * 90 + gear * l)
+	th_end = th + gear * steering * l
+	
+	links = ds_list_create() // branches linked to this node
 	
 	// Draw this arc
 	static draw = function() {
@@ -172,7 +215,13 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 			_d_end += gear * steering * _precision
 		
 		}
+	}
 	
+	// Cleanup
+	static destroy = function() {
+		for (var i = 0; i < ds_list_size(links); i ++)
+			links[|i].destroy() // destroy child elements
+		ds_list_destroy(links)
 	}
 }
 

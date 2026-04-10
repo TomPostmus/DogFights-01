@@ -32,8 +32,12 @@ astriver_cols = ds_list_create() // list to track which columns are used in 2D A
 astriver_radius = 6 // how many cells the river spreads around the original A* path in each direction
 astriver_build_i = 0 // at which point we're currently building
 
+// RRT*
+rrt_branch = undefined // current RRT* branch we're walking
+rrt_branches = ds_list_create() // branches of RRT* tree
+
 // Reeds Shepp path planning
-rs_min_r = 50//47 // minimum turning radius for RS
+rs_min_r = 50 // minimum turning radius for RS
 rs_path = undefined // current RS path we're walking
 rs_start = undefined // start pose for RS path
 rs_target = undefined // target pose for RS path
@@ -251,6 +255,16 @@ function astr_reset() {
 	}
 }
 
+// Reset RRT* tree
+function rrt_reset() {
+	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+		var _branch = rrt_branches[|i]
+		_branch.destroy()
+		delete _branch
+	}
+	ds_list_clear(rrt_branches)
+}
+
 // Reset path
 function reset_path() {
 	if (holpath != undefined)
@@ -258,6 +272,7 @@ function reset_path() {
 	holpath = undefined
 	rs_path = undefined // reset RS path also
 	astr_reset()
+	rrt_reset()
 }
 
 // Create holonomic path to target
@@ -269,11 +284,12 @@ function create_holonomic_path(_target_x, _target_y) {
 	holpath = path_add()
 	holpath_point = 0			// reset path point counter
 	if (!mp_grid_path(grid, holpath, body.get_x(), body.get_y(), _target_x, _target_y, true)) { // try making path
-		path_delete(holpath)
+		path_delete(holpath) // if not succesful
 		holpath = undefined
+	} else { // if succesful
+		astr_init(holpath) // initialize A* river
 	}
 	
-	astr_init(holpath) // initialize A* river
 }
 
 // Choose shortest out of 2 paths: a path for walking to the target,

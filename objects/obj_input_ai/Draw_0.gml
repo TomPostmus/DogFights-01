@@ -33,6 +33,13 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			}
 		}
 	}
+	
+	// Draw RRT* tree
+	draw_set_colour(c_blue)
+	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+		var _branch = rrt_branches[|i]
+		_branch.draw()
+	}
 
 }
 // Draw holonomic path

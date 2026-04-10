@@ -9,6 +9,10 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	var body = player.body
 	var camera = player.camera
 	var weapon = player.weapon
+	
+	var _body_x = body.get_x()
+	var _body_y = body.get_y()
+	var _body_rot = body.get_rotation()
 		
 	//Find targets
 	ds_list_clear(targets)
@@ -198,8 +202,8 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		//	}
 		//}
 		
-		// Build A* river
 		if (astriver != undefined) {
+			// Build A* river
 			if (astriver_build_i < path_get_number(holpath)) {
 				var _src_pt_x = path_get_point_x(holpath, astriver_build_i) // get location of current source cell
 				var _src_pt_y = path_get_point_y(holpath, astriver_build_i)
@@ -258,6 +262,60 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				}
 				
 				astriver_build_i ++ // move to next point for next step
+			}
+			
+			// Build RRT* tree
+			if (rrt_branch = undefined) {
+				rrt_branch = new rs_turn_element(_body_x, _body_y, _body_rot, _body_rot) // node that tree starts from
+				ds_list_add(rrt_branches, rrt_branch)
+			} else {
+				var _cell_test_x = astriver_cols[|irandom(ds_list_size(astriver_cols)-1)] // get random cell from A* river
+				var _cell_test_y = astriver_rows[|irandom(ds_list_size(astriver_rows)-1)] 
+				var _pt_test_x = _cell_test_x * holpath_cell_size // use cell location as test point
+				var _pt_test_y = _cell_test_y * holpath_cell_size
+				var _pt_test_th = astriver[?_cell_test_y][?_cell_test_x] // get orientation of test point
+				
+				// find nearest RTT branch (more precisely, lowest cost, defined in both distance to test point and angle difference with test point orientation)
+				var _nearest = undefined
+				var _cost = infinity
+				for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+					var _branch = rrt_branches[|i]
+					var _branch_cost = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y) + abs(angle_difference(_branch.th_end, _pt_test_th)) // combined distance & angle difference cost from branch end point to test point
+					if (_branch_cost < _cost) {
+						_nearest = _branch
+						_cost = _branch_cost
+					}
+				}
+				
+				// create new branch
+				if (_nearest != undefined) {
+					var _new_branch = undefined
+					var _dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
+					var _angdiff = angle_difference(_pt_test_th, _nearest.th_end) // angle diff from node orientation to test point orientation
+					if (abs(_angdiff) <= 22.5) {
+						_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_STRAIGHT)
+					} else if (abs(_angdiff) <= 45) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 45, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					} else if (abs(_angdiff) <= 67.5) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 67.5, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					} else if (abs(_angdiff) <= 90) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 90, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					} else if (abs(_angdiff) <= 112.5) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 112.5, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					} else if (abs(_angdiff) <= 135) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 135, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					} else if (abs(_angdiff) <= 157.5) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 157.5, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					} else if (abs(_angdiff) <= 180) {
+						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+					}
+					
+					// add new branch to nearest branch end point
+					if (_new_branch != undefined) {
+						ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
+						ds_list_add(rrt_branches, _new_branch) // add to total list of branches
+					}
+				}
 			}
 		}
 		
