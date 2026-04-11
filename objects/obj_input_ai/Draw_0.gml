@@ -10,7 +10,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	
 //	draw_text(xp, yp + 20, "Conflict: " + string(conflict))
 //	draw_text(xp, yp + 40, "FoF: " + fight_or_flight)
-	draw_text(xp, yp + 40, $"Holpath_pt: {holpath_point}")
+	//draw_text(xp, yp + 40, $"move_input: {move_input}")
 
 	// Draw A* river around player (not everything to reduce drawing computational load)
 	if (astriver != undefined) {

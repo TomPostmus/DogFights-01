@@ -16,7 +16,7 @@
     "name":"obj_game",
     "path":"objects/obj_game/obj_game.yy",
   },
-  "persistent":true,
+  "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

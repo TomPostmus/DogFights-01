@@ -29,6 +29,7 @@ ang_motion = player.input.turn_input
 	} else if (linsm_current == "try") {			
 		if (lin_retry_timer <= 0) {														//timer event
 			lin_kick_force = lin_motion * lin_kick_init_force_factor					//reset kick force
+			lin_kick_force *= 1 - clamp(abs(forwards_velocity) - 0.5, 0, 3) / 3			//dampen with factor between 0 and 1, proportional to current forwards vel in lin motion direction (to avoid infinite kick bug, where spamming forward causes player to speed up enormously due to the rapid kicks)
 			lin_retry_timer = lin_retry_time											//reset timer
 			if (leg_angle == 0) {														//if leg in neutral position, switch leg
 				left_leg = !left_leg

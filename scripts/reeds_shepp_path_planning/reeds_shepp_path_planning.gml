@@ -4,6 +4,10 @@
 #macro RS_FORWARD 1
 #macro RS_BACKWARD -1
 
+#macro RRT_LINE 0 // types of RRT path elements (straight line, arc or stationary turn)
+#macro RRT_ARC 1
+#macro RRT_TURN 2
+
 // These are the Reeds Shepp path planning functions based on github code by nathanIct
 // https://github.com/nathanlct/reeds-shepp-curves/blob/master/reeds_shepp.py
 // I made some adaptations to make it work for GameMaker
@@ -116,6 +120,7 @@ function rs_path_2(_x, _y, _th) {
 
 // Stationary turn in path (kink in path)
 function rs_turn_element(_x, _y, _th, _th_end) constructor {
+	type = RRT_TURN
 	x = _x // starting position of line in world
 	y = _y
 	th = _th // angle (orientation of line)
@@ -132,20 +137,26 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 	// Draw this kink (little circle)
 	static draw = function() {
 		draw_circle(x, y, 2, false)
+		draw_arrow(x, y, x + lengthdir_x(8, th_end), y + lengthdir_y(8, th_end), 2)
 	}
+	
+	del = false // flag to mark for deletion
 	
 	// Cleanup
 	static destroy = function() {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
 		ds_list_destroy(links)
+		del = true // mark for deletion (handled in AI step)
 	}
 	
 	cost = undefined
 	
 	// Determine cost for this element based on A* river vector field
-	static compute_cost = function(_astriver) {
-		return angle_difference(_th_end, _th) // TODO multiply with constant that represents how much time it takes to rotate
+	static compute_cost = function() {
+		cost = abs(angle_difference(th_end, th)) // TODO multiply with constant that represents how much time it takes to rotate
+		
+		return 1 // success
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
@@ -184,7 +195,7 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 		var _precision = 25 // precision in degrees
 		var _last_iter = false
 		var _found_collision = false
-		var _diff = abs(angle_difference(_th_end, _th)) // angle difference between start and end rotation
+		var _diff = abs(angle_difference(th_end, th)) // angle difference between start and end rotation
 		var _d = 0 // distance of angle sliding
 		_col_slider.x = x
 		_col_slider.y = y
@@ -218,6 +229,7 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 
 // Straight line path element constructor in world frame
 function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
+	type = RRT_LINE
 	x = _x // starting position of line in world
 	y = _y
 	th = _th // angle (orientation of line)
@@ -236,11 +248,52 @@ function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
 		draw_line(x, y, x_end, y_end)
 	}
 	
+	del = false // flag to mark for deletion
+	
 	// Cleanup
 	static destroy = function() {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
 		ds_list_destroy(links)
+		del = true // mark for deletion (handled in AI step)
+	}
+	
+	cost = undefined
+	
+	// Determine cost for this element based on A* river vector field
+	// Returns -1 if element is found to be partially outside of A* river (element is to be deleted)
+	static compute_cost = function(_astriver, _cell_size) {
+		var _precision = 10
+		var _last_iter = false
+		var _d = _precision // distance over line
+		var _d_prev = 0 // distance from previous iteration
+		cost = 0
+		while (true) {
+			if (_d > l) {
+				_d = l // cap at length
+				_last_iter = true
+			}
+			
+			var _xp = x + lengthdir_x(gear * _d, th)
+			var _yp = y + lengthdir_y(gear * _d, th)
+			var _cell_x = floor(_xp / _cell_size)
+			var _cell_y = floor(_yp / _cell_size)
+			if (ds_map_exists(_astriver, _cell_y) && ds_map_exists(_astriver[?_cell_y], _cell_x)) {
+				var _flow_th = _astriver[?_cell_y][?_cell_x]
+				cost += abs(angle_difference(_flow_th, th)) / (_d - _d_prev) // return angle diff with flow at this point, and normalize by distance since previous iteration
+			} else { // if no A* river element underneath, stop cost calculation, return
+				cost = undefined
+				return -1
+			}
+			
+			if (_last_iter)
+				return true
+			
+			_d_prev = _d
+			_d += _precision
+		}
+		
+		return 1 // success
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
@@ -313,6 +366,7 @@ function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
 
 // Arc path element constructor in world frame
 function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
+	type = RRT_ARC
 	x = _x // starting position of arc in world
 	y = _y
 	th = _th // starting angle of arc
@@ -342,13 +396,14 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 				_last_iter = true
 			}
 		
-			draw_set_colour(c_blue)
+			//draw_set_colour(c_blue)
 			draw_line( // draw line segment
 				center_x + lengthdir_x(r, th - steering * 90 + _d_start), // draw from center
 				center_y + lengthdir_y(r, th - steering * 90 + _d_start),
 				center_x + lengthdir_x(r, th - steering * 90 + _d_end),
 				center_y + lengthdir_y(r, th - steering * 90 + _d_end)
 			)
+			
 		
 			if (_last_iter)
 				break
@@ -357,8 +412,45 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 			_d_end += gear * steering * _precision
 		
 		}
-		draw_set_colour(c_red)
-		draw_circle(x_end, y_end, 1, false)
+		//draw_set_colour(c_red)
+		//draw_circle(x_end, y_end, 1, false)
+	}
+	
+	// Determine cost for this element based on A* river vector field
+	// Returns -1 if element is found to be partially outside of A* river (element is to be deleted)
+	static compute_cost = function(_astriver, _cell_size) {
+		var _precision = 25 // precision in degrees of cost computation
+		var _last_iter = false
+		var _d = _precision // distance over arc
+		var _d_prev = 0 // distance from previous iteration
+		cost = 0
+		while (true) {
+			if (_d > l) {
+				_d = l // cap at length
+				_last_iter = true
+			}
+			
+			var _xp = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d)
+			var _yp = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+			var _th = th + gear * steering * _d
+			var _cell_x = floor(_xp / _cell_size)
+			var _cell_y = floor(_yp / _cell_size)
+			if (ds_map_exists(_astriver, _cell_y) && ds_map_exists(_astriver[?_cell_y], _cell_x)) {
+				var _flow_th = _astriver[?_cell_y][?_cell_x]
+				cost += abs(angle_difference(_flow_th, _th)) / (degtorad(_d - _d_prev) * r) // return angle diff with flow at this point, and normalize by distance since previous iteration
+			} else { // if no A* river element underneath, stop cost calculation, return
+				cost = undefined
+				return -1
+			}
+			
+			if (_last_iter)
+				return true
+			
+			_d_prev = _d
+			_d += _precision
+		}
+		
+		return 1 // success
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
@@ -430,11 +522,14 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 		}
 	}
 	
+	del = false // flag to mark for deletion
+	
 	// Cleanup
 	static destroy = function() {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
 		ds_list_destroy(links)
+		del = true // mark for deletion (handled in AI step)
 	}
 }
 

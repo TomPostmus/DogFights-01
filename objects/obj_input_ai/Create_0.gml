@@ -36,6 +36,7 @@ astriver_build_i = 0 // at which point we're currently building
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // branches of RRT* tree
 rrt_test_pt = undefined
+rrt_completed = false // whether current branch we're walking has been completed
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
@@ -261,12 +262,10 @@ function astr_reset() {
 
 // Reset RRT* tree
 function rrt_reset() {
-	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
-		var _branch = rrt_branches[|i]
-		_branch.destroy()
-		delete _branch
+	if (rrt_branch != undefined) {
+		rrt_branch.destroy() // destroy current RRT branch (and thereby the full tree)
+		rrt_branch = undefined
 	}
-	ds_list_clear(rrt_branches)
 }
 
 // Reset path

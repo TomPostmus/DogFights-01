@@ -15,7 +15,7 @@
     "name":"obj_player",
     "path":"objects/obj_player/obj_player.yy",
   },
-  "persistent":true,
+  "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

@@ -4,6 +4,16 @@ turn_input = 0
 move_input = 0
 input_attack = false
 
+// Delete RTT branches that are marked for deletion
+for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+	var _branch = rrt_branches[|i]
+	if (_branch.del) {
+		delete _branch // delete struct
+		ds_list_delete(rrt_branches, i) // remove from list
+		i --
+	}
+}
+
 // Basic behaviour
 if (instance_exists(player) && instance_exists(player.body)) {
 	var body = player.body
@@ -268,8 +278,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			if (rrt_branch = undefined) {
 				rrt_branch = new rs_turn_element(_body_x, _body_y, _body_rot, _body_rot) // node that tree starts from
 				ds_list_add(rrt_branches, rrt_branch)
-			} else if (keyboard_check_pressed(vk_space)) {
-				
+			} else {
 				// try finding random test point nearby
 				var _found_cell = false
 				var _pt_test_x, _pt_test_y, _pt_test_th
@@ -326,22 +335,117 @@ if (instance_exists(player) && instance_exists(player.body)) {
 							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_FORWARD, rs_min_r)
 						}
 						
+						// compute cost and delete if falls outside A* river
+						var _success = _new_branch.compute_cost(astriver, holpath_cell_size)
+						if (_success == -1) { // if falls outside A* river, replace with turn element
+							delete _new_branch // delete old
+							_new_branch = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, _dir)
+							_new_branch.compute_cost()
+						}
+						
 						// check collision and try shortening if not collision free
 						if (_new_branch != undefined) {
-							var _success = _new_branch.shorten(colslider, obstr_objects)
+							_success = _new_branch.shorten(colslider, obstr_objects)
 							if (_success != 0) {
 								// add new branch to nearest branch end point
 								ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
 								ds_list_add(rrt_branches, _new_branch) // add to total list of branches
 								
 								// for shortened arc, add in-place turn element to comlete desired rotation
-								if (_success == 2 && _new_branch.steering != RS_STRAIGHT) { // if element was shortened and of arc element type
+								if (_success == 2 && _new_branch.type == RRT_ARC) { // if element was shortened and of arc element type
 									var _turn_element = new rs_turn_element(_new_branch.x_end, _new_branch.y_end, _new_branch.th, _dir)
+									_turn_element.compute_cost()
 									ds_list_add(_new_branch.links, _turn_element) // attach turn element to end point of arc
 									ds_list_add(rrt_branches, _turn_element)
 								}
 							}
 						}
+					}
+				}
+				
+				// Walk RRT* branch element
+				if (!rrt_completed) {
+					if (rrt_branch.type == RRT_TURN) { // execute turn
+						move_input = 0
+						turn_input = input_dir(rrt_branch.th_end)
+					
+						// check completion
+						var _completion_tolerance = 5 // completion tolerance (in degrees) on when turn is considered to be completed
+						if (abs(angle_difference(rrt_branch.th_end, _body_rot)) < _completion_tolerance) {
+							rrt_completed = true
+						}
+					} else if (rrt_branch.type == RRT_LINE) {
+						move_input = rrt_branch.gear // move according to gear
+						turn_input = 0
+				
+						// Steering correction
+						var _to_player_dir = point_direction(rrt_branch.x, rrt_branch.y, _body_x, _body_y) // direction and distance from line base to player
+						var _to_player_dist = point_distance(rrt_branch.x, rrt_branch.y, _body_x, _body_y)
+						var _center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, rrt_branch.th)) // offset of player from line (treat this lengthdir_y as a sin())
+						var _correction_tolerance = 5 // tolerance outside which to start correcting
+						if (_center_offset > _correction_tolerance) { // deviated too much on left side
+							turn_input = rrt_branch.gear // steer to right (or left if in reverse gear)
+						} else if (_center_offset < -_correction_tolerance) { // deviated too much on right side
+							turn_input = -rrt_branch.gear // steer to left (or right if in reverse gear)
+						} else {
+							turn_input = input_dir(rrt_branch.th)
+						}
+				
+						// check completion
+						var _completion_tolerance = 5 // tolerance (in pixels) on when line is considered to be completed
+						var _progression = rrt_branch.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, rrt_branch.th)) // progression on line (treat this lengthdir_x as cosine)
+						if (_progression >=  max(0, rrt_branch.l - _completion_tolerance)) { // if progression exceeds is on line segment length
+							rrt_completed = true
+						}
+					} else if (rrt_branch.type == RRT_ARC) {
+						move_input = rrt_branch.gear // move according to gear and steering
+						turn_input = rrt_branch.gear * rrt_branch.steering
+				
+						// Steering correction
+						var _to_player_dist = point_distance(rrt_branch.center_x, rrt_branch.center_y, _body_x, _body_y) // distance and direction from arc center to player
+						var _to_player_dir = point_direction(rrt_branch.center_x, rrt_branch.center_y, _body_x, _body_y)
+						var _arc_angle = _to_player_dir + 90 * rrt_branch.steering // what the angle of the arc is from player progression
+						turn_input = input_dir(_arc_angle)
+				
+						var _offset_tolerance = 5
+						if (rrt_branch.r - _to_player_dist > _offset_tolerance) { // deviated too on inside of arc
+							turn_input = 0 // stop steering, simply move straight until in center again
+						} else if (rrt_branch.r - _to_player_dist < -_offset_tolerance) // deviated too on outside of arc
+						  and (abs(angle_difference(_arc_angle, _body_rot)) > 5) { 
+							move_input = 0 // stop movement, wait until angle is within acceptable limits
+						}
+				
+						// check completion
+						var _completion_tolerance = 5 // tolerance on when path element is considered to be completed
+						var _progression = rrt_branch.steering * rrt_branch.gear * angle_difference(_to_player_dir + 90 * rrt_branch.steering, rrt_branch.th) // difference from arc starting angle to where player is on arc
+						if (_progression >= max(0, rrt_branch.l - _completion_tolerance)) {
+							rrt_completed = true
+						}
+					}
+				}
+				
+				// Choose next branch (wait if necessary), and delete the current branch (and children that are not chosen)
+				if (rrt_completed) {
+					var _cost = infinity
+					var _next_branch = undefined
+					var _next_branch_i = 0
+					for (var i = 0; i < ds_list_size(rrt_branch.links); i ++) { // loop through linked branches of current branch
+						var _link = rrt_branch.links[|i]
+						if (_link.cost != undefined && _link.cost < _cost) {
+							_cost = _link.cost
+							_next_branch = _link
+							_next_branch_i = i // remember index in list
+						}
+					}
+					
+					if (_next_branch != undefined) { // if found the next branch to walk
+						ds_list_delete(rrt_branch.links, _next_branch_i) // decouple chosen branch from old branch, to avoid deleting the chosen branch along with deleting old branch
+						rrt_branch.destroy() // delete old branch
+						rrt_branch = _next_branch
+						rrt_completed = false
+					} else { // otherwise, wait
+						move_input = 0
+						turn_input = 0
 					}
 				}
 			}
