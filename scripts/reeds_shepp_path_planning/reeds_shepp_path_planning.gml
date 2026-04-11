@@ -120,7 +120,7 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 	y = _y
 	th = _th // angle (orientation of line)
 	l = 0 // line length in pixels
-	steering = 0 // no steering
+	steering = sign(angle_difference(_th_end, _th))
 	gear = 0 // no gear
 	
 	x_end = x
@@ -131,7 +131,7 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 	
 	// Draw this kink (little circle)
 	static draw = function() {
-		draw_circle(x, y, 4, false)
+		draw_circle(x, y, 2, false)
 	}
 	
 	// Cleanup
@@ -139,6 +139,80 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
 		ds_list_destroy(links)
+	}
+	
+	cost = undefined
+	
+	// Determine cost for this element based on A* river vector field
+	static compute_cost = function(_astriver) {
+		return angle_difference(_th_end, _th) // TODO multiply with constant that represents how much time it takes to rotate
+	}
+	
+	// Check collision using collision slider and given obstruction objects types
+	// Return true if there is no collision, false otherwise
+	static collision_free = function(_col_slider, _obstr_objects) {
+		var _precision = 25 // precision in degrees
+		var _last_iter = false
+		var _diff = abs(angle_difference(_th_end, _th)) // angle difference between start and end rotation
+		var _d = 0 // distance of angle sliding
+		_col_slider.x = x
+		_col_slider.y = y
+		while (true) {
+			if (_d > _diff) {
+				_d = _diff // cap at max difference
+				_last_iter = true
+			}
+			
+			_col_slider.image_angle = th + steering * _d // slide angle over turn rotation
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						return false
+			}
+			
+			if (_last_iter)
+				return true
+			
+			_d += _precision
+		}
+	}
+	
+	// Same as collision_free in sense that we're sliding the collision slider over path checking for collisions
+	// But this same shorten the path, to be a shorter path that is collision free
+	// Returns 1 if path segment is collision free and original length, returns 2 if path was shortened to be collision free, returns 0 if not collision free and shortening was not possible
+	static shorten = function(_col_slider, _obstr_objects) {
+		var _precision = 25 // precision in degrees
+		var _last_iter = false
+		var _found_collision = false
+		var _diff = abs(angle_difference(_th_end, _th)) // angle difference between start and end rotation
+		var _d = 0 // distance of angle sliding
+		_col_slider.x = x
+		_col_slider.y = y
+		while (true) {
+			if (_d > _diff) {
+				_d = _diff // cap at max difference
+				_last_iter = true
+			}
+			
+			_col_slider.image_angle = th + steering * _d // slide angle over turn rotation
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						_found_collision = true
+			}
+			
+			if (_found_collision) {
+				_d -= _precision
+				if (_d <= 0) return 0 // for negative or zero d, non sensical path element, return 0
+				th_end = th + steering * _d // new rotation end point
+				return 2
+			}
+			
+			if (_last_iter)
+				return 1
+			
+			_d += _precision
+		}
 	}
 }
 
@@ -168,6 +242,73 @@ function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
 			links[|i].destroy() // destroy child elements
 		ds_list_destroy(links)
 	}
+	
+	// Check collision using collision slider and given obstruction objects types
+	// Return true if there is no collision, false otherwise
+	static collision_free = function(_col_slider, _obstr_objects) {
+		var _precision = 10
+		var _last_iter = false
+		var _d = 0 // distance over line of colslider
+		_col_slider.image_angle = th
+		while (true) {
+			if (_d > l) {
+				_d = l // cap at length
+				_last_iter = true
+			}
+			
+			_col_slider.x = x + lengthdir_x(gear * _d, th) // slide over line
+			_col_slider.y = y + lengthdir_y(gear * _d, th)
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						return false
+			}
+			
+			if (_last_iter)
+				return true
+			
+			_d += _precision
+		}
+	}
+	
+	// Same as collision_free in sense that we're sliding the collision slider over path checking for collisions
+	// But this same shorten the path, to be a shorter path that is collision free
+	// Returns 1 if path segment is collision free and original length, returns 2 if path was shortened to be collision free, returns 0 if not collision free and shortening was not possible
+	static shorten = function(_col_slider, _obstr_objects) {
+		var _precision = 10
+		var _last_iter = false
+		var _found_collision = false
+		var _d = 0 // distance over line of colslider
+		_col_slider.image_angle = th
+		while (true) {
+			if (_d > l) {
+				_d = l // cap at length
+				_last_iter = true
+			}
+			
+			_col_slider.x = x + lengthdir_x(gear * _d, th) // slide over line
+			_col_slider.y = y + lengthdir_y(gear * _d, th)
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						_found_collision = true
+			}
+			
+			if (_found_collision) {
+				_d -= _precision
+				if (_d <= 0) return 0 // for negative or zero d, non sensical path element, return 0
+				x_end = x + lengthdir_x(gear * _d, th) // new line end point
+				y_end = y + lengthdir_y(gear * _d, th)
+				l = _d // new line length
+				return 2
+			}
+			
+			if (_last_iter)
+				return 1
+			
+			_d += _precision
+		}
+	}
 }
 
 // Arc path element constructor in world frame
@@ -183,8 +324,8 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 	center_x = _x + lengthdir_x(_r, _th + _steering * 90) // center position of arc
 	center_y = _y + lengthdir_y(_r, _th + _steering * 90) // either left or right from start pos (depending on left or right steering)
 	
-	x_end = center_x + lengthdir_x(r, th - steering * 90 + gear * l)
-	y_end = center_y + lengthdir_x(r, th - steering * 90 + gear * l)
+	x_end = center_x + lengthdir_x(_r, _th - _steering * 90 + _gear * _steering * _l)
+	y_end = center_y + lengthdir_y(_r, _th - _steering * 90 + _gear * _steering * _l)
 	th_end = th + gear * steering * l
 	
 	links = ds_list_create() // branches linked to this node
@@ -201,6 +342,7 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 				_last_iter = true
 			}
 		
+			draw_set_colour(c_blue)
 			draw_line( // draw line segment
 				center_x + lengthdir_x(r, th - steering * 90 + _d_start), // draw from center
 				center_y + lengthdir_y(r, th - steering * 90 + _d_start),
@@ -214,6 +356,77 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 			_d_start += gear * steering * _precision
 			_d_end += gear * steering * _precision
 		
+		}
+		draw_set_colour(c_red)
+		draw_circle(x_end, y_end, 1, false)
+	}
+	
+	// Check collision using collision slider and given obstruction objects types
+	// Return true if there is no collision, false otherwise
+	static collision_free = function(_col_slider, _obstr_objects) {
+		var _precision = 25 // precision in degrees of collision check
+		var _d = 0 // distance of sliding over arc segment
+		var _last_iter = false
+		while (true) {
+			if (_d > l) {
+				_d = l // cap at length
+				_last_iter = true
+			}				
+				
+			_col_slider.x = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d) // slide over arc
+			_col_slider.y = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+			_col_slider.image_angle = th + gear * steering * _d // slide angle over turn rotation
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						return false
+			}
+		
+			if (_last_iter)
+				return true
+			
+			_d += _precision
+		}
+	}
+	
+	// Same as collision_free in sense that we're sliding the collision slider over path checking for collisions
+	// But this same shorten the path, to be a shorter path that is collision free
+	// Returns 1 if path segment is collision free and original length, returns 2 if path was shortened to be collision free, returns 0 if not collision free and shortening was not possible
+	static shorten = function(_col_slider, _obstr_objects) {
+		var _precision = 25 // precision in degrees of collision check
+		var _d = 0 // distance of sliding over arc segment
+		var _last_iter = false
+		var _found_collision = false
+		while (true) {
+			if (_d > l) {
+				_d = l // cap at length
+				_last_iter = true
+			}				
+				
+			_col_slider.x = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d) // slide over arc
+			_col_slider.y = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+			_col_slider.image_angle = th + gear * steering * _d // slide angle over turn rotation
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						_found_collision = true
+			}
+			
+			if (_found_collision) {
+				_d -= _precision
+				if (_d <= 0) return 0 // for negative or zero d, non sensical path element, return 0
+				x_end = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d) // new arc end point
+				y_end = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+				th_end = th + gear * steering * _d // slide angle over turn rotation
+				l = _d // new arc length
+				return 2
+			}
+			
+		
+			if (_last_iter)
+				return 1
+			
+			_d += _precision
 		}
 	}
 	

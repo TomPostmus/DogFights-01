@@ -233,7 +233,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 								}
 							
 								astriver[?_cell_y][?_cell_x] = _flow_dir // store flow direction in this cell
-								ds_list_add(astriver_cols, _cell_x) // keep track that this column is being used
+								ds_list_add(astriver_cells, [_cell_x, _cell_y]) // keep track that this column is being used
 							}
 						}
 						
@@ -268,52 +268,80 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			if (rrt_branch = undefined) {
 				rrt_branch = new rs_turn_element(_body_x, _body_y, _body_rot, _body_rot) // node that tree starts from
 				ds_list_add(rrt_branches, rrt_branch)
-			} else {
-				var _cell_test_x = astriver_cols[|irandom(ds_list_size(astriver_cols)-1)] // get random cell from A* river
-				var _cell_test_y = astriver_rows[|irandom(ds_list_size(astriver_rows)-1)] 
-				var _pt_test_x = _cell_test_x * holpath_cell_size // use cell location as test point
-				var _pt_test_y = _cell_test_y * holpath_cell_size
-				var _pt_test_th = astriver[?_cell_test_y][?_cell_test_x] // get orientation of test point
+			} else if (keyboard_check_pressed(vk_space)) {
 				
-				// find nearest RTT branch (more precisely, lowest cost, defined in both distance to test point and angle difference with test point orientation)
-				var _nearest = undefined
-				var _cost = infinity
-				for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
-					var _branch = rrt_branches[|i]
-					var _branch_cost = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y) + abs(angle_difference(_branch.th_end, _pt_test_th)) // combined distance & angle difference cost from branch end point to test point
-					if (_branch_cost < _cost) {
-						_nearest = _branch
-						_cost = _branch_cost
+				// try finding random test point nearby
+				var _found_cell = false
+				var _pt_test_x, _pt_test_y, _pt_test_th
+				var _cell_test_x, _cell_test_y
+				var _r = astriver_radius * holpath_cell_size // around what radius to look
+				repeat (5) { // try 5 times
+					_pt_test_x = _body_x + random_range(-_r, _r) // random point around player
+					_pt_test_y = _body_y + random_range(-_r, _r)
+					_cell_test_x = floor(_pt_test_x / holpath_cell_size)
+					_cell_test_y = floor(_pt_test_y / holpath_cell_size)
+					if (ds_map_exists(astriver, _cell_test_y) && ds_map_exists(astriver[?_cell_test_y], _cell_test_x)) {
+						_pt_test_th = astriver[?_cell_test_y][?_cell_test_x] // get orientation of test point
+						_found_cell = true
+						break // stop trying
 					}
 				}
 				
-				// create new branch
-				if (_nearest != undefined) {
-					var _new_branch = undefined
-					var _dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
-					var _angdiff = angle_difference(_pt_test_th, _nearest.th_end) // angle diff from node orientation to test point orientation
-					if (abs(_angdiff) <= 22.5) {
-						_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_STRAIGHT)
-					} else if (abs(_angdiff) <= 45) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 45, sign(_angdiff), RS_STRAIGHT, rs_min_r)
-					} else if (abs(_angdiff) <= 67.5) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 67.5, sign(_angdiff), RS_STRAIGHT, rs_min_r)
-					} else if (abs(_angdiff) <= 90) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 90, sign(_angdiff), RS_STRAIGHT, rs_min_r)
-					} else if (abs(_angdiff) <= 112.5) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 112.5, sign(_angdiff), RS_STRAIGHT, rs_min_r)
-					} else if (abs(_angdiff) <= 135) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 135, sign(_angdiff), RS_STRAIGHT, rs_min_r)
-					} else if (abs(_angdiff) <= 157.5) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 157.5, sign(_angdiff), RS_STRAIGHT, rs_min_r)
-					} else if (abs(_angdiff) <= 180) {
-						_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_STRAIGHT, rs_min_r)
+				if (_found_cell) {
+					rrt_test_pt = [_pt_test_x, _pt_test_y]
+				
+					// find nearest RTT branch (more precisely, lowest cost, defined in both distance to test point and angle difference with test point orientation)
+					var _nearest = undefined
+					var _cost = infinity
+					for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+						var _branch = rrt_branches[|i]
+						var _branch_cost = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)// + abs(angle_difference(_branch.th_end, _pt_test_th)) // combined distance & angle difference cost from branch end point to test point
+						if (_branch_cost < _cost) {
+							_nearest = _branch
+							_cost = _branch_cost
+						}
 					}
-					
-					// add new branch to nearest branch end point
-					if (_new_branch != undefined) {
-						ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
-						ds_list_add(rrt_branches, _new_branch) // add to total list of branches
+				
+					// create new branch
+					if (_nearest != undefined) {
+						var _new_branch = undefined
+						var _dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
+						var _dir = point_direction(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y)
+						var _angdiff = angle_difference(_dir, _nearest.th_end) // angle diff from node orientation to test point orientation
+						if (abs(_angdiff) <= 22.5) {
+							_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD)
+						} else if (abs(_angdiff) <= 45) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 45, sign(_angdiff), RS_FORWARD, rs_min_r)
+						} else if (abs(_angdiff) <= 67.5) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 67.5, sign(_angdiff), RS_FORWARD, rs_min_r)
+						} else if (abs(_angdiff) <= 90) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 90, sign(_angdiff), RS_FORWARD, rs_min_r)
+						} else if (abs(_angdiff) <= 112.5) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 112.5, sign(_angdiff), RS_FORWARD, rs_min_r)
+						} else if (abs(_angdiff) <= 135) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 135, sign(_angdiff), RS_FORWARD, rs_min_r)
+						} else if (abs(_angdiff) <= 157.5) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 157.5, sign(_angdiff), RS_FORWARD, rs_min_r)
+						} else if (abs(_angdiff) <= 180) {
+							_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_FORWARD, rs_min_r)
+						}
+						
+						// check collision and try shortening if not collision free
+						if (_new_branch != undefined) {
+							var _success = _new_branch.shorten(colslider, obstr_objects)
+							if (_success != 0) {
+								// add new branch to nearest branch end point
+								ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
+								ds_list_add(rrt_branches, _new_branch) // add to total list of branches
+								
+								// for shortened arc, add in-place turn element to comlete desired rotation
+								if (_success == 2 && _new_branch.steering != RS_STRAIGHT) { // if element was shortened and of arc element type
+									var _turn_element = new rs_turn_element(_new_branch.x_end, _new_branch.y_end, _new_branch.th, _dir)
+									ds_list_add(_new_branch.links, _turn_element) // attach turn element to end point of arc
+									ds_list_add(rrt_branches, _turn_element)
+								}
+							}
+						}
 					}
 				}
 			}

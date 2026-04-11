@@ -40,6 +40,11 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		var _branch = rrt_branches[|i]
 		_branch.draw()
 	}
+	
+	if (rrt_test_pt != undefined) {
+		draw_set_colour(c_lime)
+		draw_circle(rrt_test_pt[0], rrt_test_pt[1], 1, false)
+	}
 
 }
 // Draw holonomic path

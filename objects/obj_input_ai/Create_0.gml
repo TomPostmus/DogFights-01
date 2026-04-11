@@ -27,14 +27,18 @@ holpath_cell_size = 16
 
 // A* river
 astriver = undefined // rows of the 2D map (map in maps) that contain A* river cells, the map is dynamic in size, since cells are added to it dynamically
-astriver_rows = ds_list_create() // list to track which rows are used in 2D A* river map
-astriver_cols = ds_list_create() // list to track which columns are used in 2D A* river map
+astriver_cells = ds_list_create() // list of tuples (x,y) to track which cells are used in 2D A* river map
+astriver_rows = ds_list_create() // list of tuples (x,y) to track which rows are used in 2D A* river map
 astriver_radius = 6 // how many cells the river spreads around the original A* path in each direction
 astriver_build_i = 0 // at which point we're currently building
 
 // RRT*
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // branches of RRT* tree
+rrt_test_pt = undefined
+
+colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
+obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
 
 // Reeds Shepp path planning
 rs_min_r = 50 // minimum turning radius for RS
@@ -209,7 +213,7 @@ function rs_path_free(_rs_path) {
 function astr_init(_path) {
 	astriver = ds_map_create()
 	ds_list_clear(astriver_rows) // clear tracking lists of which rows and cols are used
-	ds_list_clear(astriver_cols)
+	ds_list_clear(astriver_cells)
 	astriver_build_i = 0 // reset building index
 	
 	var _length = path_get_length(_path)
@@ -239,7 +243,7 @@ function astr_init(_path) {
 		}
 		
 		astriver[?_cell_y][?_cell_x] = _th // theta angle in this cell
-		ds_list_add(astriver_cols, _cell_x) // keep track that this column is being used
+		ds_list_add(astriver_cells, [_cell_x, _cell_y]) // keep track that this column is being used
 	}
 }
 

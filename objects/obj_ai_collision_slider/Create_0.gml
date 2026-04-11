@@ -1,0 +1,1 @@
+/// @description this is an object with the collision slider sprite, purely used for checking collisions on planned motion paths by the AI player
