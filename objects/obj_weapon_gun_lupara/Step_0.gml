@@ -19,11 +19,24 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			new_anim_draw_order("arm_right", "arm_left", "weapon", "stock")
 		}
 		
+		// Aiming down sight
+		aiming = player.input.input_attack2
+		var _goal_pos_x = aiming ? ads_pos_x : neut_pos_x // goal of aiming position
+		var _goal_pos_y = aiming ? ads_pos_y : neut_pos_y
+		
 		// Set arms animation
-		with (anim_components[? "arm_right"]) {pos_x=14.70; pos_y=4.70; pos_rot=0; sprite=spr_pip_hand; index=0; is_visible=true; }
-		with (anim_components[? "arm_left"]) {pos_x=21.14; pos_y=5.39; pos_rot=0; sprite=spr_pip_hand; index=0; is_visible=true; }
-		with (anim_components[? "weapon"]) {pos_x=17.21; pos_y=5.16; pos_rot=0; sprite=spr_lupara_barrel; index=0; is_visible=true; update_wcomponents()}
-		with (anim_components[? "stock"]) {pos_x=9.23; pos_y=6.15; pos_rot=0; sprite=spr_lupara_stock; index=0; is_visible=true; }
+		with (anim_components[? "arm_right"]) {pos_rot=0; sprite=spr_pip_hand; index=0; is_visible=true; 
+			pos_x += (_goal_pos_x - pos_x) * 0.5 // update position smoothly to aiming position
+			pos_y += (_goal_pos_y - pos_y) * 0.5}
+		with (anim_components[? "arm_left"]) {pos_rot=0; sprite=spr_pip_hand; index=0; is_visible=true; 
+			pos_x += (_goal_pos_x + 6.44 - pos_x) * 0.5
+			pos_y += (_goal_pos_y + 0.69 - pos_y) * 0.5} //pos_x=21.14; pos_y=5.39; 
+		with (anim_components[? "weapon"]) {pos_rot=0; sprite=spr_lupara_barrel; index=0; is_visible=true; update_wcomponents()
+			pos_x += (_goal_pos_x + 2.51 - pos_x) * 0.5
+			pos_y += (_goal_pos_y + 0.46 - pos_y) * 0.5} //pos_x=17.21; pos_y=5.16; 
+		with (anim_components[? "stock"]) {pos_rot=0; sprite=spr_lupara_stock; index=0; is_visible=true; 
+			pos_x += (_goal_pos_x - 5.47 - pos_x) * 0.5
+			pos_y += (_goal_pos_y + 1.45 - pos_y) * 0.5} //pos_x=9.23; pos_y=6.15; 
 		
 		// Auto shot timer
 		if (auto_shot_timer > 0) {
@@ -59,6 +72,9 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		anim_lupara_reload_start()
 		anim_frame_prev = anim_frame
 		anim_frame ++
+		
+		// Aiming down sight
+		aiming = false
 		
 		// Sounds
 		if (anim_check_frame(73)) {

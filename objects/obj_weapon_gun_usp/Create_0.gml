@@ -1,7 +1,7 @@
 event_inherited()
 
 // Stats
-stats_default = {
+var _stats_default = {
 	mag_size: 8,
 	fire_mode: GUN_FMODE_SEMI,
 	ammo_type: obj_bullet_medium,
@@ -14,8 +14,9 @@ stats_default = {
 	damage: 28,
 	sound_fire: snd_usp_fire
 }
+stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
 
-stats = struct_copy(stats_default)
+stats = struct_functions(stats_default)
 
 // Mod slots
 mods = {
@@ -31,7 +32,7 @@ ammo_mag = stats.mag_size
 ammo_reserve = 3000
 
 // ADS pos
-neut_pos_x = 20.80 // neutral position of weapon (no ADS)
+neut_pos_x = 20.80 // neutral position of weapon (no ADS) in relative crds
 neut_pos_y = 4.80
 ads_pos_x = 22 // ADS position
 ads_pos_y = 3
@@ -52,7 +53,7 @@ function anim_init() {
 
 // Implement mod stats function
 function mod_stats() {
-	stats = struct_copy(stats_default)
+	stats = struct_functions(stats_default)
 	
 	if (mods.barrel == "silencer") {
 		stats.fire_volume -= 200

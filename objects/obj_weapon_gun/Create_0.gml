@@ -16,6 +16,12 @@ recoil_stun_recovery : undefined,
 damage : undefined,
 sound_fire : undefined,*/
 
+// Default stats (same for all guns)
+var _stats_default = {
+	aim_dist: 30 // displacement of camera when ADS
+}
+stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
+
 // Weapon state
 ammo_reserve = 0
 ammo_mag = 0

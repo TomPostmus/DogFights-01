@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"struct_copy",
+  "%Name":"struct_functions",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"struct_copy",
+  "name":"struct_functions",
   "parent":{
     "name":"misc",
     "path":"folders/Code/helper_functions/misc.yy",

@@ -1,7 +1,7 @@
 event_inherited()
 
 //Stats
-stats_default = {
+var _stats_default = {
 	mag_size: 2,
 	fire_mode: GUN_FMODE_SEMI,
 	ammo_type: obj_bullet_pellet,
@@ -18,8 +18,9 @@ stats_default = {
 	fire_speed_var: 1,
 	fire_pellets: 7
 }
+stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
 
-stats = struct_copy(stats_default)
+stats = struct_functions(stats_default)
 
 // Mods
 mods = {
@@ -35,6 +36,12 @@ ammo_reserve = 3000
 firemode_auto = false		// whether automatic fire is enabled
 auto_shot = false			// whether second shot will be fired automatically, with select fire
 auto_shot_timer = 0			// timer to indicate when to shoot second shot
+
+// ADS pos
+neut_pos_x = 14.70 // neutral position of right hand (no ADS) in relative crds
+neut_pos_y = 4.70
+ads_pos_x = 16 // ADS position
+ads_pos_y = 3.2
 
 // Override anim init
 function anim_init() {

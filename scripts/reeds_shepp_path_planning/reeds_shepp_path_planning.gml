@@ -53,7 +53,7 @@ function rs_change_of_basis(_p1, _p2, _min_r) {
 function rs_reflect(_path) {
 	var _refl_path = ds_list_create()
 	for (var i = 0; i < ds_list_size(_path); i ++) {
-		var _refl_elem = struct_copy(_path[|i])
+		var _refl_elem = struct_functions(_path[|i])
 		_refl_elem.steering *= -1
 		ds_list_add(_refl_path, _refl_elem)
 	}
@@ -65,7 +65,7 @@ function rs_reflect(_path) {
 function rs_reverse(_path) {
 	var _rev_path = ds_list_create()
 	for (var i = 0; i < ds_list_size(_path); i ++) {
-		var _rev_elem = struct_copy(_path[|i])
+		var _rev_elem = struct_functions(_path[|i])
 		_rev_elem.gear *= -1
 		ds_list_add(_rev_path, _rev_elem)
 	}

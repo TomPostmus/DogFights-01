@@ -282,7 +282,7 @@
     {"id":{"name":"send_buffer_udp","path":"scripts/send_buffer_udp/send_buffer_udp.yy",},},
     {"id":{"name":"sound_local","path":"scripts/sound_local/sound_local.yy",},},
     {"id":{"name":"strong_mod","path":"scripts/strong_mod/strong_mod.yy",},},
-    {"id":{"name":"struct_copy","path":"scripts/struct_copy/struct_copy.yy",},},
+    {"id":{"name":"struct_functions","path":"scripts/struct_functions/struct_functions.yy",},},
     {"id":{"name":"ui_button_draw","path":"scripts/ui_button_draw/ui_button_draw.yy",},},
     {"id":{"name":"ui_container_draw","path":"scripts/ui_container_draw/ui_container_draw.yy",},},
     {"id":{"name":"ui_create_window","path":"scripts/ui_create_window/ui_create_window.yy",},},

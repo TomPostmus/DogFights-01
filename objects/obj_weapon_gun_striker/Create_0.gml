@@ -1,7 +1,7 @@
 event_inherited()
 
 //Stats
-stats_default = {
+var _stats_default = {
 	mag_size: 12,
 	fire_mode: GUN_FMODE_AUTO,
 	ammo_type: obj_bullet_pellet,
@@ -18,12 +18,13 @@ stats_default = {
 	fire_speed_var: 1,
 	fire_pellets: 7
 }
+stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
 
-stats = struct_copy(stats_default)
+stats = struct_functions(stats_default)
 
 // Mods
 mods = {
-	silencer: false
+	barrel: undefined,
 }
 
 //Default state
@@ -31,6 +32,13 @@ state = "idle"
 state_prev = undefined
 ammo_mag = stats.mag_size
 ammo_reserve = 3000
+
+// ADS pos
+neut_pos_x = 16.60 // neutral position of right hand (no ADS) in relative crds
+neut_pos_y = 4.60
+ads_pos_x = 18 // ADS position
+ads_pos_y = 3
+
 
 // Override anim init
 function anim_init() {
@@ -48,7 +56,7 @@ function anim_init() {
 
 // Implement mod stats function
 function mod_stats() {
-	stats = struct_copy(stats_default)
+	stats = struct_functions(stats_default)
 	
 	if (mods.barrel == "silencer") {
 		stats.fire_volume -= 200

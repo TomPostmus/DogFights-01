@@ -1,8 +1,8 @@
 // obj_camera: Defines vision location. Handles camera movement and logic.
 
 // Camera parameters
-move_speed = 0.25
-zoom_speed = 0.25
+move_speed = 0.20
+zoom_speed = 0.20
 
 // Camera state
 zoom = 1

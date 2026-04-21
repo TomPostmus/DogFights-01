@@ -6,7 +6,10 @@ if (instance_exists(player)) {
 	
 	// Camera
 	if (instance_exists(player.camera) && instance_exists(player.body)) {
-		player.camera.set_target(player.body.get_x(), player.body.get_y(), 3)
+		var _cam_x = player.body.get_x() + lengthdir_x(aiming * stats.aim_dist, player.body.get_rotation())
+		var _cam_y = player.body.get_y() + lengthdir_y(aiming * stats.aim_dist, player.body.get_rotation())
+		
+		player.camera.set_target(_cam_x, _cam_y, 3)			
 	
 		//Base zoom
 		/*var pure_visibility = global.viewport_w * global.viewport_h
