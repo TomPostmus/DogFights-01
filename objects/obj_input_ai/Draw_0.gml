@@ -1,3 +1,6 @@
+if (!global.debug)
+	exit
+
 // Draw target and state
 if (instance_exists(player) && instance_exists(player.body)) {
 	var xp = player.body.get_x()
@@ -13,26 +16,26 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	//draw_text(xp, yp + 40, $"move_input: {move_input}")
 
 	// Draw A* river around player (not everything to reduce drawing computational load)
-	if (astriver != undefined) {
-		var c = holpath_cell_size
-		var r = 10 // how many cells around player to draw
-		var _plr_cell_x = floor(xp / holpath_cell_size) // the player cell x,y indices
-		var _plr_cell_y = floor(yp / holpath_cell_size)
-		draw_set_colour(c_blue)
-		for (var _cell_x = _plr_cell_x - r; _cell_x <= _plr_cell_x + r; _cell_x ++) { // loop through kernel around source point
-			for (var _cell_y = _plr_cell_y - r; _cell_y <= _plr_cell_y + r; _cell_y ++) {
-				if (ds_map_exists(astriver, _cell_y) && ds_map_exists(astriver[?_cell_y], _cell_x)) {
-					var _th = astriver[?_cell_y][?_cell_x]
-					var _cell_pt_x = (_cell_x + 0.5) * c
-					var _cell_pt_y = (_cell_y + 0.5) * c
-					//var xp = player.body.get_x()
-					//var yp = player.body.get_y()
-					//draw_rectangle(_row * c, _col * c, (_row + 1) * c, (_col + 1) * c, false)
-					draw_arrow(_cell_pt_x, _cell_pt_y, _cell_pt_x + lengthdir_x(5, _th), _cell_pt_y + lengthdir_y(5, _th), 2)
-				}
-			}
-		}
-	}
+	//if (astriver != undefined) {
+	//	var c = holpath_cell_size
+	//	var r = 10 // how many cells around player to draw
+	//	var _plr_cell_x = floor(xp / holpath_cell_size) // the player cell x,y indices
+	//	var _plr_cell_y = floor(yp / holpath_cell_size)
+	//	draw_set_colour(c_blue)
+	//	for (var _cell_x = _plr_cell_x - r; _cell_x <= _plr_cell_x + r; _cell_x ++) { // loop through kernel around source point
+	//		for (var _cell_y = _plr_cell_y - r; _cell_y <= _plr_cell_y + r; _cell_y ++) {
+	//			if (ds_map_exists(astriver, _cell_y) && ds_map_exists(astriver[?_cell_y], _cell_x)) {
+	//				var _th = astriver[?_cell_y][?_cell_x]
+	//				var _cell_pt_x = (_cell_x + 0.5) * c
+	//				var _cell_pt_y = (_cell_y + 0.5) * c
+	//				//var xp = player.body.get_x()
+	//				//var yp = player.body.get_y()
+	//				//draw_rectangle(_row * c, _col * c, (_row + 1) * c, (_col + 1) * c, false)
+	//				draw_arrow(_cell_pt_x, _cell_pt_y, _cell_pt_x + lengthdir_x(5, _th), _cell_pt_y + lengthdir_y(5, _th), 2)
+	//			}
+	//		}
+	//	}
+	//}
 	
 	// Draw RRT* tree
 	draw_set_colour(c_blue)
@@ -74,3 +77,6 @@ if (rs_path != undefined) {
 	draw_line(rs_target[0], rs_target[1], 
 			  rs_target[0] + lengthdir_x(4, rs_target[2]), rs_target[1] + lengthdir_y(4, rs_target[2]))
 }
+
+// Draw collision slider
+with (colslider) draw_self()

@@ -34,5 +34,5 @@
     "path":"sprites/spr_ai_collision_slider/spr_ai_collision_slider.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }

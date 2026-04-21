@@ -35,23 +35,35 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	//Eyes
 	blink_tick --
 	if (blink) {
-		anim_eyes += 1
-		anim_eyes = clamp(anim_eyes, 0, sprite_get_number(spr_eyes_blink)-1)
+		eye_left_closed = true // close eyes
+		eye_right_closed = true
 		if (blink_tick <= 0) {
 			blink_tick = irandom_range(blink_pause-30, blink_pause+30)
 			blink = false
-			anim_eyes = 0
 		}
 	} else {
-		anim_eyes = 0
+		eye_left_closed = false // open eyes
+		eye_right_closed = false
 		var surprise_blink = false;
 		if (point_distance(0, 0, body.speed_change_x, body.speed_change_y) > 1.4) surprise_blink = true
 		if (blink_tick <= 0 || surprise_blink) {
 			blink_tick = blink_time
 			blink = true
-			anim_eyes = 0
+		}
+		if (player.weapon.aiming) { // if aiming down sight
+			eye_right_closed = true // close right eye
 		}
 	}
+	
+	if (eye_left_closed) // left eye closing/opening animation
+		anim_eye_left ++ // next frame
+	else anim_eye_left = 0 // prev frame
+	anim_eye_left = clamp(anim_eye_left, 0, sprite_get_number(spr_eye_left)-1) // clamp
+	
+	if (eye_right_closed) // right eye closing/opening animation
+		anim_eye_right ++ // next frame
+	else anim_eye_right = 0 // prev frame
+	anim_eye_right = clamp(anim_eye_right, 0, sprite_get_number(spr_eye_left)-1) // clamp
 
 	//Animate tail
 	var tail_speed_x = body.get_trunk_speed_x_offset(tail_offset, 0)

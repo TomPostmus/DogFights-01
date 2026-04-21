@@ -25,7 +25,7 @@ lin_kick_force_decay = 0.93					//decay factor on try force
 lin_kick_sprite_pendulum_force_factor = 4	//factor on lin_motion (linear input) try kick in pendulum sprite model 
 lin_retry_time = 40							//time after which to retry
 lin_state_switch_threshold = 0.1			//speed threshold for switching between trying and walking
-lin_movement_period = 0.08					//period for walking sine function
+lin_movement_period = 0.14					//period for walking sine function
 lin_movement_phase_depth = 0.32				//magnitude of bobbing effect during walking movement
 
 function lin_movement_amplitude() {			//function that computes maximum amplitude of leg swing

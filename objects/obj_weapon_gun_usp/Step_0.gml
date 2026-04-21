@@ -21,14 +21,20 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			new_anim_draw_order("arm_left", "arm_right", "weapon")
 		}
 		
-		// Set arms animation
-		with (anim_component_arm_left) {pos_x=0; pos_y=0; rotation=0; index=0; is_visible=true}
-		with (anim_component_arm_right) {pos_x=20.80; pos_y=4.80; rotation=0; index=0; is_visible=true}
-		with (anim_component_weapon) {pos_x=21.40; pos_y=5.60; rotation=0; sprite=spr_usp; index=0; is_visible=true; update_wcomponents()}
-		
 		// Aiming down sight
 		aiming = player.input.input_attack2
+		var _goal_pos_x = aiming ? ads_pos_x : neut_pos_x // goal of aiming position
+		var _goal_pos_y = aiming ? ads_pos_y : neut_pos_y
 	
+		// Set arms animation
+		with (anim_component_arm_left) {pos_x=0; pos_y=0; rotation=0; index=0; is_visible=true}
+		with (anim_component_arm_right) {rotation=0; index=0; is_visible=true
+			pos_x += (_goal_pos_x - pos_x) * 0.5 // update position smoothly to aiming position
+			pos_y += (_goal_pos_y - pos_y) * 0.5}
+		with (anim_component_weapon) {rotation=0; sprite=spr_usp; index=0; is_visible=true; update_wcomponents()
+			pos_x += (_goal_pos_x + 0.6 - pos_x) * 0.5
+			pos_y += (_goal_pos_y + 0.8 - pos_y) * 0.5}
+		
 		// State guards
 		if (ammo_mag == 0 && !chambered && ammo_reserve > 0) {	// automatic reload on empty mag
 			state = "reload"

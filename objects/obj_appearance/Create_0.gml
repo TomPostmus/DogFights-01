@@ -7,8 +7,8 @@ player = noone
 // Appearance constants
 spr_body = spr_pip_trunk					//constants on sprites
 spr_head = spr_pip_head
-spr_eyes = spr_pip_eyes
-spr_eyes_blink = spr_pip_eyes_blink
+spr_eye_left = spr_pip_eye
+spr_eye_right = spr_pip_eye
 spr_tail = spr_pip_tail
 spr_arm = spr_pip_arm
 spr_hand = spr_pip_hand
@@ -23,6 +23,8 @@ head_offset = 8								//offset from trunk center to head over (relative) x-axis
 arms_offset = 6								//offset from trunk center to arms base (or chest)
 shoulder_offset = 3							//lateral (over y-axis) offset of each shoulder
 tail_offset = -11							//offset from trunk center to tail over x-axis
+eyes_xoff = 7								// x offset (in relative x direction) of eyes
+eyes_yoff = -4								// y offset (in relative y (lateral) direction) of right eye (left eye is mirrored)
 
 head_rotation_limit = 80					//maximal angle of head with trunk
 
@@ -33,7 +35,8 @@ team_color = c_white // the color that represents team
 // Animation state
 anim_body = 0
 anim_head = 0
-anim_eyes = 0
+anim_eye_left = 0
+anim_eye_right = 0
 anim_tail = 5
 
 shock = 0
@@ -56,6 +59,9 @@ blink = false
 blink_time = 8
 blink_pause = 180
 blink_tick = 0
+
+eye_left_closed = false // whether to open or close eyes
+eye_right_closed = false
 
 fire_event = false				// boolean that flips true when gun fires, set from weapon object
 
@@ -89,8 +95,14 @@ function draw(_body) {
 	draw_sprite_ext(spr_head, anim_head, _body.get_x() + lengthdir_x(head_offset - head_kickback, _body.get_trunk_rotation()), _body.get_y() + lengthdir_y(head_offset - head_kickback, _body.get_trunk_rotation()), 1, 1, _body.get_head_rotation(), c_white, 1)
 	
 	// Draw eyes
-	var eyes_spr = blink ? spr_eyes_blink : spr_eyes;
-	draw_sprite_ext(eyes_spr, anim_eyes, _body.get_x() + lengthdir_x(head_offset - head_kickback, _body.get_trunk_rotation()), _body.get_y() + lengthdir_y(head_offset - head_kickback, _body.get_trunk_rotation()), 1, 1, _body.get_head_rotation(), c_white, 1)
+	draw_sprite_ext(spr_eye_right, anim_eye_right, 
+		_body.get_x() + lengthdir_x(head_offset - head_kickback, _body.get_trunk_rotation()) + lengthdir_x(eyes_xoff, _body.get_head_rotation()) + lengthdir_x(-eyes_yoff-1, _body.get_head_rotation()+90), 
+		_body.get_y() + lengthdir_y(head_offset - head_kickback, _body.get_trunk_rotation()) + lengthdir_y(eyes_xoff, _body.get_head_rotation()) + lengthdir_y(-eyes_yoff-1, _body.get_head_rotation()+90), 
+		1, 1, _body.get_head_rotation(), c_white, 1)
+	draw_sprite_ext(spr_eye_left, anim_eye_left, 
+		_body.get_x() + lengthdir_x(head_offset - head_kickback, _body.get_trunk_rotation()) + lengthdir_x(eyes_xoff, _body.get_head_rotation()) + lengthdir_x(eyes_yoff, _body.get_head_rotation()+90), 
+		_body.get_y() + lengthdir_y(head_offset - head_kickback, _body.get_trunk_rotation()) + lengthdir_y(eyes_xoff, _body.get_head_rotation()) + lengthdir_y(eyes_yoff, _body.get_head_rotation()+90),
+		1, 1, _body.get_head_rotation(), c_white, 1)
 	
 	// Draw tail
 	draw_sprite_ext(spr_tail, anim_tail, _body.get_x() + lengthdir_x(tail_offset, _body.get_trunk_rotation()), _body.get_y() + lengthdir_y(tail_offset, _body.get_trunk_rotation()), 1, 1, _body.get_trunk_rotation(), c_white, 1)

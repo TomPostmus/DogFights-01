@@ -30,6 +30,12 @@ state_prev = undefined
 ammo_mag = stats.mag_size
 ammo_reserve = 3000
 
+// ADS pos
+neut_pos_x = 20.80 // neutral position of weapon (no ADS)
+neut_pos_y = 4.80
+ads_pos_x = 22 // ADS position
+ads_pos_y = 3
+
 // Override anim init
 function anim_init() {
 	// Initialize weapon animation component

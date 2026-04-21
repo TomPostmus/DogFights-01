@@ -37,9 +37,55 @@ rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // branches of RRT* tree
 rrt_test_pt = undefined
 rrt_completed = false // whether current branch we're walking has been completed
+rrt_pause = false // pause rrt (for debugging purposes)
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
+
+	
+// Compute H cost (in A* terms) of a path element based on its distance to nearest point in A* path
+function compute_h_cost(_x_end, _y_end, _th_end) {
+	var _dist = infinity
+	var _nearest_i = 0 // index on path of nearest point
+	var _nearest_dist = 0
+	var _path_n = path_get_number(holpath)
+	for (var i = 0; i < _path_n; i ++) {
+		var _pt_x = path_get_point_x(holpath, i)
+		var _pt_y = path_get_point_y(holpath, i)
+		var _pt_dist = point_distance(_x_end, _y_end, _pt_x, _pt_y)
+		if (_pt_dist < _dist) {
+			_dist = _pt_dist
+			_nearest_i = i
+		}
+	}
+	
+	if (_dist != infinity) {
+		var _path_total_cost = _path_n * holpath_cell_size
+		var _p_cost = _path_total_cost - _nearest_i * holpath_cell_size // path cost of the nearest point (cost to end goal)
+		var _h_cost = _p_cost + _dist
+		
+		// compute orientation cost of path element
+		if (_nearest_i < _path_n-1) {
+			var _pt_x = path_get_point_x(holpath, _nearest_i)
+			var _pt_y = path_get_point_y(holpath, _nearest_i)
+			var _pt_next_x = path_get_point_x(holpath, _nearest_i + 1)
+			var _pt_next_y = path_get_point_y(holpath, _nearest_i + 1)
+			var _pt_th = point_direction(_pt_x, _pt_y, _pt_next_x, _pt_next_y)
+		} else { // last path point
+			var _pt_x = path_get_point_x(holpath, _nearest_i)
+			var _pt_y = path_get_point_y(holpath, _nearest_i)
+			var _pt_prev_x = path_get_point_x(holpath, _nearest_i - 1)
+			var _pt_prev_y = path_get_point_y(holpath, _nearest_i - 1)
+			var _pt_th = point_direction(_pt_prev_x, _pt_prev_y, _pt_x, _pt_y)
+		}
+			
+		_h_cost += abs(angle_difference(_th_end, _pt_th)) // add orientation cost to h_cost
+		
+		return _h_cost
+	}
+	
+	return undefined
+}
 
 // Reeds Shepp path planning
 rs_min_r = 50 // minimum turning radius for RS

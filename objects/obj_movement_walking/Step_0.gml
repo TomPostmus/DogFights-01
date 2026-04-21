@@ -3,7 +3,11 @@ event_inherited()
 // Input
 lin_motion = player.input.move_input * 2.5
 ang_motion = player.input.turn_input
-	
+if (player.weapon.aiming) { // when aiming down sights
+	lin_motion /= 2 // walk at half movement speed
+	ang_motion /= 2 // turn at half the speed
+}
+
 // Linear state machine
 {
 	var forwards_velocity = get_forwards_velocity()
@@ -56,12 +60,19 @@ ang_motion = player.input.turn_input
 			lin_movement_x = offset_period ? pi / lin_movement_period : 0				//if necessary apply offset for logical flow into walk state
 		}
 	} else if (linsm_current == "walk") {		
-		var leg_angle_prev = leg_angle													//save angle as temp, for speed calcuation
+		//var leg_angle_prev = leg_angle													//save angle as temp, for speed calcuation
 		var movement_phase = sin(lin_movement_x * lin_movement_period)					//compute movement phase with sine function
-		leg_angle = movement_phase * lin_movement_amplitude()							//scale with amplitude
-		lin_movement_x += sign(forwards_velocity) * max(3, abs(forwards_velocity))		//update x (input for sine function)
-		leg_swing_speed = leg_angle - leg_angle_prev									//calculate swinging speed, necessary for smooth transition to other states
+		//leg_angle = movement_phase * lin_movement_amplitude()							//scale with amplitude
+		//lin_movement_x += sign(forwards_velocity) * min(3, abs(forwards_velocity))		//update x (input for sine function)
+		//leg_swing_speed = leg_angle - leg_angle_prev									//calculate swinging speed, necessary for smooth transition to other states
 		left_leg = movement_phase > 0													//calculate current swinging leg, necessary for smooth transition to other states
+		var _movement_factor = clamp(abs(get_forwards_velocity()) * 3, 3, 9)
+		var _amplitude = min(3 + abs(get_forwards_velocity()) * ((lin_motion>0)?1.5:1), 9)
+		var _amplitude = _movement_factor
+		
+		lin_movement_x += _movement_factor / 3//sign(forwards_velocity) * min(3, abs(forwards_velocity))
+		leg_swing_speed = sin(lin_movement_x * lin_movement_period) * _amplitude
+		leg_pendulum_update()
 		
 		var phase_force_factor = 1 - lin_movement_phase_depth * abs(movement_phase)		//phase factor on pid reference for bobbing effect
 		var phased_reference = lin_motion * phase_force_factor							
