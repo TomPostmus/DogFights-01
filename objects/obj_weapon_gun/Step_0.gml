@@ -6,8 +6,9 @@ if (instance_exists(player)) {
 	
 	// Camera
 	if (instance_exists(player.camera) && instance_exists(player.body)) {
-		var _cam_x = player.body.get_x() + lengthdir_x(aiming * stats.aim_dist, player.body.get_rotation())
-		var _cam_y = player.body.get_y() + lengthdir_y(aiming * stats.aim_dist, player.body.get_rotation())
+		var _forward = 10 + aiming * stats.aim_dist // how much to position camera forward in player looking orientation
+		var _cam_x = player.body.get_x() + lengthdir_x(_forward, player.body.get_rotation())
+		var _cam_y = player.body.get_y() + lengthdir_y(_forward, player.body.get_rotation())
 		
 		player.camera.set_target(_cam_x, _cam_y, 3)			
 	

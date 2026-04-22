@@ -7,8 +7,8 @@ appearance = noone
 body = noone
 weapon = noone
 movement = noone
-hp = create_controllers(obj_hp)
-camera = create_camera(0, 0, obj_camera)
+hp = noone 
+camera = noone
 
 // Player id, id of player in game
 player_id = undefined
