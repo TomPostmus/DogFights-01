@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"window_to_gui_coordinates",
   "parent":{
-    "name":"scripts",
-    "path":"folders/OldUI/scripts.yy",
+    "name":"helper_functions",
+    "path":"folders/Code/ui/helper_functions.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -24,6 +24,8 @@ path_recompute_time = 20	// number of steps between each path recompute
 holpath = undefined
 holpath_point = 0
 holpath_cell_size = 16
+grid = undefined // motion planning grid
+grid_high = undefined // motion planning grid for high objects
 
 // A* river
 astriver = undefined // rows of the 2D map (map in maps) that contain A* river cells, the map is dynamic in size, since cells are added to it dynamically
@@ -96,21 +98,19 @@ rs_path_elem_i = 0 // index of RS we're currently walking
 
 //Function to generate motion-planning grid
 function generate_mp_grid(_cell_size) {
-	var objects = tag_get_asset_ids("AIObstruction", asset_object)
 	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
-	for (var i = 0; i < array_length(objects); i ++) {
-		mp_grid_add_instances(grid, objects[i], true)
+	for (var i = 0; i < array_length(obstr_objects); i ++) {
+		mp_grid_add_instances(grid, obstr_objects[i], true)
 	}
 	return grid
 }
 
 // Generate mp grid with only high obstructions
 function generate_mp_grid_high(_cell_size) {
-	var objects = tag_get_asset_ids("AIObstruction", asset_object)
 	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
-	for (var i = 0; i < array_length(objects); i ++) {
-		for (var j = 0; j < instance_number(objects[i]); j ++) {
-			var obstacle = instance_find(objects[i], j)
+	for (var i = 0; i < array_length(obstr_objects); i ++) {
+		for (var j = 0; j < instance_number(obstr_objects[i]); j ++) {
+			var obstacle = instance_find(obstr_objects[i], j)
 			if (obstacle.height == HL.high)
 				mp_grid_add_instances(grid, obstacle, true)
 		}
@@ -118,17 +118,12 @@ function generate_mp_grid_high(_cell_size) {
 	return grid
 }
 
-//Define motion-planning grids
-grid = generate_mp_grid(holpath_cell_size)
-grid_high = generate_mp_grid_high(8)
-
 // Function to check whether line to target is not obstructed (by walls)
 function line_movable(_target_x, _target_y) {
 	var body = player.body
 	
-	var objects = tag_get_asset_ids("AIObstruction", asset_object)
-	for (var i = 0; i < array_length(objects); i ++) {
-		if (instance_exists(collision_line(body.get_x(), body.get_y(), _target_x, _target_y, objects[i], false, true)))
+	for (var i = 0; i < array_length(obstr_objects); i ++) {
+		if (instance_exists(collision_line(body.get_x(), body.get_y(), _target_x, _target_y, obstr_objects[i], false, true)))
 			return false
 	}
 	return true
@@ -138,9 +133,8 @@ function line_movable(_target_x, _target_y) {
 function point_movable(_point_x, point_y) {
 	var body = player.body
 	
-	var objects = tag_get_asset_ids("AIObstruction", asset_object)
-	for (var i = 0; i < array_length(objects); i ++) {
-		if (position_meeting(_point_x, point_y, objects[i]))
+	for (var i = 0; i < array_length(obstr_objects); i ++) {
+		if (position_meeting(_point_x, point_y, obstr_objects[i]))
 			return false
 	}
 	return true
@@ -154,63 +148,66 @@ function line_shootable(_target_x, _target_y) {
 	//var barrel_x = weapon.get_weapon_barrel_x(body)
 	//var barrel_y = weapon.get_weapon_barrel_y(body)
 	
-	var objects = tag_get_asset_ids("AIObstruction", asset_object)
-	for (var i = 0; i < array_length(objects); i ++) {
+	for (var i = 0; i < array_length(obstr_objects); i ++) {
 		var obstacles = ds_list_create()
-		collision_line_list(body.get_x(), body.get_y(), _target_x, _target_y, objects[i], false, true, obstacles, false)
+		collision_line_list(body.get_x(), body.get_y(), _target_x, _target_y, obstr_objects[i], false, true, obstacles, false)
 		for (var j = 0; j < ds_list_size(obstacles); j ++) {
-			if (obstacles[|j].height == HL.high)
+			if (obstacles[|j].height == HL.high) {
+				ds_list_destroy(obstacles) // cleanup
 				return false
-		}	
+			}
+		}
+		ds_list_destroy(obstacles) // cleanup
 	}
 	return true
 }
 
 // Check shootable line of fire from any point
 function line_shootable_arbitrary(_point_x, _point_y, _target_x, _target_y) {
-	var objects = tag_get_asset_ids("AIObstruction", asset_object)
-	for (var i = 0; i < array_length(objects); i ++) {
+	for (var i = 0; i < array_length(obstr_objects); i ++) {
 		var obstacles = ds_list_create()
-		collision_line_list(_point_x, _point_y, _target_x, _target_y, objects[i], false, true, obstacles, false)
+		collision_line_list(_point_x, _point_y, _target_x, _target_y, obstr_objects[i], false, true, obstacles, false)
 		for (var j = 0; j < ds_list_size(obstacles); j ++) {
-			if (obstacles[|j].height == HL.high)
+			if (obstacles[|j].height == HL.high) {
+				ds_list_destroy(obstacles) // cleanup
 				return false
+			}
 		}	
+		ds_list_destroy(obstacles) // cleanup
 	}
 	return true
 }
 
 // Check if an RS path is free of collisions by player
 function rs_path_free(_rs_path) {
-	var _obstr_objects = tag_get_asset_ids("AIObstruction", asset_object)
 	var _check_width = 5 // assumed width of player, check left and right from center line at _check_width away
 	for (var i = 0; i < ds_list_size(_rs_path); i ++) {
 		var _p_elem = _rs_path[|i]
 		if (_p_elem.steering == RS_STRAIGHT) { // line path element
 			
-			for (var j = 0; j < array_length(_obstr_objects); j ++) {
-				if (instance_exists(collision_line(_p_elem.x, _p_elem.y, _p_elem.x_end, _p_elem.y_end, _obstr_objects[j], false, true))) // check center line
+			for (var j = 0; j < array_length(obstr_objects); j ++) {
+				if (instance_exists(collision_line(_p_elem.x, _p_elem.y, _p_elem.x_end, _p_elem.y_end, obstr_objects[j], false, true))) // check center line
 					return false
 				if (instance_exists(collision_line(
 					_p_elem.x + lengthdir_x(_check_width, _p_elem.th + 90), 
 					_p_elem.y + lengthdir_y(_check_width, _p_elem.th + 90), 
 					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th + 90), 
 					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th + 90), 
-					_obstr_objects[j], false, true))) // check left line
+					obstr_objects[j], false, true))) // check left line
 					return false
 				if (instance_exists(collision_line(
 					_p_elem.x + lengthdir_x(_check_width, _p_elem.th - 90), 
 					_p_elem.y + lengthdir_y(_check_width, _p_elem.th - 90), 
 					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th - 90), 
 					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th - 90), 
-					_obstr_objects[j], false, true))) // check right line
+					obstr_objects[j], false, true))) // check right line
 					return false
 			}
 			
 		} else { // arc path element
 			
 			with (_p_elem) {
-			for (var j = 0; j < array_length(_obstr_objects); j ++) {
+			for (var j = 0; j < array_length(obstr_objects); j ++) {
 				var _precision = 20 // precision in degrees of arc drawing
 				var _d_start = 0 // start of line segment
 				var _d_end = gear * steering * _precision // end of line segment
@@ -225,21 +222,21 @@ function rs_path_free(_rs_path) {
 						center_x + lengthdir_x(r, th - steering * 90 + _d_start),
 						center_y + lengthdir_y(r, th - steering * 90 + _d_start),
 						center_x + lengthdir_x(r, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r, th - steering * 90 + _d_end), _obstr_objects[j], false, true))) // check center line
+						center_y + lengthdir_y(r, th - steering * 90 + _d_end), obstr_objects[j], false, true))) // check center line
 						return false
 						
 					if (instance_exists(collision_line(
 						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_start), // draw from center
 						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_start),
 						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_end), _obstr_objects[j], false, true))) // check outer line
+						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_end), obstr_objects[j], false, true))) // check outer line
 						return false
 						
 					if (instance_exists(collision_line(
 						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_start), // draw from center
 						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_start),
 						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_end), _obstr_objects[j], false, true))) // check inner line
+						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_end), obstr_objects[j], false, true))) // check inner line
 						return false
 		
 					if (_last_iter)

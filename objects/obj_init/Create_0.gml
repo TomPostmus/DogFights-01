@@ -9,7 +9,6 @@ global.key_binds = ds_map_create()
 global.key_actions = ds_map_create()
 global.frame_count = 0
 global.debug_print_count = 0
-create_controllers(obj_ui)
 
 //Set keybinds
 default_keys()
@@ -76,4 +75,23 @@ if (param_count < 2 + shell_count) {
 	window_set_caption("Shell " + string(param_count - 2))
 } else if (param_count == 2 + shell_count) {
 	window_set_caption("Shell " + string(param_count - 2))
+}
+
+lists = 0
+maps = 0
+paths = 0
+ds_report_tick = 0
+ds_report_time = 60
+
+// Count datastructures for DS report (useful for spotting memory leaks)
+function ds_count_all() {
+	var max_check = 20000;
+	lists = 0;
+	maps = 0;
+	paths = 0;
+	for (var i = 0; i < max_check; i ++) {
+		if (ds_exists(i, ds_type_list)) lists ++
+		if (ds_exists(i, ds_type_map)) maps ++
+		if (path_exists(i)) paths ++
+	}
 }

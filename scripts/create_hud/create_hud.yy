@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"create_hud",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"create_hud",
+  "parent":{
+    "name":"layer_create_functions",
+    "path":"folders/Code/helper_functions/layer_create_functions.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

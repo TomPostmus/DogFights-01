@@ -30,6 +30,18 @@ fire_ready = false
 fire_readying_tick = 0
 chambered = false
 
+// Draw weapon state at hud (hud object given as argument)
+function draw_hud(_parent) {
+	var _text_w = string_width(ammo_reserve)
+	draw_text(_parent.x + 10, _parent.y + 10, ammo_reserve)
+	for (var i = 0; i < stats.mag_size; i ++) {
+		var _subimg = i > ammo_mag-1
+		draw_sprite(spr_hud_bullet, _subimg, _parent.x + 10 + _text_w + 10 + i*10, _parent.y + 10)
+	}
+	
+	return 10 + _text_w + 10 + i*10 // return width of draw contents
+}
+
 // Fire bullet
 function fire() {
 	var body = player.body

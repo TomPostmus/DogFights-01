@@ -6,17 +6,17 @@ if (header && exit_button.clicked) {
 //Drag window
 if (active && header && dragable) {
 	var mouse = window_to_gui_coordinates(window_mouse_get_x(), window_mouse_get_y())
-	if (point_in_rectangle(mouse[0], mouse[1], left, top, left + width - header_height, top + header_height)) {
+	if (point_in_rectangle(mouse[0], mouse[1], x, y, x + width - header_height, y + header_height)) {
 		if (mouse_check_button_pressed(mb_left)) {
-			drag_anchor_x = mouse[0] - left
-			drag_anchor_y = mouse[1] - top
+			drag_anchor_x = mouse[0] - x
+			drag_anchor_y = mouse[1] - y
 			dragging = true
 		}		
 	}
 	
 	if (dragging) {
-		left = mouse[0] - drag_anchor_x
-		top = mouse[1] - drag_anchor_y
+		x = mouse[0] - drag_anchor_x
+		y = mouse[1] - drag_anchor_y
 	}
 	
 	if (!mouse_check_button(mb_left)) {
@@ -28,7 +28,7 @@ if (active && header && dragable) {
 click_outside = false
 if (active) {
 	var mouse = window_to_gui_coordinates(window_mouse_get_x(), window_mouse_get_y())
-	if (!point_in_rectangle(mouse[0], mouse[1], left, top, left + width, top + height)) {
+	if (!point_in_rectangle(mouse[0], mouse[1], x, y, x + width, y + height)) {
 		if (mouse_check_button_pressed(mb_left)) {
 			click_outside = true
 		}

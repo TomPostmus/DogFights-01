@@ -1,4 +1,4 @@
-global.viewport_to_camera = ds_map_create()
+global.viewport_to_player = ds_map_create()
 global.active_viewports = ds_list_create() // list of viewports (ints) that are currently active
 
 // Populate active viewports list

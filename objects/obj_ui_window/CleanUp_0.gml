@@ -1,0 +1,8 @@
+for (var i = 0; i < ds_list_size(elements); i ++) {
+	instance_destroy()
+}
+
+if (vertices_border != undefined)
+	ds_list_destroy(vertices_border)
+if (vertices_backg != undefined)
+	ds_list_destroy(vertices_backg)

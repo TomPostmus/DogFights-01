@@ -43,6 +43,11 @@ function draw(_body) {
 	}
 }
 
+// Draw weapon state at hud (hud object given as argument)
+function draw_hud(_hud) {
+	// implemented in children
+}
+
 // Builds new animation components list with given component names,
 // possibly recycling components from old list, if names match
 function new_anim_draw_order(_component_name1, _component_name2, etc) {

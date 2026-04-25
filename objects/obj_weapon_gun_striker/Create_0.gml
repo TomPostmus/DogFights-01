@@ -39,6 +39,21 @@ neut_pos_y = 4.60
 ads_pos_x = 18 // ADS position
 ads_pos_y = 3
 
+// Draw weapon state at hud (hud object given as argument)
+function draw_hud(_parent) {
+	var _mag_size = stats.mag_size
+	var _text_w = string_width(ammo_reserve)
+	draw_text(_parent.x + 10, _parent.y + 10, ammo_reserve)
+	for (var i = 0; i < _mag_size; i ++) {
+		var _subimg = i > ammo_mag-1
+		var _xp = (i - (i >= _mag_size/2) * _mag_size/2) * 12
+		var _yp = (i >= _mag_size/2) * 6
+		draw_sprite(spr_hud_shell_striker, _subimg, _parent.x + 10 + _text_w + 10 + _xp, _parent.y + 10 + _yp)
+	}
+	
+	return 10 + _text_w + 10 + _mag_size/2*12 // return width of draw contents
+}
+
 
 // Override anim init
 function anim_init() {

@@ -5,6 +5,18 @@ event_inherited()
 fire_pellets = undefined
 fire_speed_var = undefined*/
 
+// Draw weapon state at hud (hud object given as argument)
+function draw_hud(_parent) {
+	var _text_w = string_width(ammo_reserve)
+	draw_text(_parent.x + 10, _parent.y + 10, ammo_reserve)
+	for (var i = 0; i < stats.mag_size; i ++) {
+		var _subimg = i > ammo_mag-1
+		draw_sprite(spr_hud_shell, _subimg, _parent.x + 10 + _text_w + 10 + i*12, _parent.y + 10)
+	}
+	
+	return 10 + _text_w + 10 + i*12 // return width of draw contents
+}
+
 // Override fire function
 function fire() {	
 	var body = player.body

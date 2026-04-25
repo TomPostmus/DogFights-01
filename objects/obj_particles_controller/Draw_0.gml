@@ -1,8 +1,10 @@
 // Draw each death particle surface (one per viewport)
 for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
 	var _vp = global.active_viewports[|i]
-	var _camera = global.viewport_to_camera[?_vp] // camera corresponding to viewport
-	if (_camera != undefined && instance_exists(_camera)) {
+	var _player = obj_lobby.players_active[|i] // corresponding active player
+	var _camera = _player.camera
+	
+	if (instance_exists(_camera)) {
 		var _cx = _camera.x - _camera.get_width()/2 // camera top-left position
 		var _cy = _camera.y - _camera.get_height()/2
 			

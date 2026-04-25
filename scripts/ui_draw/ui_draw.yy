@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ui_draw",
   "parent":{
-    "name":"scripts",
-    "path":"folders/OldUI/scripts.yy",
+    "name":"ui",
+    "path":"folders/Code/ui.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

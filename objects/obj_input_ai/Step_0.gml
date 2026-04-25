@@ -252,9 +252,6 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		//		astriver_build_i ++ // move to next point for next step
 		//	}
 		//}
-		
-		if (keyboard_check_pressed(vk_space))
-			rrt_pause = !rrt_pause
 			
 		// Build RRT* tree
 		if (rrt_branch = undefined) {
@@ -262,7 +259,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			rrt_branch.g_cost = 0
 			rrt_branch.h_cost = compute_h_cost(_body_x, _body_y, _body_rot)
 			ds_list_add(rrt_branches, rrt_branch)
-		} else if (!rrt_pause) {
+		} else {
 			// try finding random test point nearby
 			//var _found_cell = false
 			//var _pt_test_x, _pt_test_y, _pt_test_th
