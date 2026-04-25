@@ -1,0 +1,2 @@
+ds_list_destroy(local_players)
+ds_list_destroy(remote_players)

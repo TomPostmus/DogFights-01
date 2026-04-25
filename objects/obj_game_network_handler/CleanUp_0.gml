@@ -1,0 +1,6 @@
+ds_list_destroy(players_requested_id)
+ds_map_destroy(local_players)
+ds_map_destroy(all_players)
+ds_map_destroy(request_number_to_player)
+ds_map_destroy(players_queue_positions)
+ds_map_destroy(local_players_hp)

@@ -1,1 +1,2 @@
-//TODO implement
+ds_list_destroy(anim_draw_order)
+ds_map_destroy(anim_components)

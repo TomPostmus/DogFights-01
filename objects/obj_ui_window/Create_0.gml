@@ -39,6 +39,11 @@ vertices_backg = undefined // list of tuples that are the vertices of the window
 
 // Update vertices shape of window
 function update_vertices() {
+	if (vertices_border != undefined)
+		ds_list_destroy(vertices_border)
+	if (vertices_backg != undefined)
+		ds_list_destroy(vertices_backg)
+		
 	vertices_border = ds_list_create()
 	vertices_backg = ds_list_create()
 	

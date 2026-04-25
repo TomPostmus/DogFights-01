@@ -3,3 +3,4 @@ for (var i = 0; i < ds_list_size(cards); i++) {
 }
 
 ds_list_destroy(cards)
+ds_list_destroy(card_spacings)

@@ -153,7 +153,7 @@ function rs_turn_element(_x, _y, _th, _th_end) constructor {
 	static destroy = function() {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
-		ds_list_destroy(links)
+		ds_list_destroy(links) // destroy ds list
 		del = true // mark for deletion (handled in AI step)
 	}
 	
@@ -281,7 +281,7 @@ function rs_straight_element(_x, _y, _th, _l, _gear) constructor {
 	static destroy = function() {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
-		ds_list_destroy(links)
+		ds_list_destroy(links) // destroy ds list
 		del = true // mark for deletion (handled in AI step)
 	}
 	
@@ -580,7 +580,7 @@ function rs_arc_element(_x, _y, _th, _l, _steering, _gear, _r) constructor {
 	static destroy = function() {
 		for (var i = 0; i < ds_list_size(links); i ++)
 			links[|i].destroy() // destroy child elements
-		ds_list_destroy(links)
+		ds_list_destroy(links) // destroy ds list
 		del = true // mark for deletion (handled in AI step)
 	}
 }

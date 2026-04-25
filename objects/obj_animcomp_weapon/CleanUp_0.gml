@@ -1,0 +1,2 @@
+ds_map_destroy(wcomponents)
+ds_list_destroy(wcomponents_draw_order)

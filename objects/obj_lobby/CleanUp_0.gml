@@ -1,0 +1,2 @@
+ds_list_destroy(players)
+ds_list_destroy(players_active)

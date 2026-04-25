@@ -1,5 +1,6 @@
 event_inherited()
 
+teams = undefined // array of lists that are the teams
 friendly_fire = false
 teams_number = 2 // how many teams
 team_colors = [c_red, c_blue, c_green] // team identification colors

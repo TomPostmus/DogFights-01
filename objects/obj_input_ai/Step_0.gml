@@ -336,7 +336,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				//}
 				
 				var _angdiff_discr = floor(abs(_angdiff) / 22.5) // divide up into discrete angle difference
-				if (_angdiff_discr == 0) {
+				if (_angdiff_discr == 0) { // if is approximately in same direction
 					_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD) // try straight element
 				} else {
 					_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, sign(_angdiff), RS_FORWARD, rs_min_r) // try arc element
@@ -349,7 +349,8 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				
 				// If still not collsion free, turn into turn element
 				if (_success == 0) { // if shortening unsuccessful
-					_new_branch = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th, _dir) // make into turn element
+					_new_branch.destroy() // destroy old branch
+					_new_branch = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th, _dir) // make turn element
 				}
 				
 				_new_branch.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
