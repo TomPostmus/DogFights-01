@@ -42,16 +42,17 @@ ads_pos_y = 3
 // Draw weapon state at hud (hud object given as argument)
 function draw_hud(_parent) {
 	var _mag_size = stats.mag_size
+	var _m = _parent.cont_margin
 	var _text_w = string_width(ammo_reserve)
-	draw_text(_parent.x + 10, _parent.y + 10, ammo_reserve)
+	draw_text(_parent.x + _m, _parent.y + _m+1, ammo_reserve)
 	for (var i = 0; i < _mag_size; i ++) {
 		var _subimg = i > ammo_mag-1
 		var _xp = (i - (i >= _mag_size/2) * _mag_size/2) * 12
-		var _yp = (i >= _mag_size/2) * 6
-		draw_sprite(spr_hud_shell_striker, _subimg, _parent.x + 10 + _text_w + 10 + _xp, _parent.y + 10 + _yp)
+		var _yp = (i >= _mag_size/2) * 8 + 1
+		draw_sprite(spr_hud_shell_striker, _subimg, _parent.x + _m + _text_w + _m + _xp, _parent.y + _m + _yp - 4)
 	}
 	
-	return 10 + _text_w + 10 + _mag_size/2*12 // return width of draw contents
+	return _m + _text_w + _m + _mag_size/2*12 // return width of draw contents
 }
 
 

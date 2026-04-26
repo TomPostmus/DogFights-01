@@ -8,13 +8,14 @@ fire_speed_var = undefined*/
 // Draw weapon state at hud (hud object given as argument)
 function draw_hud(_parent) {
 	var _text_w = string_width(ammo_reserve)
-	draw_text(_parent.x + 10, _parent.y + 10, ammo_reserve)
+	var _m = _parent.cont_margin
+	draw_text(_parent.x + _m, _parent.y + _m+1, ammo_reserve)
 	for (var i = 0; i < stats.mag_size; i ++) {
 		var _subimg = i > ammo_mag-1
-		draw_sprite(spr_hud_shell, _subimg, _parent.x + 10 + _text_w + 10 + i*12, _parent.y + 10)
+		draw_sprite(spr_hud_shell, _subimg, _parent.x + _m + _text_w + _m + i*12, _parent.y + _m)
 	}
 	
-	return 10 + _text_w + 10 + i*12 // return width of draw contents
+	return _m + _text_w + _m + i*12 // return width of draw contents
 }
 
 // Override fire function

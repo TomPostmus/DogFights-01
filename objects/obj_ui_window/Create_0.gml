@@ -5,6 +5,7 @@ elements = ds_list_create() // sub elements of this window
 element_positions = ds_map_create()
 
 // Colours
+border_colour = WINDOW_GREEN_COLOUR
 backg_colour = WINDOW_GREEN_COLOUR
 backg_alpha = WINDOW_ALPHA
 
@@ -218,7 +219,7 @@ draw = function() {
 		draw_set_alpha(1)
 	
 		//Body border
-		draw_set_color(backg_colour)
+		draw_set_color(border_colour)
 		draw_set_alpha(1)
 		draw_primitive_begin(pr_linestrip)
 		

@@ -18,41 +18,6 @@ for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
 	ds_list_add(weapon_huds, _w_hud) // add to list
 }
 
-// Draw top scoreboard
-function draw_tdm_scoreboard() {
-	//Body background
-	draw_set_color(window.backg_colour)
-	draw_set_alpha(window.backg_alpha)
-
-	draw_primitive_begin(pr_trianglelist)
-	draw_vertex(window.left, window.top)
-	draw_vertex(window.left, window.top + window.height - window.corner_size-1)
-	draw_vertex(window.left + window.width, window.top)
-
-	draw_vertex(window.left + window.width, window.top)
-	draw_vertex(window.left, window.top + window.height - window.corner_size-1)
-	draw_vertex(window.left + window.corner_size, window.top + window.height-1)
-	
-	draw_vertex(window.left + window.width, window.top)
-	draw_vertex(window.left + window.corner_size, window.top + window.height-1)
-	draw_vertex(window.left + window.width, window.top + window.height-1)
-
-	draw_primitive_end()
-
-	draw_set_alpha(1)
-	
-	//Body border
-	draw_set_color(window.backg_colour)
-	draw_set_alpha(1)
-
-	draw_primitive_begin(pr_linestrip)
-	draw_vertex(window.left+1, window.top + window.header_height)
-	draw_vertex(window.left+1, window.top + window.height - window.corner_size)
-	draw_vertex(window.left+1 + window.corner_size, window.top + window.height)
-	draw_vertex(window.left + window.width, window.top + window.height)
-	draw_vertex(window.left + window.width, window.top + window.header_height)
-	draw_vertex(window.left, window.top + window.header_height)
-	draw_primitive_end()
-
-	draw_set_alpha(1)
-}
+// Create top scoreboard window
+scrboard_hud = create_hud(0, 0, obj_ui_window_hud_scoreboard)
+scrboard_hud.x = hud_width / 2 - scrboard_hud.width / 2
