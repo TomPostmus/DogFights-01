@@ -32,6 +32,7 @@ state = "idle"
 state_prev = undefined
 ammo_mag = stats.mag_size
 ammo_reserve = 3000
+reload_cancel = false
 
 // ADS pos
 neut_pos_x = 16.60 // neutral position of right hand (no ADS) in relative crds

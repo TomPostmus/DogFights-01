@@ -56,11 +56,15 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			reload_sound(snd_insert_shell)
 		}
 		
+		// Reload cancel
+		if (player.input.input_reload)
+			reload_cancel = true
+		
 		// State guards
 		if (anim_end) {
 			reload()
 			state = "reload_insert"
-			if (ammo_mag == stats.mag_size || ammo_reserve == 0) {
+			if (ammo_mag == stats.mag_size || ammo_reserve == 0 || reload_cancel) {
 				state = "reload_end"
 			}
 		}
@@ -80,10 +84,14 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			reload_sound(snd_insert_shell)
 		}
 		
+		// Reload cancel
+		if (player.input.input_reload)
+			reload_cancel = true
+		
 		// State guards
 		if (anim_end) {
 			reload()
-			if (ammo_mag == stats.mag_size || ammo_reserve == 0) {
+			if (ammo_mag == stats.mag_size || ammo_reserve == 0 || reload_cancel) {
 				state = "reload_end"
 			} else {
 				anim_reset() // loop insert action
@@ -103,6 +111,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		// State guards
 		if (anim_end) {
 			state = "idle"
+			reload_cancel = false
 		}
 	}
 }

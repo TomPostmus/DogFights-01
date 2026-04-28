@@ -36,6 +36,7 @@ ammo_reserve = 3000
 firemode_auto = false		// whether automatic fire is enabled
 auto_shot = false			// whether second shot will be fired automatically, with select fire
 auto_shot_timer = 0			// timer to indicate when to shoot second shot
+reload_cancel = false
 
 // ADS pos
 neut_pos_x = 14.70 // neutral position of right hand (no ADS) in relative crds

@@ -2,6 +2,7 @@
 if (room != rm_lobby) { // if not in lobby room
 	with (obj_player) { // initialize players
 		hp = create_controllers(obj_hp) // init camera and hp
+		hp.player = id
 		camera = create_camera(0, 0)
 	
 		weapon = create_controllers(choose(obj_weapon_gun_lupara, obj_weapon_gun_striker, obj_weapon_gun_usp))//create_controllers(obj_weapon_gun_usp)

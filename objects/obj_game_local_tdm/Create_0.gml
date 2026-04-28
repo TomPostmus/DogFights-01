@@ -24,18 +24,8 @@ team_scores = array_create(teams_number, 0)
 // Register damage, check team ids and decide whether to deal damage
 function register_damage(_p_affected, _p_affector, _damage) {
 	if (_p_affected.team_id != _p_affector.team_id || friendly_fire) {
-		_p_affected.hp.add_hp(-_damage)
-		
-		if (_p_affected.hp.hp <= 0) { // if died
-			register_kik(_p_affected, _p_affector) // register kik (cute word for kill)
-		}
+		_p_affected.hp.register_damage(_p_affector, _damage) // register at hp object
 	}
-}
-
-// Register that affected player has been kikked by affector player
-function register_kik(_p_affected, _p_affector) {
-	var _ti = _p_affector.team_id
-	team_scores[_ti] += 1
 }
 
 // Draw game state in HUD

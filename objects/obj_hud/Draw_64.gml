@@ -12,6 +12,14 @@ surface_set_target(hud_surf)
 		weapon_huds[|i].draw(_player)
 	}
 	
+	// Draw splitscreen line
+	if (ds_list_size(obj_lobby.players_active) == 2) {
+		draw_set_colour(c_black)
+		
+		draw_line(hud_width/2, 0, hud_width/2, hud_height)
+		//draw_line(hud_width/2+1, 0, hud_width/2+1, hud_height)
+	}
+	
 	// Draw scoreboard HUD
 	scrboard_hud.draw(obj_lobby.game)
 

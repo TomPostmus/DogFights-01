@@ -81,6 +81,10 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			reload_sound(snd_lupara_open)
 		}
 		
+		// Reload cancel
+		if (player.input.input_reload)
+			reload_cancel = true
+		
 		// State guards
 		if (anim_end) {
 			state = "reload_insert"
@@ -100,6 +104,10 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		if (anim_check_frame(19)) {
 			reload_sound(snd_insert_shell)
 		}
+		
+		// Reload cancel
+		//if (player.input.input_reload)
+		//	reload_cancel = true
 		
 		// State guards
 		if (anim_end) {
@@ -129,6 +137,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		// State guards
 		if (anim_end) {
 			state = "idle"
+			//reload_cancel = false
 		}
 	} else if (state == "selectfire") {
 		// Init
