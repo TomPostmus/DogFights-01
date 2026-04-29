@@ -28,17 +28,41 @@ function register_damage(_p_affected, _p_affector, _damage) {
 	}
 }
 
-// Draw game state in HUD
+// Draw game state in HUD (hud controller as _parent)
 function draw_hud(_parent) {
 	var _m = _parent.cont_margin
-	var _xp = _parent.x + _m
-	var _yp = _parent.y + _m
 	
-	var _bar_w = _parent.width - _m * 2
+	// Draw score to win in big text
+	draw_set_font(ft_score_big)
+	draw_set_color(c_white)
+	draw_set_valign(fa_middle)
+	draw_set_halign(fa_left)
+	var _scrwin_w = string_width(score_win)
+	draw_text(
+		_parent.x + _parent.width - _m - _scrwin_w, 
+		_parent.y + _parent.height/2 - 1, 
+		score_win
+	)
+	
+	var _max_w = 0 // compute maximum string width between scores
+	for (var i = 0; i < teams_number; i ++) {
+		if (string_width(team_scores[i]) > _max_w)
+			_max_w = string_width(team_scores[i])
+	}
+	
 	for (var i = 0; i < teams_number; i ++) {
 		var _score = team_scores[i]
-		_yp = _parent.y + _m + i*_m*2
+		var _yp = _parent.y + _m + i*_m*2
+		var _xp = _parent.x + _m + _max_w / 2
 		
+		// Draw team score text
+		draw_set_font(ft_small)
+		draw_set_color(c_white)
+		draw_set_halign(fa_center)
+		draw_text(_xp, _yp, _score)
+		_xp += _m + _max_w / 2
+		
+		var _bar_w = _parent.width - (_xp - _parent.x) - _m * 2 - _scrwin_w
 		draw_set_colour(#555555) // background color
 		var _bar_h = 4 // height of outer border lines
 		draw_line(_xp, _yp - _bar_h/2-1, _xp, _yp + _bar_h/2-1) // draw background border lines

@@ -3,7 +3,7 @@
   "%Name":"ft_small",
   "AntiAlias":1,
   "applyKerning":0,
-  "ascender":9,
+  "ascender":0,
   "ascenderOffset":0,
   "bold":false,
   "canGenerateBitmap":true,
@@ -115,7 +115,7 @@
   "italic":false,
   "kerningPairs":[],
   "last":0,
-  "lineHeight":11,
+  "lineHeight":0,
   "maintainGms1Font":false,
   "name":"ft_small",
   "parent":{

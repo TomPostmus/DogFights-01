@@ -9,6 +9,8 @@ fire_speed_var = undefined*/
 function draw_hud(_parent) {
 	var _text_w = string_width(ammo_reserve)
 	var _m = _parent.cont_margin
+	draw_set_valign(fa_middle)
+	draw_set_halign(fa_left)
 	draw_text(_parent.x + _m, _parent.y + _m+1, ammo_reserve)
 	for (var i = 0; i < stats.mag_size; i ++) {
 		var _subimg = i > ammo_mag-1

@@ -17,7 +17,7 @@ surface_set_target(hud_surf)
 		draw_set_colour(c_black)
 		
 		draw_line(hud_width/2, 0, hud_width/2, hud_height)
-		//draw_line(hud_width/2+1, 0, hud_width/2+1, hud_height)
+		draw_line(hud_width/2+1, 0, hud_width/2-1, hud_height)
 	}
 	
 	// Draw scoreboard HUD

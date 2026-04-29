@@ -7,3 +7,4 @@ sounds/snd_usp_fire/snd_usp_fire filter=lfs diff=lfs merge=lfs -text
 sounds/snd_striker_fire/snd_striker_fire filter=lfs diff=lfs merge=lfs -text
 sounds/snd_usp_fire_silenced/snd_usp_fire_silenced filter=lfs diff=lfs merge=lfs -text
 sounds/snd_insert_shell/snd_insert_shell filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
