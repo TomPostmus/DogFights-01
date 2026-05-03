@@ -10,7 +10,7 @@ if (room != rm_lobby) { // if not in lobby room
 		weapon.anim_init()
 		//weapon.set_mod("barrel", "silencer")
 	
-		appearance = create_controllers(obj_appearance)
+		appearance = create_controllers(obj_appearance_bear)
 		appearance.player = id
 	}
 

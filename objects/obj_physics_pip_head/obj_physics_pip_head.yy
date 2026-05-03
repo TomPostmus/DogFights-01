@@ -42,8 +42,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_pip_head1",
-    "path":"sprites/spr_pip_head1/spr_pip_head1.yy",
+    "name":"spr_pip_head_assembled",
+    "path":"sprites/spr_pip_head_assembled/spr_pip_head_assembled.yy",
   },
   "spriteMaskId":null,
   "visible":false,
