@@ -1,6 +1,3 @@
-astr_reset()
-ds_list_destroy(astriver_rows)
-ds_list_destroy(astriver_cells)
 instance_destroy(colslider)
 ds_list_destroy(targets)
 

@@ -18,28 +18,24 @@ fight_or_flight = ""		// when conflict, whether to fight, flight or await
 path_recompute_timer = 0	// timer to recompute path when dealing with dynamic goal
 path_recompute_time = 20	// number of steps between each path recompute
 
-// Holonomic path
+// A* path
 // This is a path that is used for the higher level motion planning
 // RS path is used for lower level motion
-holpath = undefined
-holpath_point = 0
-holpath_cell_size = 16
+astpath = undefined
+astpath_point = 0
+astpath_cell_size = 16
 grid = undefined // motion planning grid
 grid_high = undefined // motion planning grid for high objects
 
-// A* river
-astriver = undefined // rows of the 2D map (map in maps) that contain A* river cells, the map is dynamic in size, since cells are added to it dynamically
-astriver_cells = ds_list_create() // list of tuples (x,y) to track which cells are used in 2D A* river map
-astriver_rows = ds_list_create() // list of tuples (x,y) to track which rows are used in 2D A* river map
-astriver_radius = 6 // how many cells the river spreads around the original A* path in each direction
-astriver_build_i = 0 // at which point we're currently building
-
 // RRT*
+// This is the RTT tree that grows from current position
+// Each step, segments are added to tree to explore optimal path
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // branches of RRT* tree
 rrt_test_pt = undefined
 rrt_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)
+rrt_arc_r = 50 // turning radius for arcs
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
@@ -50,10 +46,10 @@ function compute_h_cost(_x_end, _y_end, _th_end) {
 	var _dist = infinity
 	var _nearest_i = 0 // index on path of nearest point
 	var _nearest_dist = 0
-	var _path_n = path_get_number(holpath)
+	var _path_n = path_get_number(astpath)
 	for (var i = 0; i < _path_n; i ++) {
-		var _pt_x = path_get_point_x(holpath, i)
-		var _pt_y = path_get_point_y(holpath, i)
+		var _pt_x = path_get_point_x(astpath, i)
+		var _pt_y = path_get_point_y(astpath, i)
 		var _pt_dist = point_distance(_x_end, _y_end, _pt_x, _pt_y)
 		if (_pt_dist < _dist) {
 			_dist = _pt_dist
@@ -62,22 +58,22 @@ function compute_h_cost(_x_end, _y_end, _th_end) {
 	}
 	
 	if (_dist != infinity) {
-		var _path_total_cost = _path_n * holpath_cell_size
-		var _p_cost = _path_total_cost - _nearest_i * holpath_cell_size // path cost of the nearest point (cost to end goal)
+		var _path_total_cost = _path_n * astpath_cell_size
+		var _p_cost = _path_total_cost - _nearest_i * astpath_cell_size // path cost of the nearest point (cost to end goal)
 		var _h_cost = _p_cost + _dist
 		
 		// compute orientation cost of path element
 		if (_nearest_i < _path_n-1) {
-			var _pt_x = path_get_point_x(holpath, _nearest_i)
-			var _pt_y = path_get_point_y(holpath, _nearest_i)
-			var _pt_next_x = path_get_point_x(holpath, _nearest_i + 1)
-			var _pt_next_y = path_get_point_y(holpath, _nearest_i + 1)
+			var _pt_x = path_get_point_x(astpath, _nearest_i)
+			var _pt_y = path_get_point_y(astpath, _nearest_i)
+			var _pt_next_x = path_get_point_x(astpath, _nearest_i + 1)
+			var _pt_next_y = path_get_point_y(astpath, _nearest_i + 1)
 			var _pt_th = point_direction(_pt_x, _pt_y, _pt_next_x, _pt_next_y)
 		} else { // last path point
-			var _pt_x = path_get_point_x(holpath, _nearest_i)
-			var _pt_y = path_get_point_y(holpath, _nearest_i)
-			var _pt_prev_x = path_get_point_x(holpath, _nearest_i - 1)
-			var _pt_prev_y = path_get_point_y(holpath, _nearest_i - 1)
+			var _pt_x = path_get_point_x(astpath, _nearest_i)
+			var _pt_y = path_get_point_y(astpath, _nearest_i)
+			var _pt_prev_x = path_get_point_x(astpath, _nearest_i - 1)
+			var _pt_prev_y = path_get_point_y(astpath, _nearest_i - 1)
 			var _pt_th = point_direction(_pt_prev_x, _pt_prev_y, _pt_x, _pt_y)
 		}
 			
@@ -88,13 +84,6 @@ function compute_h_cost(_x_end, _y_end, _th_end) {
 	
 	return undefined
 }
-
-// Reeds Shepp path planning
-rs_min_r = 50 // minimum turning radius for RS
-rs_path = undefined // current RS path we're walking
-rs_start = undefined // start pose for RS path
-rs_target = undefined // target pose for RS path
-rs_path_elem_i = 0 // index of RS we're currently walking
 
 //Function to generate motion-planning grid
 function generate_mp_grid(_cell_size) {
@@ -178,131 +167,6 @@ function line_shootable_arbitrary(_point_x, _point_y, _target_x, _target_y) {
 	return true
 }
 
-// Check if an RS path is free of collisions by player
-function rs_path_free(_rs_path) {
-	var _check_width = 5 // assumed width of player, check left and right from center line at _check_width away
-	for (var i = 0; i < ds_list_size(_rs_path); i ++) {
-		var _p_elem = _rs_path[|i]
-		if (_p_elem.steering == RS_STRAIGHT) { // line path element
-			
-			for (var j = 0; j < array_length(obstr_objects); j ++) {
-				if (instance_exists(collision_line(_p_elem.x, _p_elem.y, _p_elem.x_end, _p_elem.y_end, obstr_objects[j], false, true))) // check center line
-					return false
-				if (instance_exists(collision_line(
-					_p_elem.x + lengthdir_x(_check_width, _p_elem.th + 90), 
-					_p_elem.y + lengthdir_y(_check_width, _p_elem.th + 90), 
-					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th + 90), 
-					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th + 90), 
-					obstr_objects[j], false, true))) // check left line
-					return false
-				if (instance_exists(collision_line(
-					_p_elem.x + lengthdir_x(_check_width, _p_elem.th - 90), 
-					_p_elem.y + lengthdir_y(_check_width, _p_elem.th - 90), 
-					_p_elem.x_end + lengthdir_x(_check_width, _p_elem.th - 90), 
-					_p_elem.y_end + lengthdir_y(_check_width, _p_elem.th - 90), 
-					obstr_objects[j], false, true))) // check right line
-					return false
-			}
-			
-		} else { // arc path element
-			
-			with (_p_elem) {
-			for (var j = 0; j < array_length(obstr_objects); j ++) {
-				var _precision = 20 // precision in degrees of arc drawing
-				var _d_start = 0 // start of line segment
-				var _d_end = gear * steering * _precision // end of line segment
-				var _last_iter = false
-				while (true) {
-					if (abs(_d_end) > l) {
-						_d_end = gear * steering * l // cap at length
-						_last_iter = true
-					}
-					
-					if (instance_exists(collision_line(
-						center_x + lengthdir_x(r, th - steering * 90 + _d_start),
-						center_y + lengthdir_y(r, th - steering * 90 + _d_start),
-						center_x + lengthdir_x(r, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r, th - steering * 90 + _d_end), obstr_objects[j], false, true))) // check center line
-						return false
-						
-					if (instance_exists(collision_line(
-						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_start), // draw from center
-						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_start),
-						center_x + lengthdir_x(r + _check_width, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r + _check_width, th - steering * 90 + _d_end), obstr_objects[j], false, true))) // check outer line
-						return false
-						
-					if (instance_exists(collision_line(
-						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_start), // draw from center
-						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_start),
-						center_x + lengthdir_x(r - _check_width, th - steering * 90 + _d_end),
-						center_y + lengthdir_y(r - _check_width, th - steering * 90 + _d_end), obstr_objects[j], false, true))) // check inner line
-						return false
-		
-					if (_last_iter)
-						break
-			
-					_d_start += gear * steering * _precision
-					_d_end += gear * steering * _precision
-		
-				}	
-			}}
-			
-		}
-	}
-	return true
-}
-
-// Initialize A* river based on path
-function astr_init(_path) {
-	astriver = ds_map_create()
-	ds_list_clear(astriver_rows) // clear tracking lists of which rows and cols are used
-	ds_list_clear(astriver_cells)
-	astriver_build_i = 0 // reset building index
-	
-	var _length = path_get_length(_path)
-	var _th = 0 // angle of current path cell
-	for (var i = 0; i < path_get_number(_path); i++) { // loop through path points
-		var _pt_x = path_get_point_x(_path, i) // path point location
-		var _pt_y = path_get_point_y(_path, i)
-		var _cell_x = floor(_pt_x / holpath_cell_size) // find x and y index in grid of cell
-		var _cell_y = floor(_pt_y / holpath_cell_size)
-		
-		// Compute cost
-		var _cost = _length - i * holpath_cell_size // cost of cell (this breaks if I change path to allow diagonals in future, since I assume distance increases cell size with each path point)
-		
-		// Compute theta angle
-		if (i < path_get_number(_path)-1) {
-			var _pt_next_x = path_get_point_x(_path, i+1)
-			var _pt_next_y = path_get_point_y(_path, i+1)
-			var _cell_next_x = floor(_pt_next_x / holpath_cell_size)
-			var _cell_next_y = floor(_pt_next_y / holpath_cell_size)
-			_th = point_direction(_pt_x, _pt_y, _pt_next_x, _pt_next_y) // direction to next pt (from current pt)
-		} // otherwise, for last path cell old _th value is used
-		
-		// Add to A* river 2D dynamic map
-		if (!ds_map_exists(astriver, _cell_y)) { // check if row exists in 2D A* river map
-			astriver[?_cell_y] = ds_map_create() // if not, create map
-			ds_list_add(astriver_rows, _cell_y) // keep track that this row is being used
-		}
-		
-		astriver[?_cell_y][?_cell_x] = _th // theta angle in this cell
-		ds_list_add(astriver_cells, [_cell_x, _cell_y]) // keep track that this column is being used
-	}
-}
-
-// Reset A* river
-function astr_reset() {
-	if (astriver != undefined) {
-		for (var i = 0; i < ds_list_size(astriver_rows); i ++) { // destroy row maps in dynamic A* river 2D map
-			var _row = astriver_rows[|i]
-			ds_map_destroy(astriver[?_row])
-		}
-		ds_map_destroy(astriver)
-		astriver = undefined
-	}
-}
-
 // Reset RRT* tree
 function rrt_reset() {
 	if (rrt_branch != undefined) {
@@ -313,11 +177,9 @@ function rrt_reset() {
 
 // Reset path
 function reset_path() {
-	if (holpath != undefined)
-		path_delete(holpath)
-	holpath = undefined
-	rs_path = undefined // reset RS path also
-	astr_reset()
+	if (astpath != undefined)
+		path_delete(astpath)
+	astpath = undefined
 	rrt_reset()
 }
 
@@ -327,13 +189,11 @@ function create_holonomic_path(_target_x, _target_y) {
 	
 	reset_path()
 	
-	holpath = path_add()
-	holpath_point = 0			// reset path point counter
-	if (!mp_grid_path(grid, holpath, body.get_x(), body.get_y(), _target_x, _target_y, true)) { // try making path
-		path_delete(holpath) // if not succesful
-		holpath = undefined
-	} else { // if succesful
-		astr_init(holpath) // initialize A* river
+	astpath = path_add()
+	astpath_point = 0			// reset path point counter
+	if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), _target_x, _target_y, true)) { // try making path
+		path_delete(astpath) // if not succesful
+		astpath = undefined
 	}
 	
 }
@@ -345,7 +205,7 @@ function shoot_path(_target_x, _target_y) {
 	
 	// Try making a walk path to target
 	create_holonomic_path(_target_x, _target_y)
-	var walk_path_length = holpath != undefined ? path_get_length(holpath) : infinity
+	var walk_path_length = astpath != undefined ? path_get_length(astpath) : infinity
 		
 	// Make path that goes over low objects, and try to find a line of fire on it
 	// If found, chose this path
@@ -362,7 +222,7 @@ function shoot_path(_target_x, _target_y) {
 			if (line_shootable_arbitrary(point_x, point_y, _target_x, _target_y)) { // if line of fire found
 				if (shoot_path_length < walk_path_length) { // if it is shorter, replace path with shoot path
 					reset_path() // remove old path
-					holpath = shoot_path // set new path
+					astpath = shoot_path // set new path
 					break // break loop
 				}
 			}
@@ -377,7 +237,7 @@ function shoot_path(_target_x, _target_y) {
 			if (traversal_point > path_get_number(shoot_path) - 1) // traversed entire path, stop
 				break
 		}
-		if (shoot_path != holpath) // shoot_path was not chosen, delete it
+		if (shoot_path != astpath) // shoot_path was not chosen, delete it
 			path_delete(shoot_path)
 	}
 }

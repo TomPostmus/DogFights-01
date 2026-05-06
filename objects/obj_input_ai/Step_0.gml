@@ -64,7 +64,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	
 	// Execute decision tree state
 	if (!conflict) { // explore state
-		if (holpath == undefined && irandom(100) == 0) {
+		if (astpath == undefined && irandom(100) == 0) {
 			if (instance_number(obj_ai_path_point) > 0) {
 				var path_point_marker = instance_find(obj_ai_path_point, irandom(instance_number(obj_ai_path_point)-1));
 				create_holonomic_path(path_point_marker.x, path_point_marker.y)
@@ -172,86 +172,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	//}
 	
 	// Walk holonomic path by lower level RS path segments
-	if (holpath != undefined && path_exists(holpath)) {
-		// Make RS path to reachable path point in holonomic path
-		//if (rs_path == undefined) {
-		//	var _holpath_total = path_get_number(holpath)
-		//	var _lookahead = min(10, _holpath_total) // how many path points to initially look ahead
-		//	var _pt_lookahead = holpath_point + _lookahead
-		//	while (true) {
-		//		var _pt_x = path_get_point_x(holpath, _pt_lookahead)
-		//		var _pt_y = path_get_point_y(holpath, _pt_lookahead)
-		//		var _pt_th = 0 // angle of path point (angle to next pt or from pt)
-		//		if (_pt_lookahead + 1 < _holpath_total) { // if next pt exists
-		//			var _next_pt_x = path_get_point_x(holpath, _pt_lookahead + 1)
-		//			var _next_pt_y = path_get_point_y(holpath, _pt_lookahead + 1)
-		//			_pt_th = point_direction(_pt_x, _pt_y, _next_pt_x, _next_pt_y) // compute angle to next pt
-		//		} else if (_pt_lookahead - 1 >= 0) { // else if previous pt exists
-		//			var _prev_pt_x = path_get_point_x(holpath, _pt_lookahead - 1)
-		//			var _prev_pt_y = path_get_point_y(holpath, _pt_lookahead - 1)
-		//			_pt_th = point_direction(_prev_pt_x, _prev_pt_y, _pt_x, _pt_y) // comput angle from previous pt
-		//		}
-				
-		//		rs_start = [body.get_x(), body.get_y(), body.get_rotation()]
-		//		rs_target = [_pt_x, _pt_y, _pt_th]
-		//		rs_path = rs_optimal_path(rs_start, rs_target, rs_min_r)
-		//		rs_path_elem_i = 0
-		//		if (!rs_path_free(rs_path)) {
-		//			if (_lookahead == 1) { // if lookahead is already one give up on path
-		//				rs_path = undefined
-		//				reset_path()
-		//				break
-		//			}
-		//			_lookahead = ceil(_lookahead / 2) // look at new point halfway
-		//			_pt_lookahead = holpath_point + _lookahead
-		//		} else { // free path found
-		//			holpath_point = _pt_lookahead
-		//			break // break while loop
-		//		}				
-				
-		//	}
-		//}
-		
-		//if (astriver != undefined) {
-		//	// Build A* river
-		//	if (astriver_build_i < path_get_number(holpath)) {
-		//		var _src_pt_x = path_get_point_x(holpath, astriver_build_i) // get location of current source cell
-		//		var _src_pt_y = path_get_point_y(holpath, astriver_build_i)
-		//		var _src_cell_x = floor(_src_pt_x / holpath_cell_size) // the source cell x,y indices
-		//		var _src_cell_y = floor(_src_pt_y / holpath_cell_size)
-		//		var _src_flowdir = astriver[?_src_cell_y][?_src_cell_x] // direction of flow at source cell
-				
-		//		var _kernel_radius = astriver_radius * holpath_cell_size // radius (in pixels) of the kernel with which we're building river
-		//		for (var _cell_x = _src_cell_x - astriver_radius; _cell_x <= _src_cell_x + astriver_radius; _cell_x ++) { // loop through kernel around source point
-		//			for (var _cell_y = _src_cell_y - astriver_radius; _cell_y <= _src_cell_y + astriver_radius; _cell_y ++) {
-		//				if !(_cell_x == _src_cell_x && _cell_y == _src_cell_y) { // skip source cell itself
-		//					var _pt_x = _cell_x * holpath_cell_size // location of cell in kernel
-		//					var _pt_y = _cell_y * holpath_cell_size
-		//					var _dist_to_src = point_distance(_pt_x, _pt_y, _src_pt_x, _src_pt_y) // distance from this cell to source cell
-		//					var _dir_to_src = point_direction(_pt_x, _pt_y, _src_pt_x, _src_pt_y) // distance from this cell to source cell
-							
-		//					if (_dist_to_src <= _kernel_radius) {
-		//						var _norm_dist = _dist_to_src / _kernel_radius // normalized distance to center (0 is in center, 1 is at edge of river)
-		//						var _flow_x = lengthdir_x(1 - _norm_dist, _src_flowdir) + lengthdir_x(_norm_dist, _dir_to_src) // flow at this cell
-		//						var _flow_y = lengthdir_y(1 - _norm_dist, _src_flowdir) + lengthdir_y(_norm_dist, _dir_to_src)
-							
-		//						var _flow_dir = point_direction(0, 0, _flow_x, _flow_y)
-							
-		//						if (!ds_map_exists(astriver, _cell_y)) { // check if row exists in 2D A* river map
-		//							astriver[?_cell_y] = ds_map_create() // if not, create map
-		//							ds_list_add(astriver_rows, _cell_y) // keep track that this row is being used
-		//						}
-							
-		//						astriver[?_cell_y][?_cell_x] = _flow_dir // store flow direction in this cell
-		//						ds_list_add(astriver_cells, [_cell_x, _cell_y]) // keep track that this column is being used
-		//					}
-		//				}
-		//			}
-		//		}
-				
-		//		astriver_build_i ++ // move to next point for next step
-		//	}
-		//}
+	if (astpath != undefined && path_exists(astpath)) {
 			
 		// Build RRT* tree
 		if (rrt_branch = undefined) {
@@ -264,12 +185,12 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			//var _found_cell = false
 			//var _pt_test_x, _pt_test_y, _pt_test_th
 			//var _cell_test_x, _cell_test_y
-			//var _r = astriver_radius * holpath_cell_size // around what radius to look
+			//var _r = astriver_radius * astpath_cell_size // around what radius to look
 			//repeat (5) { // try 5 times
 			//	_pt_test_x = _body_x + random_range(-_r, _r) // random point around player
 			//	_pt_test_y = _body_y + random_range(-_r, _r)
-			//	_cell_test_x = floor(_pt_test_x / holpath_cell_size)
-			//	_cell_test_y = floor(_pt_test_y / holpath_cell_size)
+			//	_cell_test_x = floor(_pt_test_x / astpath_cell_size)
+			//	_cell_test_y = floor(_pt_test_y / astpath_cell_size)
 			//	if (ds_map_exists(astriver, _cell_test_y) && ds_map_exists(astriver[?_cell_test_y], _cell_test_x)) {
 			//		_pt_test_th = astriver[?_cell_test_y][?_cell_test_x] // get orientation of test point
 			//		_found_cell = true
@@ -278,25 +199,25 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			//}
 			
 			// update nearest point to player in path
-			var _next_pt = holpath_point + 1
-			var _prev_pt = holpath_point - 1
-			var _cur_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(holpath, holpath_point), path_get_point_y(holpath, holpath_point))
+			var _next_pt = astpath_point + 1
+			var _prev_pt = astpath_point - 1
+			var _cur_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))
 			var _next_pt_dist = infinity
-			if (holpath_point < path_get_number(holpath)) // if next point exists
-				_next_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(holpath, _next_pt), path_get_point_y(holpath, _next_pt)) // distance from next pt to player
+			if (astpath_point < path_get_number(astpath)) // if next point exists
+				_next_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _next_pt), path_get_point_y(astpath, _next_pt)) // distance from next pt to player
 			var _prev_pt_dist = infinity
-			if (holpath_point > 0) // if previous point exists
-				_prev_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(holpath, _prev_pt), path_get_point_y(holpath, _prev_pt)) // distance from previous pt to player
+			if (astpath_point > 0) // if previous point exists
+				_prev_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _prev_pt), path_get_point_y(astpath, _prev_pt)) // distance from previous pt to player
 			if (_next_pt_dist == min(_cur_pt_dist, _next_pt_dist, _prev_pt_dist)) // if next point has minimal distance
-				holpath_point ++ // move to next pt
+				astpath_point ++ // move to next pt
 			else if (_prev_pt_dist < _cur_pt_dist) // else if prev point has minimal distance
-				holpath_point -- // move to prev pt
+				astpath_point -- // move to prev pt
 			
 			// pick test point at A* path between player and certain lookahead
 			var _lookahead = 10 // how many path pts to lookahead
-			var _test_path_point = min(path_get_number(holpath)-1, holpath_point + irandom(_lookahead)) // choose random point ahead, without exceeding total nr of path points
-			var _pt_test_x = path_get_point_x(holpath, _test_path_point)
-			var _pt_test_y = path_get_point_y(holpath, _test_path_point)
+			var _test_path_point = min(path_get_number(astpath)-1, astpath_point + irandom(_lookahead)) // choose random point ahead, without exceeding total nr of path points
+			var _pt_test_x = path_get_point_x(astpath, _test_path_point)
+			var _pt_test_y = path_get_point_y(astpath, _test_path_point)
 			rrt_test_pt = [_pt_test_x, _pt_test_y]
 				
 			// find nearest RTT branch
@@ -320,26 +241,26 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				//if (abs(_angdiff) <= 22.5) {
 				//	_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD)
 				//} else if (abs(_angdiff) <= 45) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 45, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 45, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//} else if (abs(_angdiff) <= 67.5) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 67.5, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 67.5, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//} else if (abs(_angdiff) <= 90) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 90, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 90, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//} else if (abs(_angdiff) <= 112.5) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 112.5, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 112.5, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//} else if (abs(_angdiff) <= 135) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 135, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 135, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//} else if (abs(_angdiff) <= 157.5) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 157.5, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 157.5, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//} else if (abs(_angdiff) <= 180) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_FORWARD, rs_min_r)
+				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_FORWARD, rrt_arc_r)
 				//}
 				
 				var _angdiff_discr = floor(abs(_angdiff) / 22.5) // divide up into discrete angle difference
 				if (_angdiff_discr == 0) { // if is approximately in same direction
 					_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD) // try straight element
 				} else {
-					_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, sign(_angdiff), RS_FORWARD, rs_min_r) // try arc element
+					_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, sign(_angdiff), RS_FORWARD, rrt_arc_r) // try arc element
 				}
 				
 				// If arc or line is not collision free, try shortening
@@ -359,7 +280,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				ds_list_add(rrt_branches, _new_branch) // add to total list of branches
 						
 				//// compute cost and delete if falls outside A* river
-				//var _success = _new_branch.compute_cost(astriver, holpath_cell_size)
+				//var _success = _new_branch.compute_cost(astriver, astpath_cell_size)
 				//if (_success == -1) { // if falls outside A* river, replace with turn element
 				//	delete _new_branch // delete old
 				//	_new_branch = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, _dir)
@@ -510,117 +431,12 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		}
 		
 		// Check if holonomic path is completed
-		var _path_end_x = path_get_point_x(holpath, path_get_number(holpath)-1)
-		var _path_end_y = path_get_point_y(holpath, path_get_number(holpath)-1)
+		var _path_end_x = path_get_point_x(astpath, path_get_number(astpath)-1)
+		var _path_end_y = path_get_point_y(astpath, path_get_number(astpath)-1)
 		var _dist = point_distance(body.get_x(), body.get_y(), _path_end_x, _path_end_y)
-		var _holpath_completion_tolerance = 30
-		if (_dist <= _holpath_completion_tolerance) {
+		var _astpath_completion_tolerance = 30
+		if (_dist <= _astpath_completion_tolerance) {
 			reset_path()
 		}
 	}
-	
-	// Walk RS path
-	//if (rs_path != undefined) {
-	//	var _p_elem = rs_path[|rs_path_elem_i] // get current path element
-	//	if (_p_elem.steering == RS_STRAIGHT || _p_elem.l < 10) { // walk line segment
-				
-	//		move_input = _p_elem.gear // move according to gear
-	//		turn_input = 0
-				
-	//		// Steering correction
-	//		var _to_player_dir = point_direction(_p_elem.x, _p_elem.y, body.get_x(), body.get_y()) // direction and distance from line base to player
-	//		var _to_player_dist = point_distance(_p_elem.x, _p_elem.y, body.get_x(), body.get_y())
-	//		var _center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, _p_elem.th)) // offset of player from line (treat this lengthdir_y as a sin())
-	//		var _correction_tolerance = 5 // tolerance outside which to start correcting
-	//		if (_center_offset > _correction_tolerance) { // deviated too much on left side
-	//			turn_input = _p_elem.gear // steer to right (or left if in reverse gear)
-	//		} else if (_center_offset < -_correction_tolerance) { // deviated too much on right side
-	//			turn_input = -_p_elem.gear // steer to left (or right if in reverse gear)
-	//		} else {
-	//			turn_input = input_dir(_p_elem.th)
-	//		}
-				
-	//		// Abort path
-	//		var _commitance_tolerance = 30 // tolerance outisde which to give up path
-	//		if (abs(_center_offset) > _commitance_tolerance) {
-	//			reset_path() // give up path
-	//		}
-				
-	//		// Track progression
-	//		var _completion_tolerance = 5 // tolerance on when path element is considered to be completed
-	//		var _l = _p_elem.l ? _p_elem.steering == RS_STRAIGHT : (_p_elem.l * _p_elem.r)
-	//		var _progression = _p_elem.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, _p_elem.th)) // progression on line (treat this lengthdir_x as cosine)
-	//		if (_progression >=  max(0, _p_elem.l - _completion_tolerance)) { // if progression exceeds is on line segment length
-	//			rs_path_elem_i ++ // move to next path element
-	//		}
-				
-	//	} else { // walk arc segment
-				
-	//		move_input = _p_elem.gear // move according to gear and steering
-	//		//turn_input = _p_elem.gear * _p_elem.steering
-				
-	//		// Steering correction
-	//		var _to_player_dist = point_distance(_p_elem.center_x, _p_elem.center_y, body.get_x(), body.get_y()) // distance and direction from arc center to player
-	//		var _to_player_dir = point_direction(_p_elem.center_x, _p_elem.center_y, body.get_x(), body.get_y())
-	//		var _arc_angle = _to_player_dir + 90 * _p_elem.steering // what the angle of the arc is from player progression
-	//		turn_input = input_dir(_arc_angle)
-				
-	//		//var _offset_tolerance = 5
-	//		//if (_p_elem.r - _to_player_dist > _offset_tolerance) { // deviated too on inside of arc
-	//		//	turn_input = 0 // stop steering, simply move straight until in center again
-	//		//} else if (_p_elem.r - _to_player_dist < -_offset_tolerance) // deviated too on outside of arc
-	//		//  and (abs(angle_difference(_to_player_dir + 90 * _p_elem.steering, body.get_rotation())) > 5) { 
-	//		//	move_input = 0 // stop movement, wait until angle is within acceptable limits
-				
-	//		//}
-				
-	//		// Abort path
-	//		var _commitance_tolerance = 30 // tolerance outisde which to give up path
-	//		if (abs(_p_elem.r - _to_player_dist) > _commitance_tolerance) {
-	//			reset_path() // give up path
-	//		}
-				
-	//		// Track progression
-	//		var _completion_tolerance = 5 // tolerance on when path element is considered to be completed
-	//		var _progression = _p_elem.steering * _p_elem.gear * angle_difference(_to_player_dir + 90 * _p_elem.steering, _p_elem.th) // difference from arc starting angle to where player is on arc
-	//		if (_progression >= max(0, _p_elem.l - _completion_tolerance)) {
-	//			rs_path_elem_i ++ // move to next path element
-	//		}
-	//	}
-			
-	//	// Check if completed RS path
-	//	if (rs_path != undefined && rs_path_elem_i >= ds_list_size(rs_path)) {
-	//		rs_path = undefined // reset
-	//	}
-	//}
-	
-	// Walk along path
-	//if (path != undefined) {
-	//	var path_point_distance = point_distance(body.get_x(), body.get_y(), path_get_point_x(path, path_point), path_get_point_y(path, path_point));
-	//	var path_point_direction = point_direction(body.get_x(), body.get_y(), path_get_point_x(path, path_point), path_get_point_y(path, path_point));
-		
-	//	// Give input to move to path point
-	//	turn_input = input_dir(path_point_direction);
-	//	if (abs(angle_difference(path_point_direction, body.get_rotation())) > 55) {
-	//		move_input = -1
-	//	} else move_input = 1
-		
-	//	// Move path point counter, for smooth and robust traversal of path
-	//	var path_point_line_free = line_movable(path_get_point_x(path, path_point), path_get_point_y(path, path_point))
-	//	if (path_point_line_free && path_point_distance < 75) { // check next point
-	//		var next_point_line_free = line_movable(path_get_point_x(path, path_point+1), path_get_point_y(path, path_point+1))
-	//		if (next_point_line_free) {	
-	//			path_point ++
-	//		}
-	//	} else { // unreachable point, move back counter
-	//		path_point --
-	//	}
-	//	path_point = min(path_point, path_get_number(path) - 1)
-		
-	//	if (path_point < 0 || // if initial point unreachable, destroy path
-	//		(path_point_distance < 30 && path_point >= path_get_number(path)-1)) { // end of path reached
-	//		path_delete(path)
-	//		path = undefined
-	//	}		
-	//}
 }
