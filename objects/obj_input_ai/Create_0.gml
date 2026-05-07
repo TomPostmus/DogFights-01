@@ -24,6 +24,8 @@ path_recompute_time = 20	// number of steps between each path recompute
 astpath = undefined
 astpath_point = 0
 astpath_cell_size = 16
+astpath_targ_x = undefined // target coordinates of A* path
+astpath_targ_y = undefined
 grid = undefined // motion planning grid
 grid_high = undefined // motion planning grid for high objects
 
@@ -183,17 +185,19 @@ function reset_path() {
 	rrt_reset()
 }
 
-// Create holonomic path to target
-function create_holonomic_path(_target_x, _target_y) {
+// Create A* path to target
+function compute_astpath() { // create_holonomic_path
 	var body = player.body
 	
 	reset_path()
 	
 	astpath = path_add()
 	astpath_point = 0			// reset path point counter
-	if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), _target_x, _target_y, true)) { // try making path
+	if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path
 		path_delete(astpath) // if not succesful
 		astpath = undefined
+		astpath_targ_x = undefined
+		astpath_targ_y = undefined
 	}
 	
 }
@@ -204,7 +208,9 @@ function shoot_path(_target_x, _target_y) {
 	var body = player.body
 	
 	// Try making a walk path to target
-	create_holonomic_path(_target_x, _target_y)
+	astpath_targ_x = _target_x
+	astpath_targ_y = _target_y
+	compute_astpath()
 	var walk_path_length = astpath != undefined ? path_get_length(astpath) : infinity
 		
 	// Make path that goes over low objects, and try to find a line of fire on it

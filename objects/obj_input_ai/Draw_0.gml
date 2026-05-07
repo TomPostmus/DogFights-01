@@ -33,6 +33,11 @@ if (instance_exists(player) && instance_exists(player.body)) {
 if (astpath != undefined && path_exists(astpath)) {
 	draw_set_colour(c_green)
 	draw_path(astpath, 0, 0, true)
+	draw_set_colour(c_red)
+	var _path_pt_x = path_get_point_x(astpath, astpath_point)
+	var _path_pt_y = path_get_point_y(astpath, astpath_point)
+	draw_circle(_path_pt_x, _path_pt_y, 1, false)
+	
 	//draw_set_colour(c_green)
 	//draw_line(xp, yp, path_get_point_x(path, path_point), path_get_point_y(path, path_point))
 }
