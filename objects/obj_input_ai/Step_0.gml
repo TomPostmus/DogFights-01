@@ -176,14 +176,47 @@ if (instance_exists(player) && instance_exists(player.body)) {
 	//}
 	
 	if (astpath != undefined && path_exists(astpath)) {
+		
+		// Update current path point to nearest point to player in path
+		var _next_pt = astpath_point + 1
+		var _prev_pt = astpath_point - 1
+		var _cur_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))
+		
+		var _next_pt_dist = infinity
+		if (astpath_point < path_get_number(astpath)) // if next point exists
+			_next_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _next_pt), path_get_point_y(astpath, _next_pt)) // distance from next pt to player
+			
+		var _prev_pt_dist = infinity
+		if (astpath_point > 0) // if previous point exists
+			_prev_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _prev_pt), path_get_point_y(astpath, _prev_pt)) // distance from previous pt to player
+			
+		if (_next_pt_dist == min(_cur_pt_dist, _next_pt_dist, _prev_pt_dist)) // if next point has minimal distance
+			astpath_point ++ // move to next pt
+		else if (_prev_pt_dist < _cur_pt_dist) // else if prev point has minimal distance
+			astpath_point -- // move to prev pt
+		
+		// Check if A* path is completed
+		var _path_end_x = path_get_point_x(astpath, path_get_number(astpath)-1)
+		var _path_end_y = path_get_point_y(astpath, path_get_number(astpath)-1)
+		var _dist = point_distance(body.get_x(), body.get_y(), _path_end_x, _path_end_y)
+		var _astpath_completion_tolerance = 30
+		if (_dist <= _astpath_completion_tolerance) {
+			
+			reset_path()
+			
+		} else if (!line_movable(path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))) { // if no free line to path point
+			
+			compute_astpath() // recompute A* path
 			
 		// Build RRT* tree
-		if (rrt_branch = undefined) {
-			rrt_branch = new rs_turn_element(_body_x, _body_y, _body_rot, _body_rot) // node that tree starts from
-			rrt_branch.g_cost = 0
-			rrt_branch.h_cost = compute_h_cost(_body_x, _body_y, _body_rot)
+		} else if (rrt_branch = undefined) { // if there is no current node
+			
+			rrt_branch = new rrt_turn_element(undefined, _body_x, _body_y, _body_rot, _body_rot) // node that tree starts from
+			rrt_branch.g_cost = 0 // initialize G cost
+			rrt_branch.h_cost = compute_h_cost(_body_x, _body_y, _body_rot) // H cost for init node
 			ds_list_add(rrt_branches, rrt_branch)
-		} else {
+			
+		} else { // if there is a current node, start adding nodes to it, each step
 			// try finding random test point nearby
 			//var _found_cell = false
 			//var _pt_test_x, _pt_test_y, _pt_test_th
@@ -201,43 +234,29 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			//	}
 			//}
 			
-			// update nearest point to player in path
-			var _next_pt = astpath_point + 1
-			var _prev_pt = astpath_point - 1
-			var _cur_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))
-			var _next_pt_dist = infinity
-			if (astpath_point < path_get_number(astpath)) // if next point exists
-				_next_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _next_pt), path_get_point_y(astpath, _next_pt)) // distance from next pt to player
-			var _prev_pt_dist = infinity
-			if (astpath_point > 0) // if previous point exists
-				_prev_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _prev_pt), path_get_point_y(astpath, _prev_pt)) // distance from previous pt to player
-			if (_next_pt_dist == min(_cur_pt_dist, _next_pt_dist, _prev_pt_dist)) // if next point has minimal distance
-				astpath_point ++ // move to next pt
-			else if (_prev_pt_dist < _cur_pt_dist) // else if prev point has minimal distance
-				astpath_point -- // move to prev pt
-				
-			if (!line_movable(path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))) { // if no free line to path point
-				compute_astpath() // recompute A* path
-				exit // do not execute rest of step event
-			}
+			repeat(2) {
 			
 			// pick test point at A* path between player and certain lookahead
 			var _front_lookahead = 10 // how many path pts to lookahead
-			var _back_lookahead = 3 // how many path pts to look back
+			var _back_lookahead = 0 // how many path pts to look back
 			var _test_path_point = clamp(astpath_point + irandom_range(-_back_lookahead, _front_lookahead), 0, path_get_number(astpath)-1) // choose random point ahead, without exceeding total nr of path points
-			var _random_dir = irandom(359)
-			var _random_dist = random(astpath_cell_size * 5)
 			
-			var _pt_test_x = path_get_point_x(astpath, _test_path_point) + lengthdir_x(_random_dist, _random_dir)
+			var _random_dir = irandom(359)
+			var _random_dist = random(astpath_cell_size * 5) // radius of random displacement around test point
+			var _pt_test_x = path_get_point_x(astpath, _test_path_point) + lengthdir_x(_random_dist, _random_dir) // pick test point from and with random displacement
 			var _pt_test_y = path_get_point_y(astpath, _test_path_point) + lengthdir_y(_random_dist, _random_dir)
 			rrt_test_pt = [_pt_test_x, _pt_test_y] // save in instance var for drawing in draw event
 				
 			// find nearest RTT branch
 			var _nearest = undefined
 			var _cost = infinity
+			var _dir, _dist
 			for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
 				var _branch = rrt_branches[|i]
-				var _branch_cost = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)// + abs(angle_difference(_branch.th_end, _pt_test_th)) // combined distance & angle difference cost from branch end point to test point
+				_dist = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)
+				_dir = point_direction(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)
+				var _branch_cost = _dist + abs(angle_difference(_branch.th_end, _dir)) // combined distance & angle difference cost from branch end point to test point
+				//var _branch_cost = _branch.h_cost + _branch.g_cost
 				if (_branch_cost < _cost) {
 					_nearest = _branch
 					_cost = _branch_cost
@@ -246,57 +265,76 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				
 			// create new branch
 			if (_nearest != undefined) {
-				var _dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
-				var _dir = point_direction(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y)
+				_dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
+				_dir = point_direction(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y)
 				var _angdiff = angle_difference(_dir, _nearest.th_end) // angle diff from node orientation to test point orientation
-				//if (abs(_angdiff) <= 22.5) {
-				//	_new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD)
-				//} else if (abs(_angdiff) <= 45) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 45, sign(_angdiff), RS_FORWARD, rrt_arc_r)
-				//} else if (abs(_angdiff) <= 67.5) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 67.5, sign(_angdiff), RS_FORWARD, rrt_arc_r)
-				//} else if (abs(_angdiff) <= 90) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 90, sign(_angdiff), RS_FORWARD, rrt_arc_r)
-				//} else if (abs(_angdiff) <= 112.5) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 112.5, sign(_angdiff), RS_FORWARD, rrt_arc_r)
-				//} else if (abs(_angdiff) <= 135) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 135, sign(_angdiff), RS_FORWARD, rrt_arc_r)
-				//} else if (abs(_angdiff) <= 157.5) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 157.5, sign(_angdiff), RS_FORWARD, rrt_arc_r)
-				//} else if (abs(_angdiff) <= 180) {
-				//	_new_branch = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 180, sign(_angdiff), RS_FORWARD, rrt_arc_r)
+				
+				//var _angdiff_discr = floor(abs(_angdiff) / 22.5) // divide up into discrete angle difference
+				//if (_angdiff_discr == 0) { // if is approximately in same direction
+				//	var _new_branch = new rrt_straight_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD) // try straight element
+				//	var _return_code = _new_branch.shorten(colslider, obstr_objects)
+					
+				//	if (_return_code != 0) { // if shorten succesful or unnecessary (collision free without shortening)
+				//		_new_branch.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
+				//		_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
+				//		ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
+				//		ds_list_add(rrt_branches, _new_branch) // add to total list of branches
+				//		_nearest.grow() // backpropagate branch thickness growth
+				//	} else {
+				//		_new_branch.destroy() // else destroy
+				//	}
+				//} else {
+				//	var _new_arc = new rrt_arc_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, sign(_angdiff), RS_FORWARD, rrt_arc_r) // try arc element
+					
+				//	if (_new_arc.collision_free(colslider, obstr_objects)) { // check if collision free
+				//		_new_arc.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
+				//		_new_arc.h_cost = compute_h_cost(_new_arc.x_end, _new_arc.y_end, _new_arc.th_end)
+				//		ds_list_add(_nearest.links, _new_arc) // add new branch to branch links
+				//		ds_list_add(rrt_branches, _new_arc) // add to total list of branches
+				//	} else {
+				//		_new_arc.destroy() // else destroy
+					
+				//		//var _new_turn = new rrt_turn_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th, _dir) // also make turn element with angle directly towards test point
+					
+				//		//_new_turn.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
+				//		//_new_turn.h_cost = compute_h_cost(_new_turn.x_end, _new_turn.y_end, _new_turn.th_end)
+				//		//ds_list_add(_nearest.links, _new_turn) // add new branch to branch links
+				//		//ds_list_add(rrt_branches, _new_turn) // add to total list of branches
+				//	}
+				//	_nearest.grow()
 				//}
 				
-				var _angdiff_discr = floor(abs(_angdiff) / 22.5) // divide up into discrete angle difference
-				if (_angdiff_discr == 0) { // if is approximately in same direction
-					var _new_branch = new rs_straight_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD) // try straight element
-					
-					if (_new_branch.collision_free(colslider, obstr_objects)) { // check if collision free
-						_new_branch.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
-						_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
-						ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
-						ds_list_add(rrt_branches, _new_branch) // add to total list of branches
-					} else {
-						_new_branch.destroy() // else destroy
-					}
+				var _straight = new rrt_straight_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD)
+				if (_straight.collision_free(colslider, obstr_objects)) {
+					_straight.compute_g_cost(_nearest.g_cost) // compute cost variables for RRT*
+					_straight.h_cost = compute_h_cost(_straight.x_end, _straight.y_end, _straight.th_end)
+					ds_list_add(_nearest.links, _straight) // add new branch to branch links
+					ds_list_add(rrt_branches, _straight) // add to total list of branches
+					_nearest.grow() // backpropagate branch thickness growth
 				} else {
-					var _new_arc = new rs_arc_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, sign(_angdiff), RS_FORWARD, rrt_arc_r) // try arc element
-					
-					if (_new_arc.collision_free(colslider, obstr_objects)) { // check if collision free
-						_new_arc.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
-						_new_arc.h_cost = compute_h_cost(_new_arc.x_end, _new_arc.y_end, _new_arc.th_end)
-						ds_list_add(_nearest.links, _new_arc) // add new branch to branch links
-						ds_list_add(rrt_branches, _new_arc) // add to total list of branches
-					} else {
-						_new_arc.destroy() // else destroy
-					}
-					
-					var _new_turn = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th, _dir) // also make turn element
-					
-					_new_turn.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
-					_new_turn.h_cost = compute_h_cost(_new_turn.x_end, _new_turn.y_end, _new_turn.th_end)
-					ds_list_add(_nearest.links, _new_turn) // add new branch to branch links
-					ds_list_add(rrt_branches, _new_turn) // add to total list of branches
+					_straight.destroy() // else destroy
+				}
+				
+				var _arc_left = new rrt_arc_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, RS_LEFT, RS_FORWARD, rrt_arc_r)
+				if (_arc_left.collision_free(colslider, obstr_objects)) {
+					_arc_left.compute_g_cost(_nearest.g_cost) // compute cost variables for RRT*
+					_arc_left.h_cost = compute_h_cost(_arc_left.x_end, _arc_left.y_end, _arc_left.th_end)
+					ds_list_add(_nearest.links, _arc_left) // add new branch to branch links
+					ds_list_add(rrt_branches, _arc_left) // add to total list of branches
+					_nearest.grow() // backpropagate branch thickness growth
+				} else {
+					_arc_left.destroy() // else destroy
+				}
+				
+				var _arc_right = new rrt_arc_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, RS_RIGHT, RS_FORWARD, rrt_arc_r)
+				if (_arc_right.collision_free(colslider, obstr_objects)) {
+					_arc_right.compute_g_cost(_nearest.g_cost) // compute cost variables for RRT*
+					_arc_right.h_cost = compute_h_cost(_arc_right.x_end, _arc_right.y_end, _arc_right.th_end)
+					ds_list_add(_nearest.links, _arc_right) // add new branch to branch links
+					ds_list_add(rrt_branches, _arc_right) // add to total list of branches
+					_nearest.grow() // backpropagate branch thickness growth
+				} else {
+					_arc_right.destroy() // else destroy
 				}
 				
 				// If arc or line is not collision free, try shortening
@@ -345,6 +383,8 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				//	}
 				//}
 			}
+			
+			}
 				
 			// Walk RRT* branch element
 			var _abort = false // abort flag
@@ -366,7 +406,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 					if (abs(angle_difference(rrt_branch.th_end, _body_rot)) < _completion_tolerance) {
 						rrt_completed = true
 					}
-				} else if (rrt_branch.type == RRT_LINE) {
+				} else if (rrt_branch.type == RRT_STRAIGHT) {
 					move_input = rrt_branch.gear // move according to gear
 					turn_input = 0
 				
@@ -446,7 +486,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				var _next_branch_i = 0
 				for (var i = 0; i < ds_list_size(rrt_branch.links); i ++) { // loop through linked branches of current branch
 					var _link = rrt_branch.links[|i]
-					var _link_cost = _link.g_cost + _link.h_cost
+					var _link_cost = _link.g_cost + _link.h_cost - _link.thickness//_link.g_cost + _link.h_cost
 					if (_link_cost < _cost) {
 						_cost = _link_cost
 						_next_branch = _link
@@ -464,15 +504,6 @@ if (instance_exists(player) && instance_exists(player.body)) {
 					turn_input = 0
 				}
 			}
-		}
-		
-		// Check if holonomic path is completed
-		var _path_end_x = path_get_point_x(astpath, path_get_number(astpath)-1)
-		var _path_end_y = path_get_point_y(astpath, path_get_number(astpath)-1)
-		var _dist = point_distance(body.get_x(), body.get_y(), _path_end_x, _path_end_y)
-		var _astpath_completion_tolerance = 30
-		if (_dist <= _astpath_completion_tolerance) {
-			reset_path()
 		}
 	}
 }

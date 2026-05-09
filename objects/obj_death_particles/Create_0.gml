@@ -13,7 +13,7 @@ function part() constructor {
 	yp = other.y + lengthdir_y(_xbody, other.rotation + 90) + lengthdir_y(_ybody, other.rotation)
 	xv = other.speed_x + lengthdir_x(degtorad(other.rotation_vel) * _xbody, other.rotation + 180) + lengthdir_x(degtorad(other.rotation_vel) * _ybody, other.rotation + 90)
 	yv = other.speed_y + lengthdir_y(degtorad(other.rotation_vel) * _xbody, other.rotation + 180) + lengthdir_y(degtorad(other.rotation_vel) * _ybody, other.rotation + 90)
-	sin_amp = 0.0001//random_range(0.00005, 0.00013) // amplitude of sine function
+	sin_amp = 0.0003//random_range(0.00005, 0.00013) // amplitude of sine function
 	sin_scale = 1 / 100 // time scale of sine function
 	sin_xshift = random_range(0, 2 * pi) // shift in sine function
 	sin_yshift = random_range(0, 2 * pi)

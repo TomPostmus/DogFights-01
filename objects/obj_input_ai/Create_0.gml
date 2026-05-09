@@ -79,7 +79,7 @@ function compute_h_cost(_x_end, _y_end, _th_end) {
 			var _pt_th = point_direction(_pt_prev_x, _pt_prev_y, _pt_x, _pt_y)
 		}
 			
-		_h_cost += abs(angle_difference(_th_end, _pt_th)) // add orientation cost to h_cost
+		_h_cost += 1 * abs(angle_difference(_th_end, _pt_th)) // add orientation cost to h_cost
 		
 		return _h_cost
 	}
@@ -193,11 +193,13 @@ function compute_astpath() { // create_holonomic_path
 	
 	astpath = path_add()
 	astpath_point = 0			// reset path point counter
-	if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path
-		path_delete(astpath) // if not succesful
-		astpath = undefined
-		astpath_targ_x = undefined
-		astpath_targ_y = undefined
+	if (astpath_targ_x != undefined && astpath_targ_y != undefined) {
+		if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path
+			path_delete(astpath) // if not succesful
+			astpath = undefined
+			astpath_targ_x = undefined
+			astpath_targ_y = undefined
+		}
 	}
 	
 }
