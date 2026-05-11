@@ -8,6 +8,11 @@ input_attack = false
 for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
 	var _branch = rrt_branches[|i]
 	if (_branch.del) {
+		var j = ds_list_find_index(rrt_open_branches, _branch) // also find in open branches list
+		if (j != -1)
+			ds_list_delete(rrt_open_branches, j)
+		
+		
 		delete _branch // delete struct
 		ds_list_delete(rrt_branches, i) // remove from list
 		i --
@@ -215,6 +220,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			rrt_branch.g_cost = 0 // initialize G cost
 			rrt_branch.h_cost = compute_h_cost(_body_x, _body_y, _body_rot) // H cost for init node
 			ds_list_add(rrt_branches, rrt_branch)
+			ds_list_add(rrt_open_branches, rrt_branch)
 			
 		} else { // if there is a current node, start adding nodes to it, each step
 			// try finding random test point nearby
@@ -234,40 +240,83 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			//	}
 			//}
 			
-			repeat(2) {
+			repeat(1) {
 			
-			// pick test point at A* path between player and certain lookahead
-			var _front_lookahead = 10 // how many path pts to lookahead
-			var _back_lookahead = 0 // how many path pts to look back
-			var _test_path_point = clamp(astpath_point + irandom_range(-_back_lookahead, _front_lookahead), 0, path_get_number(astpath)-1) // choose random point ahead, without exceeding total nr of path points
+			//// pick test point at A* path between player and certain lookahead
+			//var _front_lookahead = 10 // how many path pts to lookahead
+			//var _back_lookahead = 0 // how many path pts to look back
+			//var _test_path_point = clamp(astpath_point + irandom_range(-_back_lookahead, _front_lookahead), 0, path_get_number(astpath)-1) // choose random point ahead, without exceeding total nr of path points
 			
-			var _random_dir = irandom(359)
-			var _random_dist = random(astpath_cell_size * 5) // radius of random displacement around test point
-			var _pt_test_x = path_get_point_x(astpath, _test_path_point) + lengthdir_x(_random_dist, _random_dir) // pick test point from and with random displacement
-			var _pt_test_y = path_get_point_y(astpath, _test_path_point) + lengthdir_y(_random_dist, _random_dir)
-			rrt_test_pt = [_pt_test_x, _pt_test_y] // save in instance var for drawing in draw event
+			//var _random_dir = irandom(359)
+			//var _random_dist = random(astpath_cell_size * 5) // radius of random displacement around test point
+			//var _pt_test_x = path_get_point_x(astpath, _test_path_point) + lengthdir_x(_random_dist, _random_dir) // pick test point from and with random displacement
+			//var _pt_test_y = path_get_point_y(astpath, _test_path_point) + lengthdir_y(_random_dist, _random_dir)
+			//rrt_test_pt = [_pt_test_x, _pt_test_y] // save in instance var for drawing in draw event
 				
-			// find nearest RTT branch
-			var _nearest = undefined
-			var _cost = infinity
-			var _dir, _dist
-			for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
-				var _branch = rrt_branches[|i]
-				_dist = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)
-				_dir = point_direction(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)
-				var _branch_cost = _dist + abs(angle_difference(_branch.th_end, _dir)) // combined distance & angle difference cost from branch end point to test point
-				//var _branch_cost = _branch.h_cost + _branch.g_cost
-				if (_branch_cost < _cost) {
-					_nearest = _branch
-					_cost = _branch_cost
+			//// find nearest RTT branch
+			//var _nearest = undefined
+			//var _cost = infinity
+			//var _dir, _dist
+			//for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+			//	var _branch = rrt_branches[|i]
+			//	_dist = point_distance(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)
+			//	_dir = point_direction(_branch.x_end, _branch.y_end, _pt_test_x, _pt_test_y)
+			//	var _branch_cost = _dist + abs(angle_difference(_branch.th_end, _dir)) // combined distance & angle difference cost from branch end point to test point
+			//	//var _branch_cost = _branch.h_cost + _branch.g_cost
+			//	if (_branch_cost < _cost) {
+			//		_nearest = _branch
+			//		_cost = _branch_cost
+			//	}
+			//}
+			
+			//// find maximum and minimum h cost between open branches
+			//var _hcost_min = infinity
+			//var _hcost_max = -infinity
+			//for (var i = 0; i < _nr_open; i ++) {
+			//	var _hcost = rrt_open_branches[|i].h_cost
+			//	if (_hcost < _hcost_min) 
+			//		_hcost_min = _hcost
+			//	if (_hcost > _hcost_max)
+			//		_hcost_max = _hcost
+			//}
+			
+			// choose an open branch based on probability weighted with h cost
+			var _chosen = undefined // the chosen branch
+			var _nr_open = ds_list_size(rrt_open_branches)
+			if (_nr_open == 1) // if there is only 1 branch
+				_chosen = rrt_open_branches[|0]
+			else {
+				// do power-law weighting
+				var _e = 0.00001 // small constant to avoid div by zero
+				var _p = 3 // power coefficient, p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = 2 means strong preference
+				var _ws = array_create(_nr_open)
+				var _w_sum = 0
+				for (var i = 0; i < _nr_open; i ++) {
+					var _branch = rrt_open_branches[|i]
+					var _hcost = _branch.h_cost
+					
+					var _w = 1 / power(_hcost + _e, _p) // compute weight
+					_w_sum += _w
+					_ws[i] = _w
+				}
+				
+				var _rn = random(1) // random number from 0 to 1
+				var _acc = 0 // var that accumulates probabilities
+				for (var i = 0; i < _nr_open; i ++) {
+					var _p_i = _ws[i] / _w_sum // probability of branch i
+					if (_rn >= _acc && _rn < _acc + _p_i) { // if _p falls between weighted portion
+						_chosen = rrt_open_branches[|i] // choose this branch
+						break
+					}
+					_acc += _p_i
 				}
 			}
 				
 			// create new branch
-			if (_nearest != undefined) {
-				_dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
-				_dir = point_direction(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y)
-				var _angdiff = angle_difference(_dir, _nearest.th_end) // angle diff from node orientation to test point orientation
+			if (_chosen != undefined) {
+				//_dist = point_distance(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y) // distance branch end point to test point
+				//_dir = point_direction(_nearest.x_end, _nearest.y_end, _pt_test_x, _pt_test_y)
+				//var _angdiff = angle_difference(_dir, _nearest.th_end) // angle diff from node orientation to test point orientation
 				
 				//var _angdiff_discr = floor(abs(_angdiff) / 22.5) // divide up into discrete angle difference
 				//if (_angdiff_discr == 0) { // if is approximately in same direction
@@ -304,38 +353,47 @@ if (instance_exists(player) && instance_exists(player.body)) {
 				//	_nearest.grow()
 				//}
 				
-				var _straight = new rrt_straight_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 25, RS_FORWARD)
-				if (_straight.collision_free(colslider, obstr_objects)) {
-					_straight.compute_g_cost(_nearest.g_cost) // compute cost variables for RRT*
-					_straight.h_cost = compute_h_cost(_straight.x_end, _straight.y_end, _straight.th_end)
-					ds_list_add(_nearest.links, _straight) // add new branch to branch links
-					ds_list_add(rrt_branches, _straight) // add to total list of branches
-					_nearest.grow() // backpropagate branch thickness growth
+				// build bundle on chosen branch
+				var _bundle = ds_list_create() // bundle of three elements: left arc, straight segment and right arc
+				var _straight = new rrt_straight_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, 25, RS_FORWARD) // make straight element
+				if (_straight.collision_free(colslider, obstr_objects)) { // check if has no collisions
+					ds_list_add(_bundle, _straight) // add to list
 				} else {
 					_straight.destroy() // else destroy
 				}
 				
-				var _arc_left = new rrt_arc_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, RS_LEFT, RS_FORWARD, rrt_arc_r)
+				var _arc_left = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, 22.5, RS_LEFT, RS_FORWARD, rrt_arc_r) // make left arc
 				if (_arc_left.collision_free(colslider, obstr_objects)) {
-					_arc_left.compute_g_cost(_nearest.g_cost) // compute cost variables for RRT*
-					_arc_left.h_cost = compute_h_cost(_arc_left.x_end, _arc_left.y_end, _arc_left.th_end)
-					ds_list_add(_nearest.links, _arc_left) // add new branch to branch links
-					ds_list_add(rrt_branches, _arc_left) // add to total list of branches
-					_nearest.grow() // backpropagate branch thickness growth
+					ds_list_add(_bundle, _arc_left) // add to list
 				} else {
 					_arc_left.destroy() // else destroy
 				}
 				
-				var _arc_right = new rrt_arc_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th_end, 22.5, RS_RIGHT, RS_FORWARD, rrt_arc_r)
+				var _arc_right = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, 22.5, RS_RIGHT, RS_FORWARD, rrt_arc_r) // make right arc
 				if (_arc_right.collision_free(colslider, obstr_objects)) {
-					_arc_right.compute_g_cost(_nearest.g_cost) // compute cost variables for RRT*
-					_arc_right.h_cost = compute_h_cost(_arc_right.x_end, _arc_right.y_end, _arc_right.th_end)
-					ds_list_add(_nearest.links, _arc_right) // add new branch to branch links
-					ds_list_add(rrt_branches, _arc_right) // add to total list of branches
-					_nearest.grow() // backpropagate branch thickness growth
+					ds_list_add(_bundle, _arc_right) // add to list
 				} else {
 					_arc_right.destroy() // else destroy
 				}
+				
+				// for new branches in bundle, compute costs and add to relevant lists
+				var _nr_added = ds_list_size(_bundle) // number of branches added at end of chosen branch
+				for (var i = 0; i < _nr_added; i ++) {
+					var _new_branch = _bundle[|i]
+					_new_branch.compute_g_cost(_chosen.g_cost) // compute cost variables for RRT*
+					_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
+					ds_list_add(_chosen.links, _new_branch) // add new branch to chosen branch links
+					ds_list_add(rrt_branches, _new_branch) // add to total list of branches
+					ds_list_add(rrt_open_branches, _new_branch) // add new branch to open branches list
+					_chosen.grow() // backpropagate branch thickness growth
+				}
+				
+				// if elements were added, remove chosen branch from open branch list (it's no longer open)
+				if (_nr_added > 0) {
+					var i = ds_list_find_index(rrt_open_branches, _chosen)
+					ds_list_delete(rrt_open_branches, i)
+				}
+				ds_list_destroy(_bundle)
 				
 				// If arc or line is not collision free, try shortening
 				//var _success = 1 // assume successful shorten attempt

@@ -26,12 +26,18 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		draw_set_colour(c_lime)
 		draw_circle(rrt_test_pt[0], rrt_test_pt[1], 1, false)
 	}
+	
+	draw_set_colour(c_red)
+	for (var i = 0; i < ds_list_size(rrt_open_branches); i ++) {
+		var _branch = rrt_open_branches[|i]
+		draw_circle(_branch.x_end, _branch.y_end, 1, false) // draw red circles at end points of open branches
+	}
 
 }
 
 // Draw A* path
 if (astpath != undefined && path_exists(astpath)) {
-	draw_set_colour(c_green)
+	draw_set_colour(c_purple)
 	draw_path(astpath, 0, 0, true)
 	draw_set_colour(c_red)
 	var _path_pt_x = path_get_point_x(astpath, astpath_point)

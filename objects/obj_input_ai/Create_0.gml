@@ -33,7 +33,8 @@ grid_high = undefined // motion planning grid for high objects
 // This is the RTT tree that grows from current position
 // Each step, segments are added to tree to explore optimal path
 rrt_branch = undefined // current RRT* branch we're walking
-rrt_branches = ds_list_create() // branches of RRT* tree
+rrt_branches = ds_list_create() // all branches of RRT* tree
+rrt_open_branches = ds_list_create() // list of branches that are still open, no connections at end point yet
 rrt_test_pt = undefined
 rrt_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)

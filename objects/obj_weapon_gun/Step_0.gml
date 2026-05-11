@@ -10,7 +10,7 @@ if (instance_exists(player)) {
 		var _cam_x = player.body.get_x() + lengthdir_x(_forward, player.body.get_rotation())
 		var _cam_y = player.body.get_y() + lengthdir_y(_forward, player.body.get_rotation())
 		
-		player.camera.set_target(_cam_x, _cam_y, 3)			
+		player.camera.set_target(_cam_x, _cam_y, 1)			
 	
 		//Base zoom
 		/*var pure_visibility = global.viewport_w * global.viewport_h
