@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"rrt_update_tree",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"rrt_update_tree",
+  "parent":{
+    "name":"ai_player_functions",
+    "path":"folders/Code/player/ai_player_functions.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

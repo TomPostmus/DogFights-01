@@ -12,7 +12,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 //	}
 	
 //	draw_text(xp, yp + 20, "Conflict: " + string(conflict))
-	draw_text(xp, yp + 40, "FoF: " + fight_or_flight)
+	//draw_text(xp, yp + 40, "FoF: " + fight_or_flight)
 	//draw_text(xp, yp + 40, $"move_input: {move_input}")
 	
 	// Draw RRT* tree
@@ -42,6 +42,10 @@ if (astpath != undefined && path_exists(astpath)) {
 	draw_set_colour(c_red)
 	var _path_pt_x = path_get_point_x(astpath, astpath_point)
 	var _path_pt_y = path_get_point_y(astpath, astpath_point)
+	draw_circle(_path_pt_x, _path_pt_y, 1, false)
+	draw_set_colour(c_green)
+	var _path_pt_x = path_get_point_x(astpath, astpath_furthvis_point)
+	var _path_pt_y = path_get_point_y(astpath, astpath_furthvis_point)
 	draw_circle(_path_pt_x, _path_pt_y, 1, false)
 	
 	//draw_set_colour(c_green)

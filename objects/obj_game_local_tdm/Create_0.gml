@@ -18,7 +18,7 @@ for (var i = 0; i < teams_number; i ++) { // determine distribution
 	}
 }
 
-score_win = 30 // score for winning
+score_win = 60 // score for winning
 team_scores = array_create(teams_number, 0)
 
 // Register damage, check team ids and decide whether to deal damage

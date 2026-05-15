@@ -105,7 +105,7 @@ function draw(_body) {
 		1, 1, _body.get_head_rotation(), c_white, 1)
 	
 	// Draw tail
-	//draw_sprite_ext(spr_tail, anim_tail, _body.get_x() + lengthdir_x(tail_offset, _body.get_trunk_rotation()), _body.get_y() + lengthdir_y(tail_offset, _body.get_trunk_rotation()), 1, 1, _body.get_trunk_rotation(), c_white, 1)
+	draw_sprite_ext(spr_tail, anim_tail, _body.get_x() + lengthdir_x(tail_offset, _body.get_trunk_rotation()), _body.get_y() + lengthdir_y(tail_offset, _body.get_trunk_rotation()), 1, 1, _body.get_trunk_rotation(), c_white, 1)
 
 }
 

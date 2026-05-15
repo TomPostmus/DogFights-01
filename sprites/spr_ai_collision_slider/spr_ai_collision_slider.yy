@@ -23,7 +23,7 @@
   ],
   "name":"spr_ai_collision_slider",
   "nineSlice":null,
-  "origin":3,
+  "origin":4,
   "parent":{
     "name":"dir_player",
     "path":"folders/AssetsWeaponsAndPlayer/dir_player.yy",
@@ -75,7 +75,7 @@
     ],
     "visibleRange":null,
     "volume":1.0,
-    "xorigin":0,
+    "xorigin":12,
     "yorigin":5,
   },
   "swatchColours":null,

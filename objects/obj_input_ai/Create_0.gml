@@ -22,7 +22,8 @@ path_recompute_time = 20	// number of steps between each path recompute
 // This is a path that is used for the higher level motion planning
 // RS path is used for lower level motion
 astpath = undefined
-astpath_point = 0
+astpath_point = 0 // path point currently closest to player
+astpath_furthvis_point = 0 // furthest path point visible from player
 astpath_cell_size = 16
 astpath_targ_x = undefined // target coordinates of A* path
 astpath_targ_y = undefined
@@ -38,6 +39,8 @@ rrt_open_branches = ds_list_create() // list of branches that are still open, no
 rrt_test_pt = undefined
 rrt_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)
+rrt_walk_timer = -1 // timer for keeping completion time of element in check
+rrt_walk_maxtime = 60 // how many steps maximally to wait for completing element
 rrt_arc_r = 50 // turning radius for arcs
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
@@ -173,7 +176,7 @@ function line_shootable_arbitrary(_point_x, _point_y, _target_x, _target_y) {
 // Reset RRT* tree
 function rrt_reset() {
 	if (rrt_branch != undefined) {
-		rrt_branch.destroy() // destroy current RRT branch (and thereby the full tree)
+		rrt_mark_del(rrt_branch) // destroy current RRT branch (and thereby the full tree)
 		rrt_branch = undefined
 	}
 }

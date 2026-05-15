@@ -11,10 +11,10 @@ var _stats_default = {
 	fire_recoil_side: 0.5,
 	fire_volume: 400,
 	fire_volume_dropoff: 1000,
-	damage: 70,
+	damage: 60,
 	sound_fire: snd_striker_fire,
 	
-	fire_spread: 4,
+	fire_spread: 6,
 	fire_speed_var: 1,
 	fire_pellets: 7
 }

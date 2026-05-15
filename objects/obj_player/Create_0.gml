@@ -63,8 +63,8 @@ function spawn(_spawn_x, spawn_y, spawn_rot) {
 // Set team that player belongs to
 function set_team(_team_id, _team_color) {
 	team_id = _team_id
-	appearance.team_collar = true // enable team identification collar
-	appearance.team_color = _team_color
+	//appearance.team_collar = true // enable team identification collar
+	//appearance.team_color = _team_color
 }
 
 // Kill body

@@ -1,17 +1,18 @@
 // Create in-game related player objects (so outside of lobby room)
 if (room != rm_lobby) { // if not in lobby room
+	
+	
+	// Init players
 	with (obj_player) { // initialize players
 		hp = create_controllers(obj_hp) // init camera and hp
 		hp.player = id
 		camera = create_camera(0, 0)
 	
-		weapon = create_controllers(obj_weapon_gun_usp)//choose(obj_weapon_gun_lupara, obj_weapon_gun_striker, obj_weapon_gun_usp))//create_controllers(obj_weapon_gun_usp)
+		weapon = create_controllers(choose(obj_weapon_gun_lupara, obj_weapon_gun_striker, obj_weapon_gun_usp))//create_controllers(obj_weapon_gun_usp)
 		weapon.player = id
 		weapon.anim_init()
 		//weapon.set_mod("barrel", "silencer")
-	
-		appearance = create_controllers(obj_appearance_bear)
-		appearance.player = id
+		
 	}
 
 	// Populate teams
@@ -26,6 +27,14 @@ if (room != rm_lobby) { // if not in lobby room
 			_player.set_team(i, _team_color) // set team of player
 			_player_i += 1
 		}
+	}
+	
+	with (obj_player) { // initialize players
+		if (team_id == 0) 
+			appearance = create_controllers(obj_appearance)
+		else
+			appearance = create_controllers(obj_appearance_bear)
+		appearance.player = id
 	}
 
 	// Start spawn teams

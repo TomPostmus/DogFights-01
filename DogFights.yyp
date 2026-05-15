@@ -292,6 +292,7 @@
     {"id":{"name":"reeds_shepp_path_planning","path":"scripts/reeds_shepp_path_planning/reeds_shepp_path_planning.yy",},},
     {"id":{"name":"room_set_viewports","path":"scripts/room_set_viewports/room_set_viewports.yy",},},
     {"id":{"name":"rrt_elements","path":"scripts/rrt_elements/rrt_elements.yy",},},
+    {"id":{"name":"rrt_update_tree","path":"scripts/rrt_update_tree/rrt_update_tree.yy",},},
     {"id":{"name":"send_buffer_tcp","path":"scripts/send_buffer_tcp/send_buffer_tcp.yy",},},
     {"id":{"name":"send_buffer_udp","path":"scripts/send_buffer_udp/send_buffer_udp.yy",},},
     {"id":{"name":"sound_local","path":"scripts/sound_local/sound_local.yy",},},
