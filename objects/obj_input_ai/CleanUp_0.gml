@@ -10,3 +10,5 @@ for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
 
 ds_list_destroy(rrt_branches)
 ds_list_destroy(rrt_open_branches)
+ds_list_destroy(astpath_costs)
+ds_list_destroy(astpath_ths)

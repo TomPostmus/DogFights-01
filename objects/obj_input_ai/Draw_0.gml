@@ -48,6 +48,13 @@ if (astpath != undefined && path_exists(astpath)) {
 	var _path_pt_y = path_get_point_y(astpath, astpath_furthvis_point)
 	draw_circle(_path_pt_x, _path_pt_y, 1, false)
 	
+	//for (var i = 0; i < path_get_number(astpath); i ++) {
+	//	var _path_pt_x = path_get_point_x(astpath, i)
+	//	var _path_pt_y = path_get_point_y(astpath, i)
+		
+	//	draw_text(_path_pt_x, _path_pt_y, astpath_costs[|i])
+	//}
+	
 	//draw_set_colour(c_green)
 	//draw_line(xp, yp, path_get_point_x(path, path_point), path_get_point_y(path, path_point))
 }

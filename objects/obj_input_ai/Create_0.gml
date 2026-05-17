@@ -20,13 +20,15 @@ path_recompute_time = 20	// number of steps between each path recompute
 
 // A* path
 // This is a path that is used for the higher level motion planning
-// RS path is used for lower level motion
+// RRT tree motion planning is used for lower level motion
 astpath = undefined
 astpath_point = 0 // path point currently closest to player
 astpath_furthvis_point = 0 // furthest path point visible from player
 astpath_cell_size = 16
 astpath_targ_x = undefined // target coordinates of A* path
 astpath_targ_y = undefined
+astpath_costs = ds_list_create() // list that maps path points to costs
+astpath_ths = ds_list_create() // list that maps path points to orientation values (thetas)
 grid = undefined // motion planning grid
 grid_high = undefined // motion planning grid for high objects
 
@@ -40,55 +42,54 @@ rrt_test_pt = undefined
 rrt_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)
 rrt_walk_timer = -1 // timer for keeping completion time of element in check
-rrt_walk_maxtime = 60 // how many steps maximally to wait for completing element
-rrt_arc_r = 50 // turning radius for arcs
+rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
 
+
+// For a _x, _y, compute which point on A* path is the nearest
+// Returns the index of that path point and the distance to it
+function compute_nearest_point(_x, _y) {
+	var _dist = infinity
+	var _path_pt = 0 // index on path of nearest point
+	for (var i = 0; i < path_get_number(astpath); i ++) {
+		var _pt_x = path_get_point_x(astpath, i)
+		var _pt_y = path_get_point_y(astpath, i)
+		var _pt_dist = point_distance(_x, _y, _pt_x, _pt_y)
+		if (_pt_dist < _dist) {
+			_dist = _pt_dist
+			_path_pt = i
+		}
+	}
+	
+	return [_path_pt, _dist]
+}
+
+// For a _x, _y, compute furthest point on A* path that is visible
+// Returns the index of that path point
+function compute_furthest_visible_point(_x, _y) {
+	var _path_pt = 0 // index on path of nearest point
+	for (var i = 0; i < path_get_number(astpath); i ++) {
+		var _pt_x = path_get_point_x(astpath, i)
+		var _pt_y = path_get_point_y(astpath, i)
+		var _vis = line_movable(_pt_x, _pt_y)
+		if (_vis) {
+			_path_pt = i
+		}
+	}
+	
+	return _path_pt
+}
 	
 // Compute H cost (in A* terms) of a path element based on its distance to nearest point in A* path
 function compute_h_cost(_x_end, _y_end, _th_end) {
-	var _dist = infinity
-	var _nearest_i = 0 // index on path of nearest point
-	var _nearest_dist = 0
-	var _path_n = path_get_number(astpath)
-	for (var i = 0; i < _path_n; i ++) {
-		var _pt_x = path_get_point_x(astpath, i)
-		var _pt_y = path_get_point_y(astpath, i)
-		var _pt_dist = point_distance(_x_end, _y_end, _pt_x, _pt_y)
-		if (_pt_dist < _dist) {
-			_dist = _pt_dist
-			_nearest_i = i
-		}
-	}
+	var _nearest = compute_nearest_point(_x_end, _y_end) // find index of nearest point and distance to it
+	var _nearest_pt = _nearest[0]
+	var _nearest_dist = _nearest[1]
 	
-	if (_dist != infinity) {
-		var _path_total_cost = _path_n * astpath_cell_size
-		var _p_cost = _path_total_cost - _nearest_i * astpath_cell_size // path cost of the nearest point (cost to end goal)
-		var _h_cost = _p_cost + _dist
-		
-		// compute orientation cost of path element
-		if (_nearest_i < _path_n-1) {
-			var _pt_x = path_get_point_x(astpath, _nearest_i)
-			var _pt_y = path_get_point_y(astpath, _nearest_i)
-			var _pt_next_x = path_get_point_x(astpath, _nearest_i + 1)
-			var _pt_next_y = path_get_point_y(astpath, _nearest_i + 1)
-			var _pt_th = point_direction(_pt_x, _pt_y, _pt_next_x, _pt_next_y)
-		} else { // last path point
-			var _pt_x = path_get_point_x(astpath, _nearest_i)
-			var _pt_y = path_get_point_y(astpath, _nearest_i)
-			var _pt_prev_x = path_get_point_x(astpath, _nearest_i - 1)
-			var _pt_prev_y = path_get_point_y(astpath, _nearest_i - 1)
-			var _pt_th = point_direction(_pt_prev_x, _pt_prev_y, _pt_x, _pt_y)
-		}
-			
-		_h_cost += 1 * abs(angle_difference(_th_end, _pt_th)) // add orientation cost to h_cost
-		
-		return _h_cost
-	}
-	
-	return undefined
+	var _th = astpath_ths[|_nearest_pt]
+	return astpath_costs[|_nearest_pt] + _nearest_dist + abs(angle_difference(_th_end, _th)) // H cost is path cost of nearest point, plus distance to that point, plus difference in orientation of element end point and orientation of nearest path point
 }
 
 //Function to generate motion-planning grid
@@ -189,6 +190,33 @@ function reset_path() {
 	rrt_reset()
 }
 
+// When A* path is computed, this function computes path attributes
+function compute_path_attributes() {
+	ds_list_clear(astpath_costs) // clear lists keeping track of path point attributes
+	ds_list_clear(astpath_ths)
+	
+	var _len = path_get_length(astpath) // total path length
+	var _len_acc = 0 // accumulated length from start
+	var _cost, _th, _pt_x, _pt_y, _pt_x_next, _pt_y_next
+	for (var i = 0; i < path_get_number(astpath); i ++) {
+		_pt_x = path_get_point_x(astpath, i)
+		_pt_y = path_get_point_y(astpath, i)
+		
+		_cost = _len - _len_acc // compute path cost of point (total length minus accumulated length from start)
+		
+		if (i < path_get_number(astpath)-1) { // for all points except final point
+			_pt_x_next = path_get_point_x(astpath, i+1)
+			_pt_y_next = path_get_point_y(astpath, i+1)
+		
+			_th = point_direction(_pt_x, _pt_y, _pt_x_next, _pt_y_next) // compute angle to next point
+			_len_acc += point_distance(_pt_x, _pt_y, _pt_x_next, _pt_y_next)
+		}
+		
+		ds_list_add(astpath_costs, _cost)
+		ds_list_add(astpath_ths, _th)
+	}
+}
+
 // Create A* path to target
 function compute_astpath() { // create_holonomic_path
 	var body = player.body
@@ -203,6 +231,8 @@ function compute_astpath() { // create_holonomic_path
 			astpath = undefined
 			astpath_targ_x = undefined
 			astpath_targ_y = undefined
+		} else {
+			compute_path_attributes()
 		}
 	}
 	
@@ -235,6 +265,7 @@ function shoot_path(_target_x, _target_y) {
 				if (shoot_path_length < walk_path_length) { // if it is shorter, replace path with shoot path
 					reset_path() // remove old path
 					astpath = shoot_path // set new path
+					compute_path_attributes()
 					break // break loop
 				}
 			}

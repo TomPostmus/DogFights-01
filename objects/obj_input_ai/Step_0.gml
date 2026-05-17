@@ -180,7 +180,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		} else if (rrt_branch = undefined) { // if there is no current node
 			
 			// Initialize tree
-			rrt_branch = new rrt_turn_element(undefined, _body_x, _body_y, _body_rot, _body_rot) // node that tree starts from
+			rrt_branch = new rrt_root_element(_body_x, _body_y, _body_rot) // root node of tree
 			rrt_branch.h_cost = compute_h_cost(_body_x, _body_y, _body_rot) // H cost for init node
 			ds_list_add(rrt_branches, rrt_branch)
 			ds_list_add(rrt_open_branches, rrt_branch)

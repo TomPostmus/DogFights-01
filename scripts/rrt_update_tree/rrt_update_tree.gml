@@ -31,7 +31,7 @@ function rrt_update_tree(){
 				
 			// do power-law weighting
 			var _e = 0.00001 // small constant to avoid div by zero
-			var _p = 2 // power coefficient, p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = 2 means strong preference
+			var _p = 1.8 // power coefficient, p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = 2 means strong preference
 			var _ws = array_create(_nr_open)
 			var _w_sum = 0
 			for (var i = 0; i < _nr_open; i ++) {
@@ -122,7 +122,7 @@ function rrt_update_tree(){
 			}
 				
 			if !(_chosen.steering == RS_LEFT && _chosen.gear == RS_BACKWARD) {
-				var _arc_left_f = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_LEFT, RS_FORWARD, rrt_arc_r) // make forward left arc
+				var _arc_left_f = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_LEFT, RS_FORWARD) // make forward left arc
 				if (_arc_left_f.collision_free(colslider, obstr_objects)) {
 					ds_list_add(_bundle, _arc_left_f) // add to list
 				} else {
@@ -131,7 +131,7 @@ function rrt_update_tree(){
 			}
 				
 			if !(_chosen.steering == RS_LEFT && _chosen.gear == RS_FORWARD) {
-				var _arc_left_b = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_LEFT, RS_BACKWARD, rrt_arc_r) // make backward left arc
+				var _arc_left_b = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_LEFT, RS_BACKWARD) // make backward left arc
 				if (_arc_left_b.collision_free(colslider, obstr_objects)) {
 					ds_list_add(_bundle, _arc_left_b) // add to list
 				} else {
@@ -140,7 +140,7 @@ function rrt_update_tree(){
 			}
 				
 			if !(_chosen.steering == RS_RIGHT && _chosen.gear == RS_BACKWARD) {
-				var _arc_right_f = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_RIGHT, RS_FORWARD, rrt_arc_r) // make forward right arc
+				var _arc_right_f = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_RIGHT, RS_FORWARD) // make forward right arc
 				if (_arc_right_f.collision_free(colslider, obstr_objects)) {
 					ds_list_add(_bundle, _arc_right_f) // add to list
 				} else {
@@ -149,7 +149,7 @@ function rrt_update_tree(){
 			}
 				
 			if !(_chosen.steering == RS_LEFT && _chosen.gear == RS_FORWARD) {
-				var _arc_right_b = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_RIGHT, RS_BACKWARD, rrt_arc_r) // make backward right arc
+				var _arc_right_b = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_RIGHT, RS_BACKWARD) // make backward right arc
 				if (_arc_right_b.collision_free(colslider, obstr_objects)) {
 					ds_list_add(_bundle, _arc_right_b) // add to list
 				} else {
@@ -157,45 +157,21 @@ function rrt_update_tree(){
 				}
 			}
 			
-			//if !(_chosen.type == RRT_TURN) {
-			//	var _furthvis_x = path_get_point_x(astpath, astpath_furthvis_point)
-			//	var _furthvis_y = path_get_point_y(astpath, astpath_furthvis_point)
-			//	var _dir = point_direction(_chosen.x_end, _chosen.y_end, _furthvis_x, _furthvis_y)
-			//	var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _dir) // make turn element to furthest path point in A* path
-			//	ds_list_add(_bundle, _turn)
-			//}
-					
-			//// Add turn element if no branches added
-			//if (ds_list_size(_bundle) == 0) {
-			//	// find furthest visible point on A* path
-			//	//var _path_pt = astpath_point
-			//	//while (true) {
-			//	//	if (_path_pt >= path_get_number(astpath)-1) {
-			//	//		break
-			//	//	}
-							
-			//	//	var _path_pt_x = path_get_point_x(astpath, _path_pt)
-			//	//	var _path_pt_y = path_get_point_y(astpath, _path_pt)
-			//	//	var _dist = point_distance(_chosen.x_end, _chosen.y_end, _path_pt_x, _path_pt_y)
-			//	//	var _dir = point_direction(_chosen.x_end, _chosen.y_end, _path_pt_x, _path_pt_y)
-			//	//	var _test_elem = new rrt_straight_element(noone, _chosen.x_end, _chosen.y_end, _dir, _dist, RS_FORWARD) // use straight element with length equal to length to test point
-			//	//	var _colfree = _test_elem.collision_free(colslider, obstr_objects) // extract relevant info: is it collision free
-			//	//	_test_elem.destroy() // destroy right away
-							
-			//	//	if (!_colfree) { // if found point to which we have no clear sight
-			//	//		break
-			//	//		_path_pt = max(0, _path_pt - 1) // decrement (not exceeding 0)
-			//	//	}							
-							
-			//	//	_path_pt ++ // go to next
-			//	//}
-						
-			//	//var _dir = point_direction(_chosen.x_end, _chosen.y_end, path_get_point_x(astpath, _path_pt), path_get_point_y(astpath, _path_pt))
+			if (_chosen.type != RRT_TURN) {
+				var _furthvis_pt = compute_furthest_visible_point(_chosen.x_end, _chosen.y_end) // index of furthest visible point
 				
-			//	var _dir = irandom(360) // just turn in a random direction
-			//	var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _dir) // make turn element to nearest path point in A* path
-			//	ds_list_add(_bundle, _turn)
-			//}
+				var _pt_x = path_get_point_x(astpath, _furthvis_pt)
+				var _pt_y = path_get_point_y(astpath, _furthvis_pt)
+				var _furthvis_dir = point_direction(_chosen.x_end, _chosen.y_end, _pt_x, _pt_y) // distance and direction from element end point to furthest visible point
+				var _furthvis_dist = point_distance(_chosen.x_end, _chosen.y_end, _pt_x, _pt_y)
+				
+				//var _pt_dir = astpath_ths[|_furthvis_pt] // orientation of furthest visible  A* path point
+				//var _weight = min(1, _furthvis_dist / astpath_cell_size) // weight is 1 if dist is larger than or eq to A* cell size
+				//var _dir = _pt_dir * (1 - _weight) + _furthvis_dir * _weight // weigthed orientation
+				
+				var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _furthvis_dir) // make turn element
+				ds_list_add(_bundle, _turn)
+			}
 				
 			// for new branches in bundle, compute costs and add to relevant lists
 			var _nr_added = ds_list_size(_bundle) // number of branches added at end of chosen branch
@@ -214,52 +190,6 @@ function rrt_update_tree(){
 				ds_list_delete(rrt_open_branches, i)
 			}
 			ds_list_destroy(_bundle)
-				
-			// If arc or line is not collision free, try shortening
-			//var _success = 1 // assume successful shorten attempt
-			//if (!_new_branch.collision_free(colslider, obstr_objects))
-			//	_success = _new_branch.shorten(colslider, obstr_objects)
-				
-			//// If still not collsion free, turn into turn element
-			//if (_success == 0) { // if shortening unsuccessful
-			//	_new_branch.destroy() // destroy old branch
-			//	_new_branch = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th, _dir) // make turn element
-			//}
-				
-			//_new_branch.compute_g_cost(g_cost) // compute cost variables for RRT*
-			//_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
-			//ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
-			//ds_list_add(rrt_branches, _new_branch) // add to total list of branches
-						
-			//// compute cost and delete if falls outside A* river
-			//var _success = _new_branch.compute_cost(astriver, astpath_cell_size)
-			//if (_success == -1) { // if falls outside A* river, replace with turn element
-			//	delete _new_branch // delete old
-			//	_new_branch = new rs_turn_element(_nearest.x_end, _nearest.y_end, _nearest.th_end, _dir)
-			//	_new_branch.compute_cost()
-			//}
-						
-			// check collision and try shortening if not collision free
-			//if (_new_branch != undefined) {
-			//	_success = _new_branch.shorten(colslider, obstr_objects)
-			//	if (_success != 0) {
-			//		_new_branch.compute_g_cost(rrt_branch.g_cost)
-			//		_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end)
-						
-			//		// add new branch to nearest branch end point
-			//		ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
-			//		ds_list_add(rrt_branches, _new_branch) // add to total list of branches
-								
-			//		// for shortened arc, add in-place turn element to comlete desired rotation
-			//		if (_success == 2 && _new_branch.type == RRT_ARC) { // if element was shortened and of arc element type
-			//			var _turn_element = new rs_turn_element(_new_branch.x_end, _new_branch.y_end, _new_branch.th, _dir)
-			//			_turn_element.compute_g_cost(rrt_branch.g_cost)
-			//			_turn_element.h_cost = compute_h_cost(_turn_element.x_end, _turn_element.y_end)
-			//			ds_list_add(_new_branch.links, _turn_element) // attach turn element to end point of arc
-			//			ds_list_add(rrt_branches, _turn_element)
-			//		}
-			//	}
-			//}
 		}
 			
 	}
@@ -272,18 +202,21 @@ function rrt_update_tree(){
 		rrt_walk_timer --
 		if (rrt_walk_timer <= 0)
 			_abort = true // maximal time for completing element elapsed, abort RRT tree
-		
-		if (rrt_branch.type == RRT_TURN) { // execute turn					
+			
+			
+		if (rrt_branch.type == RRT_ROOT) {
+			rrt_completed = true
+		} else if (rrt_branch.type == RRT_TURN) { // execute turn					
 			move_input = 0
 			turn_input = input_dir(rrt_branch.th_end)
 					
 			// RRT path abortion
-			var _abortion_tolerance = 5 // distance from which to abort path
+			var _abortion_tolerance = 10 // distance from which to abort path
 			if (point_distance(_body_x, _body_y, rrt_branch.x, rrt_branch.y) > _abortion_tolerance)
 				_abort = true // raise flag
 					
 			// check completion
-			var _completion_tolerance = 1 // completion tolerance (in degrees) on when turn is considered to be completed
+			var _completion_tolerance = 3 // completion tolerance (in degrees) on when turn is considered to be completed
 			if (abs(angle_difference(rrt_branch.th_end, _body_rot)) < _completion_tolerance) {
 				rrt_completed = true
 			}
@@ -307,7 +240,7 @@ function rrt_update_tree(){
 			//}
 					
 			// RRT path abortion
-			var _abortion_tolerance = 5 // distance from which to abort path
+			var _abortion_tolerance = 10 // distance from which to abort path
 			if (_center_offset > _abortion_tolerance)
 				_abort = true // raise flag
 			if (_progression < -_abortion_tolerance || _progression > rrt_branch.l + _abortion_tolerance)
@@ -329,9 +262,9 @@ function rrt_update_tree(){
 					
 			// steering correction
 			//var _offset_tolerance = 5
-			//if (_to_player_dist < rrt_branch.r - _offset_tolerance) { // deviated too on inside of arc
+			//if (_to_player_dist < RRT_R - _offset_tolerance) { // deviated too on inside of arc
 			//	turn_input = 0 // stop steering, simply move straight until in center again
-			//} else if (_to_player_dist > rrt_branch.r + _offset_tolerance) { // deviated too on outside of arc
+			//} else if (_to_player_dist > RRT_R + _offset_tolerance) { // deviated too on outside of arc
 			//	if (abs(angle_difference(_arc_angle, _body_rot)) > 20) 
 			//		move_input = 0 // stop movement, wait until angle is within acceptable limits
 			//	turn_input = input_dir(_arc_angle + 10 * rrt_branch.steering * rrt_branch.gear)
@@ -342,9 +275,9 @@ function rrt_update_tree(){
 			turn_input = input_dir(_arc_angle)
 					
 			// RRT path abortion
-			var _abortion_tolerance = 5 // distance from which to abort path
-			var _abrt_angle_tolerance = radtodeg(_abortion_tolerance / rrt_branch.r) // tolerance in degrees for arc angle progression
-			if (_to_player_dist > rrt_branch.r + _abortion_tolerance || _to_player_dist < rrt_branch.r - _abortion_tolerance)
+			var _abortion_tolerance = 10 // distance from which to abort path
+			var _abrt_angle_tolerance = radtodeg(_abortion_tolerance / RRT_R) // tolerance in degrees for arc angle progression
+			if (_to_player_dist > RRT_R + _abortion_tolerance || _to_player_dist < RRT_R - _abortion_tolerance)
 				_abort = true // raise flag
 			if (_progression < -_abrt_angle_tolerance || _progression > rrt_branch.l + _abrt_angle_tolerance)
 				_abort = true
@@ -369,7 +302,7 @@ function rrt_update_tree(){
 		var _next_branch_i = 0
 		for (var i = 0; i < ds_list_size(rrt_branch.links); i ++) { // loop through linked branches of current branch
 			var _link = rrt_branch.links[|i]
-			var _link_cost = 2 * -_link.thickness + _link.g_cost + _link.h_cost
+			var _link_cost = 2 * -_link.thickness// + _link.g_cost + _link.h_cost
 			if (_link_cost < _cost) {
 				_cost = _link_cost
 				_next_branch = _link

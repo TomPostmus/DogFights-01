@@ -17,6 +17,8 @@ for (var i = 0; i < teams_number; i ++) { // determine distribution
 		team_sizes[i] = _team_size
 	}
 }
+team_sizes[0] = 2
+team_sizes[1] = _players_number - team_sizes[0]
 
 score_win = 60 // score for winning
 team_scores = array_create(teams_number, 0)

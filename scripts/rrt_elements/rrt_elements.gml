@@ -1,6 +1,13 @@
 #macro RRT_STRAIGHT 0 // types of RRT path elements (straight line, arc or stationary turn)
 #macro RRT_ARC 1
 #macro RRT_TURN 2
+#macro RRT_ROOT 3
+
+#macro RRT_R 50 // turning radius for arcs (in pixels)
+#macro RRT_V 2 // assumed speed of player (pixels/step)
+
+#macro RRT_GEARSHIFT_PEN 15 // constants for how much to penalise gear shifts and steering shifts in G cost
+#macro RRT_STEERSHIFT_PEN 10
 
 // Mark branch for deletion
 // Return the number of child branches that have been marked for deletion
@@ -22,14 +29,51 @@ function rrt_grow(_branch) {
 		rrt_grow(_branch.parent) // recursively do for parent elements
 }
 
+// Root element that is start of tree
+function rrt_root_element(_x, _y, _th) constructor {
+	type = RRT_ROOT
+	parent = undefined
+	
+	x = _x // starting position
+	y = _y
+	th = _th // angle (orientation of line)
+	x_end = x
+	y_end = y
+	th_end = _th
+	
+	steering = 0
+	gear = 0
+	
+	links = ds_list_create() // branches linked to this node
+	thickness = 0 // thickness of branch, i.e. how many branches are hanging from it
+	del = false // flag whether branch is to be deleted (necessary for safely removing branch in rrt_branches list)
+	
+	g_cost = 0
+	h_cost = undefined
+	
+	// Draw root element
+	static draw = function() {
+		draw_circle(x, y, 2, false)
+	}
+	
+	// Check collision
+	static collision_free = function(_col_slider, _obstr_objects) {
+		return true
+	}
+	
+	// Shorten
+	static shorten = function(_col_slider, _obstr_objects) {
+		return 1
+	}
+}
+
 // Stationary turn in path (kink in path)
 function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	type = RRT_TURN
 	parent = _parent // parent element
-	x = _x // starting position of line in world
+	x = _x // starting position
 	y = _y
 	th = _th // angle (orientation of line)
-	l = 0 // line length in pixels
 	steering = sign(angle_difference(_th_end, _th))
 	gear = 0 // no gear
 	
@@ -41,11 +85,8 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	thickness = 0 // thickness of branch, i.e. how many branches are hanging from it
 	del = false // flag whether branch is to be deleted (necessary for safely removing branch in rrt_branches list)
 	
-	if (_parent != undefined) {
-		var _gear_switch_pen = 30 * abs(_parent.gear - gear) // gear switch penalty
-		var _steer_switch_pen = 15 * abs(_parent.steering - steering) // steering switch penalty
-		g_cost = _parent.g_cost + abs(angle_difference(th_end, th)) + _gear_switch_pen + _steer_switch_pen // compute G cost (in A* terms) for this element based on base G cost from parent
-	} else g_cost = 0
+	var _time = degtorad(abs(angle_difference(_th_end, _th))) * RRT_R / RRT_V // est. time (in steps) to complete element
+	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined
 	
@@ -53,13 +94,6 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	static draw = function() {
 		draw_circle(x, y, 2, false)
 		draw_arrow(x, y, x + lengthdir_x(8, th_end), y + lengthdir_y(8, th_end), 2)
-		
-		// draw cost
-		//draw_set_font(ft_path_debug)
-		//var _s = (g_cost != undefined && h_cost != undefined) ? g_cost + h_cost : undefined
-		//draw_text(x + 10, y, $"G:{g_cost}, H:{h_cost}")
-		//draw_text(x + 10, y, $" H:{h_cost}")
-		//draw_text(x + 10, y + 10, $"S:{_s}")
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
@@ -97,11 +131,8 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	thickness = 0 // thickness of branch, i.e. how many branches are hanging from it
 	del = false // flag to mark for deletion
 	
-	if (_parent != undefined) {
-		var _gear_switch_pen = 30 * abs(_parent.gear - gear) // gear switch penalty
-		var _steer_switch_pen = 15 * abs(_parent.steering - steering) // steering switch penalty
-		g_cost = _parent.g_cost + l + _gear_switch_pen + _steer_switch_pen
-	} else g_cost = 0
+	var _time = l / RRT_V // est. time (in steps) to complete element
+	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined
 	
@@ -179,33 +210,29 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 }
 
 // Arc path element constructor in world frame
-function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear, _r) constructor {
+function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor {
 	type = RRT_ARC
 	parent = _parent
 	x = _x // starting position of arc in world
 	y = _y
 	th = _th // starting angle of arc
 	l = _l // arc length in degrees (can be from 0 to 180)
-	r = _r // arc radius
 	steering = _steering // left or right steering
 	gear = _gear // forwards or backward arc
 	
-	center_x = _x + lengthdir_x(_r, _th + _steering * 90) // center position of arc
-	center_y = _y + lengthdir_y(_r, _th + _steering * 90) // either left or right from start pos (depending on left or right steering)
+	center_x = _x + lengthdir_x(RRT_R, _th + _steering * 90) // center position of arc
+	center_y = _y + lengthdir_y(RRT_R, _th + _steering * 90) // either left or right from start pos (depending on left or right steering)
 	
-	x_end = center_x + lengthdir_x(_r, _th - _steering * 90 + _gear * _steering * _l)
-	y_end = center_y + lengthdir_y(_r, _th - _steering * 90 + _gear * _steering * _l)
+	x_end = center_x + lengthdir_x(RRT_R, _th - _steering * 90 + _gear * _steering * _l)
+	y_end = center_y + lengthdir_y(RRT_R, _th - _steering * 90 + _gear * _steering * _l)
 	th_end = th + gear * steering * l
 	
 	links = ds_list_create() // branches linked to this node
 	thickness = 0 // thickness of branch, i.e. how many branches are hanging from it
 	del = false
 	
-	if (_parent != undefined) {
-		var _gear_switch_pen = 30 * abs(_parent.gear - gear) // gear switch penalty
-		var _steer_switch_pen = 15 * abs(_parent.steering - steering) // steering switch penalty
-		g_cost = _parent.g_cost + degtorad(l) * r + _gear_switch_pen + _steer_switch_pen
-	} else g_cost = 0
+	var _time = degtorad(l) * RRT_R / RRT_V // est. time (in steps) to complete element
+	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined
 	
@@ -223,10 +250,10 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear, _r) constru
 		
 			//draw_set_colour(c_blue)
 			draw_line_width( // draw line segment
-				center_x + lengthdir_x(r, th - steering * 90 + _d_start), // draw from center
-				center_y + lengthdir_y(r, th - steering * 90 + _d_start),
-				center_x + lengthdir_x(r, th - steering * 90 + _d_end),
-				center_y + lengthdir_y(r, th - steering * 90 + _d_end), 1 + (thickness > 5) + (thickness > 10) + (thickness > 15)
+				center_x + lengthdir_x(RRT_R, th - steering * 90 + _d_start), // draw from center
+				center_y + lengthdir_y(RRT_R, th - steering * 90 + _d_start),
+				center_x + lengthdir_x(RRT_R, th - steering * 90 + _d_end),
+				center_y + lengthdir_y(RRT_R, th - steering * 90 + _d_end), 1 + (thickness > 5) + (thickness > 10) + (thickness > 15)
 			)
 			
 		
@@ -251,8 +278,8 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear, _r) constru
 				_last_iter = true
 			}				
 				
-			_col_slider.x = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d) // slide over arc
-			_col_slider.y = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+			_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * _d) // slide over arc
+			_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * _d)
 			_col_slider.image_angle = th + gear * steering * _d // slide angle over turn rotation
 			with (_col_slider) {
 				for (var i = 0; i < array_length(_obstr_objects); i ++)
@@ -281,8 +308,8 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear, _r) constru
 				_last_iter = true
 			}				
 				
-			_col_slider.x = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d) // slide over arc
-			_col_slider.y = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+			_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * _d) // slide over arc
+			_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * _d)
 			_col_slider.image_angle = th + gear * steering * _d // slide angle over turn rotation
 			with (_col_slider) {
 				for (var i = 0; i < array_length(_obstr_objects); i ++)
@@ -293,8 +320,8 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear, _r) constru
 			if (_found_collision) {
 				_d -= _precision
 				if (_d <= 0) return 0 // for negative or zero d, non sensical path element, return 0
-				x_end = center_x + lengthdir_x(r, th - steering * 90 + gear * steering * _d) // new arc end point
-				y_end = center_y + lengthdir_y(r, th - steering * 90 + gear * steering * _d)
+				x_end = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * _d) // new arc end point
+				y_end = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * _d)
 				th_end = th + gear * steering * _d // slide angle over turn rotation
 				l = _d // new arc length
 				return 2
