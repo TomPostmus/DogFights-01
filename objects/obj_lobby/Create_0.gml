@@ -10,7 +10,7 @@ _p1.input.player = _p1
 
 // Add second input player
 var _p2 = instance_create_layer(0, 0, "Players", obj_player_local)
-_p2.input = instance_create_layer(0, 0, "Players", obj_input_ai)
+_p2.input = instance_create_layer(0, 0, "Players", obj_input_p2)
 _p2.input.player = _p2
 
 // Add to active players list

@@ -8,9 +8,9 @@ hp_previous = 0
 
 // Health constants
 hp_max = 100
-hp_regen_downtime = 200
+hp_regen_downtime = 150
 hp_regen_amount = 10
-hp_regen_time = 120
+hp_regen_time = 80
 hp_regen_tick = 0
 
 // Damage bill

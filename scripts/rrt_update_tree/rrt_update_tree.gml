@@ -9,7 +9,7 @@ function rrt_update_tree(){
 
 	var _rrt_max_tree_size = 300
 	if (ds_list_size(rrt_branches) < _rrt_max_tree_size) {
-	repeat(2) {
+	repeat(1) {
 				
 		// choose an open branch based on probability weighted with h cost
 		var _chosen = undefined // the chosen branch

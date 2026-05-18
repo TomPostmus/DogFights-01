@@ -59,6 +59,10 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		// Reload cancel
 		if (player.input.input_reload)
 			reload_cancel = true
+		if (ammo_mag > 0 && trigger && fire_ready) {						// fire shot
+			fire()
+			state = "reload_end" // cancel reload
+		}
 		
 		// State guards
 		if (anim_end) {
@@ -67,7 +71,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			if (ammo_mag == stats.mag_size || ammo_reserve == 0 || reload_cancel) {
 				state = "reload_end"
 			}
-		}
+		}		
 	} else if (state == "reload_insert") {
 		// Init
 		if (init) {
@@ -87,6 +91,10 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		// Reload cancel
 		if (player.input.input_reload)
 			reload_cancel = true
+		if (ammo_mag > 0 && trigger && fire_ready) {						// fire shot
+			fire()
+			state = "reload_end" // cancel reload
+		}
 		
 		// State guards
 		if (anim_end) {
@@ -107,6 +115,10 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		anim_striker_reload_end()
 		anim_frame_prev = anim_frame
 		anim_frame ++
+		
+		if (ammo_mag > 0 && trigger && fire_ready) {						// fire shot
+			fire()
+		}
 		
 		// State guards
 		if (anim_end) {
