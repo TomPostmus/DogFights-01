@@ -27,6 +27,8 @@ repeat (_num_ais) {
 	ds_list_add(players, _ai)
 }
 
+
+
 // Create game object
-game = instance_create_layer(0, 0, "Players", obj_game_local_tdm)
+game = instance_create_layer(0, 0, "Players", obj_game_local_teambattle)
 room_goto_next() // go to next room (which is assumed to be game room)

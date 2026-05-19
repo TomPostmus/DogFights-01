@@ -8,7 +8,7 @@ if (room != rm_lobby) { // if not in lobby room
 		hp.player = id
 		camera = create_camera(0, 0)
 	
-		weapon = create_controllers(choose(obj_weapon_gun_lupara, obj_weapon_gun_striker, obj_weapon_gun_usp))//create_controllers(obj_weapon_gun_usp)
+		weapon = create_controllers(obj_weapon_gun_usp)
 		weapon.player = id
 		weapon.anim_init()
 		//weapon.set_mod("barrel", "silencer")

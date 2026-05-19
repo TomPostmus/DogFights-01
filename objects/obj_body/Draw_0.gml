@@ -30,6 +30,4 @@ with (hitmask_arm_right) {
 }
 
 // Draw self
-if (instance_exists(player)) {
-	player.appearance.draw(id)
-}
+appearance.draw(id)

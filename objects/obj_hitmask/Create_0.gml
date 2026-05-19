@@ -1,7 +1,7 @@
 // obj_hitmask: belongs to a body, collider for bullets
 
-// Player reference
-player = noone
+// Body reference
+body = noone
 
 // Animated boolean
 // If true: follow sprite and image index from body part

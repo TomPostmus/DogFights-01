@@ -5,6 +5,9 @@
 // Player reference, body does not necessarily have player
 player = noone
 
+// Appearance reference
+appearance = noone
+
 // Physical boolean (indicates whether physical body or not)
 physical = false
 
@@ -70,8 +73,6 @@ function destroy_physical_body() {
 function create_physical_body() {
 	destroy_physical_body()
 	
-	var appearance = player.appearance
-	
 	// TODO create in rotation
 
 	trunk = create_groundhigh(x, y, appearance.trunk_phybody_obj)
@@ -90,6 +91,27 @@ function create_physical_body() {
 	hitmask_arm_left.player = player
 	hitmask_arm_right = create_groundhigh(x, y, obj_hitmask_arm_right)
 	hitmask_arm_right.player = player
+}
+
+// Hit by _bullet on _body_part ("head", "trunk", "arm_left", etc...)
+function hit(_bullet, _body_part) {
+	obj_game.register_damage(id, _bullet.player, _bullet.damage)
+	
+	if (physical) {
+		if (_body_part == "head") { // for head hit apply impulse to head
+			with (head) 
+				physics_apply_impulse(_bullet.x, _bullet.y, 
+					_bullet.speed_x*_bullet.weight, _bullet.speed_y*_bullet.weight)
+			var _normal_dir = point_direction(head.x, head.y, _bullet.x, _bullet.y) // normal direction of hit
+			appearance.bullet_hit(_bullet, _normal_dir)
+		} else {					// for hit to trunk or arms, apply impulse to trunk
+			with (trunk) 
+				physics_apply_impulse(_bullet.x, _bullet.y, 
+					_bullet.speed_x*_bullet.weight, _bullet.speed_y*_bullet.weight)
+			var _normal_dir = point_direction(trunk.x, trunk.y, _bullet.x, _bullet.y)
+			appearance.bullet_hit(_bullet, _normal_dir)
+		}
+	}
 }
 
 function set_physical(_physical) {
@@ -123,9 +145,7 @@ function add_speed(_speed_x, _speed_y) {
 }
 
 // Set rotation of head (clamp with trunk angle limit)
-function set_head_rotation(_rotation) {
-	var appearance = player.appearance
-	
+function set_head_rotation(_rotation) {	
 	if (physical) {
 		head.phy_rotation = -clamp(_rotation, -appearance.head_rotation_limit, appearance.head_rotation_limit)
 	} else {
@@ -144,8 +164,8 @@ function get_speed_dir() {return point_direction(0, 0, get_speed_x(), get_speed_
 function get_rotation() {return -trunk.phy_rotation}
 function get_trunk_rotation() {return physical ? -trunk.phy_rotation : trunk_rotation}
 function get_trunk_speed_rot() {return -trunk.phy_angular_velocity / game_get_speed(gamespeed_fps)}
-function get_head_x() {return physical ? head.x : x + lengthdir_x(player.appearance.head_offset, get_rotation())}
-function get_head_y() {return physical ? head.y : y + lengthdir_y(player.appearance.head_offset, get_rotation())}
+function get_head_x() {return physical ? head.x : x + lengthdir_x(appearance.head_offset, get_rotation())}
+function get_head_y() {return physical ? head.y : y + lengthdir_y(appearance.head_offset, get_rotation())}
 function get_head_speed_x() {return physical ? head.phy_speed_x : hspeed}
 function get_head_speed_y() {return physical ? head.phy_speed_y : vspeed}
 function get_head_rotation() {return physical ? -head.phy_rotation : head_rotation}
