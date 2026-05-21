@@ -14,10 +14,7 @@
     "name":"player_implementations",
     "path":"folders/Code/player/old_player_code/player_implementations.yy",
   },
-  "parentObjectId":{
-    "name":"obj_player_local",
-    "path":"objects/obj_player_local/obj_player_local.yy",
-  },
+  "parentObjectId":null,
   "persistent":true,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

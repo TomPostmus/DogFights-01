@@ -10,6 +10,14 @@ global.key_actions = ds_map_create()
 global.frame_count = 0
 global.debug_print_count = 0
 
+// In-game function
+global.ingame = function() {
+	if (room == rm_map_josephsfarm)
+		return true
+	
+	return false
+} // whether we are in an in-game room
+
 //Set keybinds
 default_keys()
 

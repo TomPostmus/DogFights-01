@@ -1,9 +1,9 @@
 event_inherited()
 
 // Input
-lin_motion = player.input.move_input * 2.5
-ang_motion = player.input.turn_input
-if (player.weapon.aiming) { // when aiming down sights
+lin_motion = move_input * 2.5
+ang_motion = turn_input
+if (instance_exists(character.weapon) && character.weapon.aiming) { // when aiming down sights
 	lin_motion /= 2 // walk at half movement speed
 	ang_motion /= 2 // turn at half the speed
 }
@@ -33,7 +33,7 @@ if (player.weapon.aiming) { // when aiming down sights
 	} else if (linsm_current == "try") {			
 		if (lin_retry_timer <= 0) {														//timer event
 			lin_kick_force = lin_motion * lin_kick_init_force_factor					//reset kick force
-			lin_kick_force *= 1 - clamp(abs(forwards_velocity) - 0.5, 0, 3) / 3			//dampen with factor between 0 and 1, proportional to current forwards vel in lin motion direction (to avoid infinite kick bug, where spamming forward causes player to speed up enormously due to the rapid kicks)
+			lin_kick_force *= 1 - clamp(abs(forwards_velocity) - 0.5, 0, 3) / 3			//dampen with factor between 0 and 1, proportional to current forwards vel in lin motion direction (to avoid infinite kick bug, where spamming forward causes character to speed up enormously due to the rapid kicks)
 			lin_retry_timer = lin_retry_time											//reset timer
 			if (leg_angle == 0) {														//if leg in neutral position, switch leg
 				left_leg = !left_leg
@@ -47,7 +47,7 @@ if (player.weapon.aiming) { // when aiming down sights
 		
 		forward_friction(lin_static_friction)
 		
-		with (player.body.trunk)
+		with (character.body.trunk)
 			physics_apply_local_force(0, 0, other.lin_kick_force, 0)	//apply kick force to body
 		
 		lin_kick_force *= lin_kick_force_decay											//lessen kick force
@@ -74,7 +74,7 @@ if (player.weapon.aiming) { // when aiming down sights
 		var phase_force_factor = 1 - lin_movement_phase_depth * abs(movement_phase)		//phase factor on pid reference for bobbing effect
 		var phased_reference = lin_motion * phase_force_factor							
 		var pid_force = lin_pid.get(forwards_velocity, phased_reference)				//get pid output
-		with (player.body.trunk)
+		with (character.body.trunk)
 			physics_apply_local_force(0, 0, pid_force, 0)								//apply force to body
 			
 		// State guard
@@ -88,15 +88,15 @@ if (player.weapon.aiming) { // when aiming down sights
 
 // Angular movement
 //turn_speed += clamp(ang_motion - turn_speed, -turn_speed_max_change, turn_speed_max_change)
-//player.body.rotation += turn_speed	//update body rotation
+//character.body.rotation += turn_speed	//update body rotation
 
-var torque = ang_pid.get(player.body.get_trunk_speed_rot(), ang_motion * 2.5) // angular PID (desired round time 1.98s)
-with (player.body.trunk) physics_apply_torque(-torque)
+var torque = ang_pid.get(character.body.get_trunk_speed_rot(), ang_motion * 2.5) // angular PID (desired round time 1.98s)
+with (character.body.trunk) physics_apply_torque(-torque)
 
 /*var reference_error = -ang_motion*250 - turn_speed // calculate reference for smooth reference
 turn_speed += sign(reference_error) * min(abs(reference_error), 25) // update smooth reference
-var torque = ang_pid.get(player.body.trunk.phy_angular_velocity, turn_speed) // angular PID (desired round time 1.98s)
+var torque = ang_pid.get(character.body.trunk.phy_angular_velocity, turn_speed) // angular PID (desired round time 1.98s)
 with (player.body.trunk) physics_apply_torque(torque)*/
 
 // Set leg angle in appearance animation state
-player.appearance.set_leg_angle(leg_angle)
+character.appearance.set_leg_angle(leg_angle)

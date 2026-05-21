@@ -29,19 +29,19 @@ draw = function(_player) {
 	draw_set_font(font)
 	draw_set_colour(text_colour)
 	
-	// Draw weapon bullets
-	var _weapon = _player.weapon
-	var _weap_w = 100
-	if (instance_exists(_weapon)) {
-		_weap_w = _weapon.draw_hud(id) // draw weapon element in window and return the width of the drawn contents
-	}
+	if (instance_exists(_player.character)) {
 	
-	// Draw HP
-	var _bar_w = 100
-	var _xp = x + cont_margin
-	var _yp = y + cont_margin * 3
-	if (instance_exists(_player.hp)) {
-		var _hp_cont = _player.hp // hp controller of player
+		// Draw weapon bullets
+		var _weapon = _player.character.weapon
+		var _weap_w = 100
+		if (instance_exists(_weapon)) {
+			_weap_w = _weapon.draw_hud(id) // draw weapon element in window and return the width of the drawn contents
+		}
+	
+		// Draw HP
+		var _bar_w = 100
+		var _xp = x + cont_margin
+		var _yp = y + cont_margin * 3
 		_bar_w = max(_bar_w, _weap_w) // hp bar has minimal length of 100 but stretches further of weapon hud is longer
 		
 		_xp += 4 // half of icon spr width
@@ -56,20 +56,21 @@ draw = function(_player) {
 		draw_line(_xp, _yp-1, _xp + _bar_w, _yp-1)
 		
 		draw_set_colour(c_red)
-		if (_hp_cont.hp > 0) {
+		if (_player.character.hp > 0) {
 			draw_line(_xp, _yp - _bar_h/2-1, _xp, _yp + _bar_h/2-1) // left red border line
 			
-			var _hp_w = (_hp_cont.hp / _hp_cont.hp_max) * _bar_w // width of hp spanned over bar width
+			var _hp_w = (_player.character.hp / _player.character.hp_max) * _bar_w // width of hp spanned over bar width
 			draw_line(_xp + _hp_w, _yp - _bar_h/2-1, _xp + _hp_w, _yp + _bar_h/2-1) // right red border line
 			var _hp_h_inner = 2 // inner height of hp bar
 			draw_rectangle(_xp, _yp - _hp_h_inner/2, _xp + _hp_w, _yp + _hp_h_inner/2-1, false) // draw inner bar
 		}
-	}
 	
-	// Resize window width to fit contents snug
-	new_width = (_xp - x) + _bar_w + cont_margin // set new width
-	if (new_width != width) {
-		width = new_width
-		update_vertices()
+		// Resize window width to fit contents snug
+		new_width = (_xp - x) + _bar_w + cont_margin // set new width
+		if (new_width != width) {
+			width = new_width
+			update_vertices()
+		}
+	
 	}
 }

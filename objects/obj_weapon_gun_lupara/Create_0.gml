@@ -49,13 +49,13 @@ function anim_init() {
 	// Initialize weapon animation component
 	anim_component_weapon = create_groundhigh(0, 0, obj_animcomp_weapon_lupara)
 	anim_component_weapon.name = "weapon"
-	anim_component_weapon.player = player
+	anim_component_weapon.character = character
 	
 	// Initialize arm animation components
 	anim_component_arm_left = create_groundhigh(0, 0, obj_animcomp_arm_left)
-	anim_component_arm_left.player = player
+	anim_component_arm_left.character = character
 	anim_component_arm_right = create_groundhigh(0, 0, obj_animcomp_arm_right)
-	anim_component_arm_right.player = player
+	anim_component_arm_right.character = character
 }
 
 // Override reload function to transfer just 1 bullet per call
@@ -68,7 +68,7 @@ function reload() {
 
 // Override fire function, to create bullets at slightly different position for left and right barrel shot
 function fire() {
-	var body = player.body
+	var body = character.body
 	
 	// Left barrel
 	var left_barrel = ammo_mag == 2 // what barrel to shoot from
@@ -81,7 +81,7 @@ function fire() {
 	// Create pellets, direction
 	for (var i = 0; i < stats.fire_pellets; i ++) {
 		var bullet = create_groundhigh(bullet_x, bullet_y, stats.ammo_type)	
-		bullet.player = player												// give id of current player (shooter), for damage handling at other players
+		bullet.character = character												// give id of current character (shooter), for damage handling at other characters
 		
 		if (left_barrel) {
 			bullet.rotation = get_weapon_rotation(body)	+ stats.fire_spread -
@@ -111,8 +111,8 @@ function fire() {
 		stats.fire_volume, stats.fire_volume_dropoff
 	)					
 	
-	player.appearance.fire_event = true										// notify appearance animator of fire event
-	player.appearance.arms_add_force(										// add recoil to arms
+	character.appearance.fire_event = true										// notify appearance animator of fire event
+	character.appearance.arms_add_force(										// add recoil to arms
 		lengthdir_x(-stats.fire_recoil, get_weapon_rotation(body)),
 		lengthdir_y(-stats.fire_recoil, get_weapon_rotation(body))
 	)

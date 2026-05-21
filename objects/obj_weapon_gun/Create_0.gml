@@ -23,12 +23,15 @@ var _stats_default = {
 stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
 
 // Weapon state
+aiming = false		// whether aiming weapon (aiming down sight)
 ammo_reserve = 0
 ammo_mag = 0
 trigger = false
 fire_ready = false
 fire_readying_tick = 0
 chambered = false
+input_reload = false
+input_firemode = false
 
 // Draw weapon state at hud (hud object given as argument)
 function draw_hud(_parent) {
@@ -48,7 +51,7 @@ function draw_hud(_parent) {
 
 // Fire bullet
 function fire() {
-	var body = player.body
+	var body = character.body
 	
 	// Fire location
 	var bullet_x = get_weapon_barrel_x(body)
@@ -56,7 +59,7 @@ function fire() {
 	
 	// Create bullet
 	var bullet = create_groundhigh(bullet_x, bullet_y, stats.ammo_type)	
-	bullet.player = player												// give id of current player (shooter), for damage handling at other players
+	bullet.character = character												// give id of current character (shooter), for damage handling at other characters
 	bullet.rotation = get_weapon_rotation(body)							// give correct rotation and speed
 	bullet.speed_x = lengthdir_x(stats.fire_speed, bullet.rotation)		// set speed of bullet
 	bullet.speed_y = lengthdir_y(stats.fire_speed, bullet.rotation)
@@ -68,8 +71,8 @@ function fire() {
 		stats.fire_volume, stats.fire_volume_dropoff
 	)					
 	
-	player.appearance.fire_event = true									// notify appearance animator of fire event
-	player.appearance.arms_add_force(									// add recoil to arms
+	character.appearance.fire_event = true									// notify appearance animator of fire event
+	character.appearance.arms_add_force(									// add recoil to arms
 		lengthdir_x(-stats.fire_recoil, get_weapon_rotation(body)),
 		lengthdir_y(-stats.fire_recoil, get_weapon_rotation(body))
 	)
@@ -87,7 +90,7 @@ function reload() {
 
 // Create reload sound at weapon
 function reload_sound(_sound_index) {
-	var body = player.body
+	var body = character.body
 	
 	sound_local(_sound_index, get_weapon_x(body), get_weapon_y(body), 200, 500)
 }

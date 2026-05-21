@@ -1,16 +1,13 @@
 // obj_weapon (interface): Defines a weapon. Contains weapon constants, weapon logic,
 // animation and draw logic for weapon (with arms).
 
-// Player reference
-player = noone
+// Character reference
+character = noone
 
 // Weapon stats
 stats_default = {}	// default stats of bare weapon
 stats = {}			// current (modified) stats
 mods = {}			// struct mapping mod slot to its current mod (as string) (maps to undefined if no mod)
-
-// Weapon state
-aiming = false		// whether aiming weapon (aiming down sight)
 
 // Animation state
 anim_frame = 0			// frame id, in case of scripted animation
@@ -29,9 +26,9 @@ anim_draw_order = ds_list_create()	// list of animation components to be drawn, 
 function anim_init() {
 	// Initialize arm animation components
 	anim_component_arm_left = create_groundhigh(0, 0, obj_animcomp_arm_left)
-	anim_component_arm_left.player = player
+	anim_component_arm_left.character = character
 	anim_component_arm_right = create_groundhigh(0, 0, obj_animcomp_arm_right)
-	anim_component_arm_right.player = player
+	anim_component_arm_right.character = character
 }
 
 // Draw weapon at _body
@@ -80,7 +77,7 @@ function new_anim_draw_order(_component_name1, _component_name2, etc) {
 			} else {
 				var component = create_groundhigh(0, 0, obj_animcomp) // create new component with name
 				component.name = name
-				component.player = player
+				component.character = character
 			}
 			ds_list_add(new_draw_order, component)	// add to new draw_order
 			anim_components[? name] = component		// set in active components map

@@ -1,55 +1,54 @@
 // Create in-game related player objects (so outside of lobby room)
-if (room != rm_lobby) { // if not in lobby room
+if (global.ingame()) { // if in in-game room
 	
-	
-	// Init players
-	with (obj_player) { // initialize players
-		hp = create_controllers(obj_hp) // init camera and hp
-		hp.player = id
-		camera = create_camera(0, 0)
-	
-		weapon = create_controllers(obj_weapon_gun_usp)
-		weapon.player = id
-		weapon.anim_init()
-		//weapon.set_mod("barrel", "silencer")
+	// Gather team spawns in lists
+	for (var i = 0; i < teams_number; i ++)
+		ds_list_clear(team_spawns[i]) // clear lists
 		
-	}
-
-	// Populate teams
-	teams = array_create(teams_number) // array of teams (lists) of players
-	var _player_i = 0 // index of player inst
-	for (var i = 0; i < teams_number; i ++) {
-		teams[i] = ds_list_create()
-		repeat (team_sizes[i]) {
-			var _player = instance_find(obj_player, _player_i) // find next player
-			var _team_color = team_colors[i]
-			ds_list_add(teams[i], _player) // add to team
-			_player.set_team(i, _team_color) // set team of player
-			_player_i += 1
-		}
+	with (obj_marker_team_spawn) {
+		if (team_id < other.teams_number) // if team is used
+			ds_list_add(other.team_spawns[team_id], id) // for every team spawn marker add to list
 	}
 	
-	with (obj_player) { // initialize players
-		if (team_id == 0) 
-			appearance = create_controllers(obj_appearance)
-		else
-			appearance = create_controllers(obj_appearance_bear)
-		appearance.player = id
+	// Create characters for each team
+	for (var _ti = 0; _ti < teams_number; _ti ++) {
+		for (var i = 0; i < lives_init; i ++) { // for each live, create character
+			var _spawn = team_spawns[_ti][|i]
+			
+			var _character = create_groundhigh(_spawn.x, _spawn.y, obj_character)
+			_character.rotation = _spawn.image_angle
+			_character.team_id = _ti
+			ds_list_add(team_reserves[_ti], _character) // add to army list
+			
+			with (_character) {
+				if (_ti == 0)
+					appearance = create_controllers(obj_appearance_pip)
+				else if (_ti == 1)
+					appearance = create_controllers(obj_appearance_bear)
+			
+				weapon = create_controllers(obj_weapon_gun_usp) // characters start with usp
+				weapon.character = id
+				weapon.anim_init()		
+				
+				initialize()
+			}
+			
+		}
 	}
 
 	// Start spawn teams
-	for (var _ti = 0; _ti < teams_number; _ti ++) {
-		var _team_spawns = ds_list_create()
-		with (obj_marker_team_spawn) {
-			if (team_id == _ti) ds_list_add(_team_spawns, id) // add team spawns with corresponding team id
-		}
+	//for (var _ti = 0; _ti < teams_number; _ti ++) {
+	//	var _team_spawns = ds_list_create()
+	//	with (obj_marker_team_spawn) {
+	//		if (team_id == _ti) ds_list_add(_team_spawns, id) // add team spawns with corresponding team id
+	//	}
 	
-		for (var i = 0; i < ds_list_size(teams[_ti]); i ++) { // spawn player at corresponding team spawn
-			var _team_spawn = _team_spawns[|i]
-			var _player = teams[_ti][|i]
-			_player.spawn(_team_spawn.x, _team_spawn.y, _team_spawn.image_angle)
-		}
+	//	for (var i = 0; i < ds_list_size(teams[_ti]); i ++) { // spawn player at corresponding team spawn
+	//		var _team_spawn = _team_spawns[|i]
+	//		var _player = teams[_ti][|i]
+	//		_player.spawn(_team_spawn.x, _team_spawn.y, _team_spawn.image_angle)
+	//	}
 	
-		ds_list_destroy(_team_spawns)
-	}
+	//	ds_list_destroy(_team_spawns)
+	//}
 }

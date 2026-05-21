@@ -1,19 +1,19 @@
 {
   "$GMObject":"",
-  "%Name":"obj_input_p2",
+  "%Name":"obj_player_p2",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_input_p2",
+  "name":"obj_player_p2",
   "overriddenProperties":[],
   "parent":{
     "name":"player",
     "path":"folders/Code/player.yy",
   },
   "parentObjectId":{
-    "name":"obj_input",
-    "path":"objects/obj_input/obj_input.yy",
+    "name":"obj_player",
+    "path":"objects/obj_player/obj_player.yy",
   },
   "persistent":true,
   "physicsAngularDamping":0.1,

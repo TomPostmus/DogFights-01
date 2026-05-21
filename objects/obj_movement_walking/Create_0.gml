@@ -8,8 +8,8 @@ event_inherited()
 //Pendulum model: pendulum-like model for leg sprites for naturally swinging back legs. Used in idle and try state
 //Sine model: used in walk state to periodically swing legs
 
-// Player reference
-player = noone
+// Character reference
+character = noone
 
 // Movement constants
 lin_static_friction = 0.35					//linear friction when standing still
@@ -52,7 +52,7 @@ angular_pid_smooth_reference = 0			//smooth reference of angular pid, for smooth
 //Helper functions
 {
 	function forward_friction(_max_friction) {
-		with (player.body) {
+		with (character.body) {
 			var forwards_velocity = get_speed() * dcos(angle_difference(get_speed_dir(), get_trunk_rotation()));
 			var capped_forwards_velocity = min(_max_friction, abs(forwards_velocity)) * sign(forwards_velocity);
 			add_speed(-lengthdir_x(capped_forwards_velocity, get_trunk_rotation()),
@@ -61,7 +61,7 @@ angular_pid_smooth_reference = 0			//smooth reference of angular pid, for smooth
 	}
 
 	function sideways_friction(_max_friction) {
-		with (player.body) {
+		with (character.body) {
 			var sideways_velocity = get_speed() * dcos(angle_difference(get_speed_dir(), get_trunk_rotation() - 90))
 			var capped_linear_velocity = min(_max_friction, abs(sideways_velocity)) * sign(sideways_velocity);
 			add_speed(-lengthdir_x(capped_linear_velocity, get_trunk_rotation() - 90),
@@ -70,7 +70,7 @@ angular_pid_smooth_reference = 0			//smooth reference of angular pid, for smooth
 	}
 
 	function get_forwards_velocity() {
-		with (player.body) {
+		with (character.body) {
 			return get_speed() * dcos(angle_difference(get_speed_dir(), get_trunk_rotation()));
 		}
 	}

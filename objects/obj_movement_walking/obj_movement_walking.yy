@@ -10,8 +10,8 @@
   "name":"obj_movement_walking",
   "overriddenProperties":[],
   "parent":{
-    "name":"player",
-    "path":"folders/Code/player.yy",
+    "name":"movement",
+    "path":"folders/Code/player/movement.yy",
   },
   "parentObjectId":{
     "name":"obj_movement",

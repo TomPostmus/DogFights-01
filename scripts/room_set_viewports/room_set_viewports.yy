@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"room_set_viewports",
   "parent":{
-    "name":"cameras_and_views",
-    "path":"folders/Code/cameras_and_views.yy",
+    "name":"viewports",
+    "path":"folders/Code/viewports.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

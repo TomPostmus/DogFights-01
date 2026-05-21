@@ -2,7 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 
 function rrt_update_tree(){
-	var body = player.body
+	var body = character.body
 	var _body_x = body.get_x()
 	var _body_y = body.get_y()
 	var _body_rot = body.get_rotation()

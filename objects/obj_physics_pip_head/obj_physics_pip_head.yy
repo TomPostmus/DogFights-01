@@ -8,8 +8,8 @@
   "name":"obj_physics_pip_head",
   "overriddenProperties":[],
   "parent":{
-    "name":"body_phybodies",
-    "path":"folders/Code/player/body_phybodies.yy",
+    "name":"body",
+    "path":"folders/Code/player/body.yy",
   },
   "parentObjectId":{
     "name":"obj_phygroup_half",

@@ -14,7 +14,7 @@ with (hitmask_head) {
 
 // Update arm hitmasks
 with (hitmask_arm_left) {
-	var arm_anim_component = player.weapon.anim_component_arm_left
+	var arm_anim_component = character.weapon.anim_component_arm_left
 	x = arm_anim_component.get_x(other)
 	y = arm_anim_component.get_y(other)
 	image_angle = arm_anim_component.get_arm_rotation(other)
@@ -22,7 +22,7 @@ with (hitmask_arm_left) {
 }
 
 with (hitmask_arm_right) {
-	var arm_anim_component = player.weapon.anim_component_arm_right
+	var arm_anim_component = character.weapon.anim_component_arm_right
 	x = arm_anim_component.get_x(other)
 	y = arm_anim_component.get_y(other)
 	image_angle = arm_anim_component.get_arm_rotation(other)

@@ -26,8 +26,9 @@ hp = clamp(hp, 0, hp_max) // keep in boundaries
 
 // Die
 if (hp <= 0) {
-	if (player.alive) {
-		player.die()
-		obj_game.register_kik(player, last_affector) // register kik at game object (cute word for kill)
-	}
+	if (instance_exists(player))
+		obj_game.register_kik(player, damage_last_affector) // register kik at game object (cute word for kill)
+
+	appearance.death_effect(body) // death effect
+	instance_destroy() // destroy self
 }

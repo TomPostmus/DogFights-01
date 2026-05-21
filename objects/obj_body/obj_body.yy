@@ -11,8 +11,8 @@
   "name":"obj_body",
   "overriddenProperties":[],
   "parent":{
-    "name":"player",
-    "path":"folders/Code/player.yy",
+    "name":"body",
+    "path":"folders/Code/player/body.yy",
   },
   "parentObjectId":null,
   "persistent":false,

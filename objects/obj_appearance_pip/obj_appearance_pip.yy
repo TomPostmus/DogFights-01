@@ -9,8 +9,8 @@
   "name":"obj_appearance_pip",
   "overriddenProperties":[],
   "parent":{
-    "name":"player",
-    "path":"folders/Code/player.yy",
+    "name":"appearance",
+    "path":"folders/Code/player/appearance.yy",
   },
   "parentObjectId":{
     "name":"obj_appearance",

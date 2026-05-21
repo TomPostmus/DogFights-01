@@ -1,4 +1,4 @@
-player = noone
+character = noone
 damage = undefined
 weight = 0.04
 

@@ -23,7 +23,7 @@ for (var prog = 0; prog < dist + precision; prog += precision) {
 		instance_position_list(x, y, obj_hitmask, hit_masks, false)				//check collision with hitmasks
 		for (var i = 0; i < ds_list_size(hit_masks); i ++) {
 			if (hit_masks[|i].height == height &&								//check if on same height level
-				hit_masks[|i].player != player) {								
+				hit_masks[|i].character != character) {								
 				hit = hit_masks[|i]
 				break
 			}

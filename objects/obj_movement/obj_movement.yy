@@ -9,8 +9,8 @@
   "name":"obj_movement",
   "overriddenProperties":[],
   "parent":{
-    "name":"player",
-    "path":"folders/Code/player.yy",
+    "name":"movement",
+    "path":"folders/Code/player/movement.yy",
   },
   "parentObjectId":null,
   "persistent":false,

@@ -42,13 +42,13 @@ function anim_init() {
 	// Initialize weapon animation component
 	anim_component_weapon = create_groundhigh(0, 0, obj_animcomp_weapon_usp)
 	anim_component_weapon.name = "weapon"
-	anim_component_weapon.player = player
+	anim_component_weapon.character = character
 	
 	// Initialize arm animation components
 	anim_component_arm_left = create_groundhigh(0, 0, obj_animcomp_arm_left)
-	anim_component_arm_left.player = player
+	anim_component_arm_left.character = character
 	anim_component_arm_right = create_groundhigh(0, 0, obj_animcomp_arm_right)
-	anim_component_arm_right.player = player
+	anim_component_arm_right.character = character
 }
 
 // Implement mod stats function

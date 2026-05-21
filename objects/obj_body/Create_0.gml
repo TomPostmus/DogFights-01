@@ -1,9 +1,9 @@
-// obj_body: Embodiment of player. Contains spatial attributes of the body.
+// obj_body: Embodiment of character. Contains spatial attributes of the body.
 // Can be in the normal physical state, or a non-physical representation of
-// the player.
+// the character.
 
-// Player reference, body does not necessarily have player
-player = noone
+// Character reference, body does not necessarily have character
+character = noone
 
 // Appearance reference
 appearance = noone
@@ -35,18 +35,6 @@ head_rotation = 0
 // Arms offset in animation (for animating recoil and sway)
 arms_offset_x = 0
 arms_offset_y = 0
-
-// Readable movement variables
-/*rotation = 0
-speed_x = 0
-speed_y = 0
-
-// Previous variables
-previous_x = undefined
-previous_y = undefined
-previous_rot = undefined
-previous_speed_x = undefined
-previous_speed_y = undefined*/
 
 // Speed change
 previous_speed_x = 0
@@ -84,18 +72,18 @@ function create_physical_body() {
 	trunk_head_revolute = physics_joint_revolute_create(trunk, head, head.x, head.y, -appearance.head_rotation_limit, appearance.head_rotation_limit, true, 0, 0, false, false)
 	
 	hitmask_trunk = create_groundhigh(x, y, appearance.trunk_hitmask_obj)
-	hitmask_trunk.player = player
+	hitmask_trunk.character = character
 	hitmask_head = create_groundhigh(x + lengthdir_x(appearance.head_offset, rotation), y + lengthdir_y(appearance.head_offset, rotation), appearance.head_hitmask_obj)
-	hitmask_head.player = player
+	hitmask_head.character = character
 	hitmask_arm_left = create_groundhigh(x, y, obj_hitmask_arm_left)
-	hitmask_arm_left.player = player
+	hitmask_arm_left.character = character
 	hitmask_arm_right = create_groundhigh(x, y, obj_hitmask_arm_right)
-	hitmask_arm_right.player = player
+	hitmask_arm_right.character = character
 }
 
 // Hit by _bullet on _body_part ("head", "trunk", "arm_left", etc...)
 function hit(_bullet, _body_part) {
-	obj_game.register_damage(id, _bullet.player, _bullet.damage)
+	obj_game.register_damage(id, _bullet.character, _bullet.damage)
 	
 	if (physical) {
 		if (_body_part == "head") { // for head hit apply impulse to head

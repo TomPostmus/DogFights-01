@@ -10,10 +10,10 @@ event_inherited()
 }*/
 
 // Update weapon state
-if (instance_exists(player) && instance_exists(player.body)) {
+if (instance_exists(character) && instance_exists(character.body)) {
 	var init = state != state_prev
 	state_prev = state
-	var body = player.body
+	var body = character.body
 	
 	if (state == "idle") {
 		// Init
@@ -22,7 +22,6 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		}
 		
 		// Aiming down sight
-		aiming = player.input.input_attack2
 		var _goal_pos_x = aiming ? ads_pos_x : neut_pos_x // goal of aiming position
 		var _goal_pos_y = aiming ? ads_pos_y : neut_pos_y
 	
@@ -41,7 +40,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		} else if (!chambered && ammo_mag > 0) {				// leveraction for empty chamber (chamber is autom. refilled after fire)
 			state = "leveraction"
 		} else if (stats.mag_size - ammo_mag > 0 &&
-			ammo_reserve > 0 && player.input.input_reload) {	// manual reload on reload input
+			ammo_reserve > 0 && input_reload) {	// manual reload on reload input
 			state = "reload"
 		} else if (chambered && trigger && fire_ready) {		// fire bullet
 			fire()

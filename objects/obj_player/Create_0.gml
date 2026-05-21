@@ -1,28 +1,38 @@
 // obj_player: defines a player
 // Has a character that it controls
+// Player object represents human player (or AI player that simulates human player)
 
 // References
 character = noone
 profile = noone
 input = noone
-camera = noone
+camera = create_camera(0, 0)
 
 // Player id, id of player in game
 player_id = undefined
 team_id = undefined
-
-// Inventory
+team_color = undefined
 
 // Player state
 type = undefined			//type of player, e.g. dog or spectator or hacker
-alive = false				//if type dog, whether alive or dead, or not yet spawned
-movement_mode = undefined	//control mode of dog, e.g. walking or driving
+
+// Input state
+move_input = 0			// player movement over longitudal axis (backwards or forwards), ranges from -1 to 1
+turn_input = 0			// angular movement input, ranges from -1 to 1
+
+input_reload = false	// input for reloading weapon
+input_attack = false	// input of primary attack of weapon
+input_attack2 = false	// input for aiming weapon, or secondary attack
+input_firemode = false	// input to switch firemode for weapon
+
+//alive = false				//if type dog, whether alive or dead, or not yet spawned
+//movement_mode = undefined	//control mode of dog, e.g. walking or driving
 
 // Spawn player
 //function spawn(_spawn_x, spawn_y, spawn_rot) {
 //	if type == "dog" {
 //		alive = true
-//		hp.init_hp()
+//		hp.initialize()
 		
 //		var _vars = {rotation: spawn_rot} // var struct to give to creation
 //		body = create_groundhigh(_spawn_x, spawn_y, obj_body, _vars)
@@ -35,13 +45,6 @@ movement_mode = undefined	//control mode of dog, e.g. walking or driving
 //		}
 //	}
 //}
-
-// Set team that player belongs to
-function set_team(_team_id, _team_color) {
-	team_id = _team_id
-	//appearance.team_collar = true // enable team identification collar
-	//appearance.team_color = _team_color
-}
 
 // Kill body
 //function die() {

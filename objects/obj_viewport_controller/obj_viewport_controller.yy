@@ -11,8 +11,8 @@
   "name":"obj_viewport_controller",
   "overriddenProperties":[],
   "parent":{
-    "name":"cameras_and_views",
-    "path":"folders/Code/cameras_and_views.yy",
+    "name":"viewports",
+    "path":"folders/Code/viewports.yy",
   },
   "parentObjectId":null,
   "persistent":false,

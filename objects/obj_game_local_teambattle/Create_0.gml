@@ -1,13 +1,26 @@
 event_inherited()
 
-teams = undefined // array of lists that are the teams
+// Game stats
 friendly_fire = false
 teams_number = 2 // how many teams
+score_win = 60 // score for winning
+lives_init = 8 // how many lives each team begins with (army size)
+
+// Team vars
 team_colors = [c_red, c_blue, c_green] // team identification colors
-var _players_number = instance_number(obj_player)
+team_scores = array_create(teams_number, 0) // array keeping track of scores of teams
+team_reserves = array_create(teams_number, undefined) // array of lists of reserves (remaining soldier/characters) that teams have
+team_spawns = array_create(teams_number, undefined)
+
+for (var i = 0; i < teams_number; i ++) {
+	team_spawns[i] = ds_list_create() // create lists
+	team_reserves[i] = ds_list_create()
+}
+
+// Determine team sizes
+var _players_number = ds_list_size(obj_lobby.players)
 var _team_size = floor(_players_number / teams_number) // floored average size of teams
 var _remainder = _players_number - _team_size * teams_number // how many remaining players (after dividing in equal portions)
-
 team_sizes = array_create(teams_number) // array of team sizes (players divided across teams equally, with remainder)
 for (var i = 0; i < teams_number; i ++) { // determine distribution
 	if (_remainder > 0) {
@@ -17,14 +30,21 @@ for (var i = 0; i < teams_number; i ++) { // determine distribution
 		team_sizes[i] = _team_size
 	}
 }
-team_sizes[0] = 2
-team_sizes[1] = _players_number - team_sizes[0]
 
-score_win = 60 // score for winning
-team_scores = array_create(teams_number, 0) // array keeping track of scores of teams
-
-lives_init = 16 // how many lives each team begins with
-team_lives = array_create(teams_number, lives_init) // array keeping track of team lives
+// Populate teams
+teams = array_create(teams_number) // array of teams (lists) of players
+var _player_i = 0 // index of player inst
+for (var i = 0; i < teams_number; i ++) {
+	teams[i] = ds_list_create()
+	repeat (team_sizes[i]) {
+		var _player = instance_find(obj_player, _player_i) // find next player
+		_player.team_id = i
+		_player.team_color = team_colors[i]
+		
+		ds_list_add(teams[i], _player) // add to team
+		_player_i += 1
+	}
+}
 
 // Register damage, check team ids and decide whether to deal damage
 function register_damage(_p_affected, _p_affector, _damage) {
@@ -59,12 +79,13 @@ function draw_hud(_parent) {
 	
 	var _max_w = 0 // compute maximum string width between lives
 	for (var i = 0; i < teams_number; i ++) {
-		if (string_width(team_lives[i]) > _max_w)
-			_max_w = string_width(team_lives[i])
+		var _lives = ds_list_size(team_reserves[i])
+		if (string_width(_lives) > _max_w)
+			_max_w = string_width(_lives)
 	}
 	
 	for (var i = 0; i < teams_number; i ++) {
-		var _lives = team_lives[i]
+		var _lives = ds_list_size(team_reserves[i])
 		var _yp = _parent.y + _m + i*_m*2
 		var _xp = _parent.x + _m + _max_w / 2
 		

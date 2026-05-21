@@ -22,7 +22,7 @@ function draw_hud(_parent) {
 
 // Override fire function
 function fire() {	
-	var body = player.body
+	var body = character.body
 	
 	// Fire location
 	var bullet_x = get_weapon_barrel_x(body)
@@ -31,7 +31,7 @@ function fire() {
 	// Create pellets
 	for (var i = 0; i < stats.fire_pellets; i ++) {
 		var bullet = create_groundhigh(bullet_x, bullet_y, stats.ammo_type)	
-		bullet.player = player												// give id of current player (shooter), for damage handling at other players
+		bullet.character = character												// give id of current character (shooter), for damage handling at other characters
 		bullet.rotation = get_weapon_rotation(body)	+ -stats.fire_spread +
 			stats.fire_spread * 2* (i/stats.fire_pellets) +					// spread pellets across entire spread range
 			random_range(-stats.fire_spread/6, stats.fire_spread/6)			// and extra small random term
@@ -54,8 +54,8 @@ function fire() {
 		stats.fire_volume, stats.fire_volume_dropoff
 	)					
 	
-	player.appearance.fire_event = true										// notify appearance animator of fire event
-	player.appearance.arms_add_force(										// add recoil to arms
+	character.appearance.fire_event = true										// notify appearance animator of fire event
+	character.appearance.arms_add_force(										// add recoil to arms
 		lengthdir_x(-stats.fire_recoil, get_weapon_rotation(body)),
 		lengthdir_y(-stats.fire_recoil, get_weapon_rotation(body))
 	)
