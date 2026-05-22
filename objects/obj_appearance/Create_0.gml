@@ -1,8 +1,8 @@
-// obj_player_appearance: Defines a player appearance, e.g. different dog races or a pig. 
+// obj_appearance: Defines a character appearance, e.g. different dog races or a pig. 
 // Contains appearance data, animation logic and draw logic for appearance.
 
-// Player reference
-player = noone
+// Character reference
+character = noone
 
 // Appearance constants
 spr_body = spr_pip_trunk					//constants on sprites
@@ -82,7 +82,7 @@ function arms_add_force(_force_x, _force_y) {
 function draw(_body) {
 	
 	// Draw weapon
-	player.weapon.draw(_body)
+	character.weapon.draw(_body)
 	
 	// Draw body
 	draw_sprite_ext(spr_body, anim_body, _body.get_x(), _body.get_y(), 1, 1, _body.get_trunk_rotation(), c_white, 1)

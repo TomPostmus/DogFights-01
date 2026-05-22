@@ -1,9 +1,9 @@
 // Update animation state
-if (instance_exists(player) && instance_exists(player.body)) {
-	var body = player.body
+if (instance_exists(character) && instance_exists(character.body)) {
+	var body = character.body
 	
 	//Breathing
-	if (player.input.move_input != 0) breath_exhaustion += 0.003
+	if (character.movement.move_input != 0) breath_exhaustion += 0.003
 	else breath_exhaustion -= 0.001
 	breath_exhaustion = clamp(breath_exhaustion, 0, 10)
 	
@@ -50,7 +50,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 			blink_tick = blink_time
 			blink = true
 		}
-		if (player.weapon.aiming) { // if aiming down sight
+		if (character.weapon.aiming) { // if aiming down sight
 			eye_right_closed = true // close right eye
 		}
 	}
@@ -80,11 +80,11 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		arms_flex = false
 	
 	// Flex when change in move input
-	if (arms_move_input_previous != player.input.move_input) {
+	if (arms_move_input_previous != character.movement.move_input) {
 		arms_flex = true						// flex when out of range
 		arms_flex_timer = 10
 	}
-	arms_move_input_previous = player.input.move_input
+	arms_move_input_previous = character.movement.move_input
 	
 	// Flex when fire event
 	if (fire_event) {

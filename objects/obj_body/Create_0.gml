@@ -72,18 +72,18 @@ function create_physical_body() {
 	trunk_head_revolute = physics_joint_revolute_create(trunk, head, head.x, head.y, -appearance.head_rotation_limit, appearance.head_rotation_limit, true, 0, 0, false, false)
 	
 	hitmask_trunk = create_groundhigh(x, y, appearance.trunk_hitmask_obj)
-	hitmask_trunk.character = character
+	hitmask_trunk.body = id
 	hitmask_head = create_groundhigh(x + lengthdir_x(appearance.head_offset, rotation), y + lengthdir_y(appearance.head_offset, rotation), appearance.head_hitmask_obj)
-	hitmask_head.character = character
+	hitmask_head.body = id
 	hitmask_arm_left = create_groundhigh(x, y, obj_hitmask_arm_left)
-	hitmask_arm_left.character = character
+	hitmask_arm_left.body = id
 	hitmask_arm_right = create_groundhigh(x, y, obj_hitmask_arm_right)
-	hitmask_arm_right.character = character
+	hitmask_arm_right.body = id
 }
 
 // Hit by _bullet on _body_part ("head", "trunk", "arm_left", etc...)
 function hit(_bullet, _body_part) {
-	obj_game.register_damage(id, _bullet.character, _bullet.damage)
+	obj_game.register_damage(character, _bullet.team_id, _bullet.player, _bullet.damage)
 	
 	if (physical) {
 		if (_body_part == "head") { // for head hit apply impulse to head

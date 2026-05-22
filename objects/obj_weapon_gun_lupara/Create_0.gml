@@ -81,7 +81,9 @@ function fire() {
 	// Create pellets, direction
 	for (var i = 0; i < stats.fire_pellets; i ++) {
 		var bullet = create_groundhigh(bullet_x, bullet_y, stats.ammo_type)	
-		bullet.character = character												// give id of current character (shooter), for damage handling at other characters
+		bullet.player = character.player												// give id of player(shooter)
+		bullet.ignore_body = character.body // give body to know which body to ignore
+		bullet.team_id = character.team_id
 		
 		if (left_barrel) {
 			bullet.rotation = get_weapon_rotation(body)	+ stats.fire_spread -

@@ -18,13 +18,17 @@ if (global.ingame()) { // if in in-game room
 			var _character = create_groundhigh(_spawn.x, _spawn.y, obj_character)
 			_character.rotation = _spawn.image_angle
 			_character.team_id = _ti
+			_character.hp_protection = true // enable HP protection by default (disabled when player takes over)
 			ds_list_add(team_reserves[_ti], _character) // add to army list
 			
 			with (_character) {
-				if (_ti == 0)
+				if (_ti == 0) {
 					appearance = create_controllers(obj_appearance_pip)
-				else if (_ti == 1)
+					appearance.character = id
+				} else if (_ti == 1) {
 					appearance = create_controllers(obj_appearance_bear)
+					appearance.character = id
+				}
 			
 				weapon = create_controllers(obj_weapon_gun_usp) // characters start with usp
 				weapon.character = id

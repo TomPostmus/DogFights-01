@@ -59,7 +59,9 @@ function fire() {
 	
 	// Create bullet
 	var bullet = create_groundhigh(bullet_x, bullet_y, stats.ammo_type)	
-	bullet.character = character												// give id of current character (shooter), for damage handling at other characters
+	bullet.player = character.player												// give id of player(shooter)
+	bullet.ignore_body = character.body // give body to know which body to ignore
+	bullet.team_id = character.team_id
 	bullet.rotation = get_weapon_rotation(body)							// give correct rotation and speed
 	bullet.speed_x = lengthdir_x(stats.fire_speed, bullet.rotation)		// set speed of bullet
 	bullet.speed_y = lengthdir_y(stats.fire_speed, bullet.rotation)

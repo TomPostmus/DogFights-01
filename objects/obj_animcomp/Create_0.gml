@@ -1,8 +1,8 @@
 // obj_animcomp: Data for animation component. Could be a weapon, arm,
 // attachment or any other animation object.
 
-// Player reference
-player = noone
+// Character reference
+character = noone
 
 // Name
 name = undefined

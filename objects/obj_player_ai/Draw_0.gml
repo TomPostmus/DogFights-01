@@ -2,9 +2,9 @@ if (!global.debug)
 	exit
 
 // Draw target and state
-if (instance_exists(player) && instance_exists(player.body)) {
-	var xp = player.body.get_x()
-	var yp = player.body.get_y()
+if (instance_exists(character) && instance_exists(character.body)) {
+	var xp = character.body.get_x()
+	var yp = character.body.get_y()
 
 //	if (instance_exists(target)) {
 //		draw_set_colour(c_red)

@@ -21,6 +21,7 @@ hp_regen_downtime = 150
 hp_regen_amount = 10
 hp_regen_time = 80
 hp_regen_tick = 0
+hp_protection = false // whether HP is protected (i.e. no damage can be done)
 
 // Health state
 hp = hp_max
@@ -34,14 +35,19 @@ damage_last_affector = noone // last affector player that dealt damage
 function initialize() {	
 	var _vars = {rotation: rotation} // var struct to give to creation
 	body = create_groundhigh(x, y, obj_body, _vars)
-	body.player = id
+	body.character = id
 	body.appearance = appearance
 	body.set_physical(true)
 }
 
 // Register damage
 function register_damage(_p_affector, _damage) {
-	hp -= _damage
-	ds_list_add(damage_bill, [_p_affector, _damage]) // add entry to bill
-	damage_last_affector = _p_affector // remember the player as last affector player that dealt damage
+	if (!hp_protection) {
+		hp -= _damage
+		
+		if (instance_exists(_p_affector)) { // if affector player was given with bullet
+			ds_list_add(damage_bill, [_p_affector, _damage]) // add entry to bill
+			damage_last_affector = _p_affector // remember the player as last affector player that dealt damage
+		}
+	}
 }

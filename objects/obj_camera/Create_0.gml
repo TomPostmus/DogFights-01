@@ -1,5 +1,8 @@
 // obj_camera: Defines vision location. Handles camera movement and logic.
 
+// Player reference
+player = noone
+
 // Camera parameters
 move_speed = 0.20
 zoom_speed = 0.20

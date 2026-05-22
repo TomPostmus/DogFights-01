@@ -144,8 +144,6 @@
     {"id":{"name":"obj_httprequest","path":"objects/obj_httprequest/obj_httprequest.yy",},},
     {"id":{"name":"obj_hud","path":"objects/obj_hud/obj_hud.yy",},},
     {"id":{"name":"obj_init","path":"objects/obj_init/obj_init.yy",},},
-    {"id":{"name":"obj_input_ai","path":"objects/obj_input_ai/obj_input_ai.yy",},},
-    {"id":{"name":"obj_input","path":"objects/obj_input/obj_input.yy",},},
     {"id":{"name":"obj_lobby","path":"objects/obj_lobby/obj_lobby.yy",},},
     {"id":{"name":"obj_lowsolid_circle","path":"objects/obj_lowsolid_circle/obj_lowsolid_circle.yy",},},
     {"id":{"name":"obj_lowsolid_square","path":"objects/obj_lowsolid_square/obj_lowsolid_square.yy",},},

@@ -2,7 +2,7 @@
 if (instance_exists(player) && instance_exists(player.character)) {
 	var _aiming = 0
 	if (instance_exists(player.character.weapon))
-		_aiming = aiming * stats.aim_dist
+		_aiming = player.character.weapon.aiming * player.character.weapon.stats.aim_dist
 	
 	if (instance_exists(player.character.body)) {
 		var _forward = 10 + _aiming // how much to position camera forward in player looking orientation

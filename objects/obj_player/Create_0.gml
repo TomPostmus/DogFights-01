@@ -5,8 +5,7 @@
 // References
 character = noone
 profile = noone
-input = noone
-camera = create_camera(0, 0)
+camera = noone // created at start of room
 
 // Player id, id of player in game
 player_id = undefined

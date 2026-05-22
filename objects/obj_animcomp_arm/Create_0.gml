@@ -5,7 +5,7 @@ right = false // whether a right arm
 // Override draw function
 function draw(_body) {
 	if (is_visible) {
-		var appearance = player.appearance
+		var appearance = character.appearance
 		
 		// Draw hand and arm
 		var hand_base = sprite_get_xoffset(appearance.spr_hand)			// offset from center of hand to base
@@ -19,7 +19,7 @@ function draw(_body) {
 
 // Absolute shoulder position
 function get_shoulder_x(_body) {
-	var appearance = player.appearance
+	var appearance = character.appearance
 	
 	// Relative shoulder position
 	var relative_x = appearance.arms_offset
@@ -30,7 +30,7 @@ function get_shoulder_x(_body) {
 }
 
 function get_shoulder_y(_body) {
-	var appearance = player.appearance
+	var appearance = character.appearance
 	
 	// Relative shoulder position
 	var relative_x = appearance.arms_offset
@@ -48,7 +48,7 @@ function get_arm_rotation(_body) {
 
 // Get image index of arm to match distance from shoulder to end point
 function get_arm_index(_body) {
-	var appearance = player.appearance
+	var appearance = character.appearance
 		
 	// Determine arm sprite index based on distance
 	var dist = point_distance(get_shoulder_x(_body), get_shoulder_y(_body),

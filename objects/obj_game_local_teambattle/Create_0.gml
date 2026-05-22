@@ -11,6 +11,7 @@ team_colors = [c_red, c_blue, c_green] // team identification colors
 team_scores = array_create(teams_number, 0) // array keeping track of scores of teams
 team_reserves = array_create(teams_number, undefined) // array of lists of reserves (remaining soldier/characters) that teams have
 team_spawns = array_create(teams_number, undefined)
+team_lives = array_create(teams_number, lives_init) // array keeping track of team lives
 
 for (var i = 0; i < teams_number; i ++) {
 	team_spawns[i] = ds_list_create() // create lists
@@ -47,9 +48,9 @@ for (var i = 0; i < teams_number; i ++) {
 }
 
 // Register damage, check team ids and decide whether to deal damage
-function register_damage(_p_affected, _p_affector, _damage) {
-	if (_p_affected.team_id != _p_affector.team_id || friendly_fire) {
-		_p_affected.hp.register_damage(_p_affector, _damage) // register at hp object
+function register_damage(_c_affected, _c_affector_team_id, _p_affector, _damage) {
+	if (_c_affected.team_id != _c_affector_team_id || friendly_fire) {
+		_c_affected.register_damage(_p_affector, _damage) // register damage at affected character
 	}
 }
 
@@ -58,7 +59,6 @@ function register_kik(_p_affected, _p_affector) {
 	var _ti_affector = _p_affector.team_id
 	var _ti_affected = _p_affected.team_id
 	team_scores[_ti_affector] += 1
-	team_lives[_ti_affected] -= 1
 }
 
 // Draw game state in HUD (hud controller as _parent)
@@ -79,13 +79,13 @@ function draw_hud(_parent) {
 	
 	var _max_w = 0 // compute maximum string width between lives
 	for (var i = 0; i < teams_number; i ++) {
-		var _lives = ds_list_size(team_reserves[i])
+		var _lives = team_lives[i]
 		if (string_width(_lives) > _max_w)
 			_max_w = string_width(_lives)
 	}
 	
 	for (var i = 0; i < teams_number; i ++) {
-		var _lives = ds_list_size(team_reserves[i])
+		var _lives = team_lives[i]
 		var _yp = _parent.y + _m + i*_m*2
 		var _xp = _parent.x + _m + _max_w / 2
 		
