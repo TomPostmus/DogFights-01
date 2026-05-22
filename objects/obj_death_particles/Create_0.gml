@@ -20,6 +20,7 @@ function part() constructor {
 	alpha = 1
 	alpha_dimstep = random_range(0.002, 0.007) //how much to dimish alpha each step
 	radius = other.part_radius
+	color = other.sample_func(_xbody, _ybody)
 }
 
 parts_num = 5

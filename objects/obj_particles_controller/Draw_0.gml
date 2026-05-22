@@ -16,7 +16,7 @@ for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
 		}
 		
 		surface_set_target(global.death_particles_surface[i])
-		gpu_set_blendmode(bm_add)
+		gpu_set_blendmode(bm_normal)
 		
 		draw_clear_alpha(c_white, 0) // flush surface
 	
@@ -25,11 +25,12 @@ for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
 			for (var j = 0; j < ds_list_size(parts); j ++) {
 				var _part = parts[|j]
 				
-				//draw_circle(_part.xp - _cx, _part.yp - _cy, part_radius, false);
-				draw_set_alpha(_part.alpha)
-				draw_sprite(spr_death_particle_metaball, 0, _part.xp - _cx, _part.yp - _cy) // draw particle
-				// offset with camera position since we're drawing to surface that's located at camera			
-				draw_set_alpha(1)	
+				draw_sprite_ext(
+					spr_death_particle_metaball, 0, 
+					_part.xp - _cx, _part.yp - _cy, 
+					1, 1, 0, _part.color, _part.alpha
+				) // draw particle
+				// offset with camera position since we're drawing to surface that's located at camera
 			}
 		}
 	
@@ -45,13 +46,3 @@ for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
 		}
 	}
 }
-
-
-// Draw death particles
-//with (obj_death_particles) {
-//	for (var i = 0; i < parts_num; i ++) {
-//		var _part = parts[i]
-//		draw_sprite(spr_death_particle, 0, _part.xp, _part.yp) // draw particle
-//		// offset with camera position since we're drawing to surface that's located at camera
-//	}
-//}

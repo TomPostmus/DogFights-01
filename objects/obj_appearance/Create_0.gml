@@ -119,11 +119,21 @@ function set_leg_angle(_leg_angle) {
 
 // Create particles at bullet hit
 function bullet_hit(_bullet, _normal_dir) {
-	var _orig_x = _bullet.x + lengthdir_x(7, _bullet.rotation)
+	var _orig_x = _bullet.x + lengthdir_x(7, _bullet.rotation) // location of impact
 	var _orig_y = _bullet.y + lengthdir_y(7, _bullet.rotation)
+	
+	var _body_x = character.body.trunk.x
+	var _body_y = character.body.trunk.y
+	var _body_rot = -character.body.trunk.phy_rotation
+	
+	var _rel_x = lengthdir_x(point_distance(_body_x, _body_y, _orig_x, _orig_y), angle_difference(point_direction(_body_x, _body_y, _orig_x, _orig_y), _body_rot)) // location of impact in relative crds
+	var _rel_y = lengthdir_y(point_distance(_body_x, _body_y, _orig_x, _orig_y), angle_difference(point_direction(_body_x, _body_y, _orig_x, _orig_y), _body_rot))
+	var _color = death_part_sample_color(_rel_x, _rel_y) // sample color at relative crds
+	
 	var _rev_dir =  _bullet.rotation + 180 // reverse direction of bullet
 	var _pt_dir = _rev_dir//_rev_dir + angle_difference(_rev_dir, _normal_dir) / 2 // average of bullet direction and normal impact direction
 	part_type_direction(global.pt_hit, _pt_dir - 17, _pt_dir + 17, 0, 0)  // set direction of particle type
+	part_type_colour1(global.pt_hit, _color)
 	part_particles_create(global.hit_particles, _orig_x, _orig_y, global.pt_hit, 5)  // do particle burst
 }
 
@@ -134,7 +144,14 @@ function death_effect(_body) {
 		speed_y: _body.get_speed_y(),
 		speed_rotation: _body.get_speed_rot(),
 		rotation: _body.get_rotation(),
-		rotation_vel: _body.get_speed_rot()
+		rotation_vel: _body.get_speed_rot(),
+		sample_func: death_part_sample_color
 	}
 	var dth_part = instance_create_layer(_body.get_x(), _body.get_y(), "TexturesLow", obj_death_particles, _vars) // create death particles effect
+}
+
+// Death particles sample color
+// For relative _x, _y, return which color death particle should be
+death_part_sample_color = function(_x, _y) {
+	return c_white // for default pip sprite, all white
 }

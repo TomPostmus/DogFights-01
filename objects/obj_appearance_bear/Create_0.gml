@@ -3,6 +3,11 @@
 // Inherit the parent event
 event_inherited();
 
+// Death particles sample color
+death_part_sample_color = function(_x, _y) {
+	return c_black
+}
+
 // Appearance constants
 spr_body = spr_bear_trunk					//constants on sprites
 spr_head = spr_bear_head

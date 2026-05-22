@@ -9,7 +9,7 @@ ds_list_add(players_active, _p1, _p2) // add to active players list
 ds_list_add(players, _p1, _p2) // and general players list
 
 // Create AI players
-var _num_ais = 8 // how many to create
+var _num_ais = 10 // how many to create
 repeat (_num_ais) {
 	var _ai = instance_create_layer(0, 0, "Players", obj_player_ai)	
 	ds_list_add(players, _ai)
