@@ -9,4 +9,4 @@ part_type_life(global.pt_hit, 8, 13) // lifetime range of parts
 part_type_speed(global.pt_hit, 2, 3, 0, 0) // set speed
 //part_type_blend(global.pt_hit, true);
 
-global.death_particles_surface = array_create(ds_list_size(global.active_viewports), -1) // array of surfaces corresponding to number of active viewports
+global.death_particles_surface = array_create(ds_list_size(obj_lobby.players_active), -1) // array of surfaces corresponding to number of active players

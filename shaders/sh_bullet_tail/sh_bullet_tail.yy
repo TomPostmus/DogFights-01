@@ -4,7 +4,7 @@
   "name":"sh_bullet_tail",
   "parent":{
     "name":"bullets",
-    "path":"folders/Code/player/weapons/bullets.yy",
+    "path":"folders/Code/weapons/bullets.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

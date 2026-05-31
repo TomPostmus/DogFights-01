@@ -1,9 +1,4 @@
-global.viewport_to_player = ds_map_create()
-global.active_viewports = ds_list_create() // list of viewports (ints) that are currently active
-
-// Populate active viewports list
-for (var i = 0; i < 8; i ++) {
-	if (view_visible[i]) { // if viewport is set to visible
-		ds_list_add(global.active_viewports, i); // add to active viewports list
-	}
-}
+// Enable viewports in ingame rooms
+var _nr_players_active = ds_list_size(obj_lobby.players_active)
+for (var i = 0; i < array_length(global.ingame_rooms); i ++) 
+	room_set_viewports(global.ingame_rooms[i], _nr_players_active) // enable viewports in ingame rooms

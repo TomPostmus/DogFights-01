@@ -3,7 +3,7 @@
   "%Name":"spr_pip_assembled",
   "bboxMode":0,
   "bbox_bottom":22,
-  "bbox_left":6,
+  "bbox_left":9,
   "bbox_right":46,
   "bbox_top":2,
   "collisionKind":1,

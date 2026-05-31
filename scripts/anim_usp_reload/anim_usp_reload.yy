@@ -6,7 +6,7 @@
   "name":"anim_usp_reload",
   "parent":{
     "name":"animations",
-    "path":"folders/Code/player/weapons/animations.yy",
+    "path":"folders/Code/weapons/animations.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

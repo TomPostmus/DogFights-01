@@ -2,8 +2,7 @@
 if (sound_inst != undefined && emitter == undefined && dist_min != undefined && dist_max != undefined) {
 	var gain = 0;
 	var min_dist = undefined
-	for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
-		var viewport = global.active_viewports[|i];
+	for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
 		var _player = obj_lobby.players_active[|i] // corresponding active player
 		var _camera = _player.camera
 		if (instance_exists(_camera)) {

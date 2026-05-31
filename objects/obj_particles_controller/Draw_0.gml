@@ -1,6 +1,5 @@
 // Draw each death particle surface (one per viewport)
-for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
-	var _vp = global.active_viewports[|i]
+for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
 	var _player = obj_lobby.players_active[|i] // corresponding active player
 	var _camera = _player.camera
 	
@@ -10,8 +9,8 @@ for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
 			
 		// Create surface if does not exist
 		if (!surface_exists(global.death_particles_surface[i])) {
-			var _surf_w = view_get_wport(_vp) // get viewport dimensions
-			var _surf_h = view_get_hport(_vp)
+			var _surf_w = view_get_wport(i) // get viewport dimensions
+			var _surf_h = view_get_hport(i)
 			global.death_particles_surface[i] = surface_create(_surf_w, _surf_w) // surface for drawing death particles to
 		}
 		
@@ -38,7 +37,7 @@ for (var i = 0; i < ds_list_size(global.active_viewports); i ++) {
 		gpu_set_blendmode(bm_normal)
 		
 		// Draw surface
-		if (_vp == view_current && surface_exists(global.death_particles_surface[i])) { // check if current viewport that is being rendered matches _vp
+		if (i == view_current && surface_exists(global.death_particles_surface[i])) { // check if current viewport that is being rendered matches viewport
 			gpu_set_alphatestenable(true)
 			gpu_set_alphatestref(100) // reject pixels below this alpha value (not drawn, range: 0 to 255)
 			draw_surface(global.death_particles_surface[i], _cx, _cy) // draw surface to viewport (on camera location)

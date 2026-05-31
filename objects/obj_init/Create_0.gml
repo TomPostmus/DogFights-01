@@ -9,13 +9,11 @@ global.key_binds = ds_map_create()
 global.key_actions = ds_map_create()
 global.frame_count = 0
 global.debug_print_count = 0
+global.ingame_rooms = [rm_map_josephsfarm, rm_test]
 
 // In-game function
 global.ingame = function() {
-	if (room == rm_map_josephsfarm)
-		return true
-	
-	return false
+	return array_contains(global.ingame_rooms, room)
 } // whether we are in an in-game room
 
 //Set keybinds
@@ -27,11 +25,8 @@ global.height = display_get_height()
 global.width = global.aspect*global.height
 global.viewport_w = global.width
 global.viewport_h = global.height
-window_set_fullscreen(true)
-//window_set_position(window_get_x(), -1500) // move to second screen (above)
-room_set_viewports(rm_test, 2)
-room_set_viewports(rm_map_josephsfarm, 2)
 surface_resize(application_surface, global.width, global.height)
+window_set_fullscreen(true)
 
 //Sound
 global.sound_directional = true

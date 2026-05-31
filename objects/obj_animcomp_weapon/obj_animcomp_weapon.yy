@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"animation_components",
-    "path":"folders/Code/player/weapons/animation_components.yy",
+    "path":"folders/Code/weapons/animation_components.yy",
   },
   "parentObjectId":{
     "name":"obj_animcomp",

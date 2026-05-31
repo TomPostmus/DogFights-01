@@ -23,6 +23,7 @@ input_reload = false	// input for reloading weapon
 input_attack = false	// input of primary attack of weapon
 input_attack2 = false	// input for aiming weapon, or secondary attack
 input_firemode = false	// input to switch firemode for weapon
+input_interact = false	// input for interacting with world items (e.g. opening packages)
 
 //alive = false				//if type dog, whether alive or dead, or not yet spawned
 //movement_mode = undefined	//control mode of dog, e.g. walking or driving
