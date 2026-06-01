@@ -10,8 +10,8 @@
   "name":"obj_game_remote",
   "overriddenProperties":[],
   "parent":{
-    "name":"games_and_networking",
-    "path":"folders/Code/games_and_networking.yy",
+    "name":"lobby_and_games",
+    "path":"folders/Code/lobby_and_games.yy",
   },
   "parentObjectId":{
     "name":"obj_game",

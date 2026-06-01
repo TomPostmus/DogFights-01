@@ -6,7 +6,7 @@
   "name":"create_packet_game_info",
   "parent":{
     "name":"packet_generators",
-    "path":"folders/Code/games_and_networking/networking/packet_generators.yy",
+    "path":"folders/Code/networking/packet_generators.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

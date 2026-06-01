@@ -34,6 +34,9 @@ audio_group_load(agroup_local_sounds)
 audio_falloff_set_model(audio_falloff_linear_distance_clamped)
 audio_listener_orientation(0, 1, 0, 0, 0, 1)
 
+// Screenshot index
+screenshot_i = 0 // current index of screenshot
+
 //Next room
 room_goto_next()
 

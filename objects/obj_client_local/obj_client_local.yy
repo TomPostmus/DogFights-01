@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"networking",
-    "path":"folders/Code/games_and_networking/networking.yy",
+    "path":"folders/Code/networking.yy",
   },
   "parentObjectId":{
     "name":"obj_client",

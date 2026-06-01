@@ -6,9 +6,11 @@ if (keyboard_check_pressed(vk_f3)) {
 	window_set_fullscreen(!window_get_fullscreen())
 	alarm[0] = 1
 }
-if (keyboard_check_pressed(vk_f4)) {
-	screen_save("screenshot.png")
+
+if (keyboard_check_pressed(ord("Q"))) {
+	screen_save($"screenshot{screenshot_i}.png")
 	show_debug_message("Screenshot made!")
+	screenshot_i ++
 }
 
 //Frame count
