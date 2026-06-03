@@ -15,6 +15,12 @@ rotation = 0
 // Team ID
 team_id = undefined
 
+// Interact focus
+interact = false // whether to interact (e.g. if interact key is being pressed)
+interact_range = 100 // maximum range to be able to interact with object
+interact_focus = undefined // which object is currently in the interact focus of character (e.g. for pickups)
+interactables = [obj_package, obj_parent_pickups] // array of objects that char can interact with (interactable parent is not used, as it would interfer with physics parent of objects)
+
 // Health constants
 hp_max = 100
 hp_regen_downtime = 150

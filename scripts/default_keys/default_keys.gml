@@ -7,7 +7,8 @@ function default_keys() {
 	global.key_binds[? KEY_P1_ATTACK] = ord("F")
 	global.key_binds[? KEY_P1_ATTACK2] = ord("G")
 	global.key_binds[? KEY_P1_RELOAD] = ord("R")
-	global.key_binds[? KEY_P1_FIREMODE] = ord("T")
+	//global.key_binds[? KEY_P1_FIREMODE] = ord("T")
+	global.key_binds[? KEY_P1_INTERACT] = ord("E")
 
 	//Player 2 keybinds
 	global.key_binds[? KEY_P2_LEFT] = vk_left
@@ -17,7 +18,8 @@ function default_keys() {
 	global.key_binds[? KEY_P2_ATTACK] = ord("L")
 	global.key_binds[? KEY_P2_ATTACK2] = ord("K")
 	global.key_binds[? KEY_P2_RELOAD] = ord("P")
-	global.key_binds[? KEY_P2_FIREMODE] = ord("O")
+	//global.key_binds[? KEY_P2_FIREMODE] = ord("O")
+	global.key_binds[? KEY_P2_INTERACT] = ord("O")
 
 	//Player 3 keybinds
 	global.key_binds[? KEY_P3_LEFT] = ord("V")
@@ -27,7 +29,8 @@ function default_keys() {
 	global.key_binds[? KEY_P3_ATTACK] = ord("J")
 	global.key_binds[? KEY_P3_ATTACK2] = ord("K")
 	global.key_binds[? KEY_P3_RELOAD] = ord("U")
-	global.key_binds[? KEY_P3_FIREMODE] = ord("Y")
+	//global.key_binds[? KEY_P3_FIREMODE] = ord("Y")
+	//global.key_binds[? KEY_P3_INTERACT] = ord("Y")
 
 
 }

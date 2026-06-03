@@ -1,16 +1,15 @@
 {
   "$GMObject":"",
-  "%Name":"obj_parent_interactable",
+  "%Name":"obj_parent_pickups",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_parent_interactable",
+  "name":"obj_parent_pickups",
   "overriddenProperties":[],
   "parent":{
-    "name":"interactable",
-    "path":"folders/Code/weapons/interactable.yy",
+    "name":"interactables",
+    "path":"folders/Code/interactables.yy",
   },
   "parentObjectId":null,
   "persistent":false,

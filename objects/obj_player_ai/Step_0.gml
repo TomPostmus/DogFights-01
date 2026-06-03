@@ -198,7 +198,11 @@ if (global.ingame()) {
 		}
 	}
 	
+	// Send inputs
 	if (instance_exists(character)) {
+	
+		// Send to character
+		character.interact = input_interact
 	
 		// Send to weapon
 		if (instance_exists(character.weapon)) {

@@ -1,0 +1,1 @@
+interactable = true // whether can be interacted with

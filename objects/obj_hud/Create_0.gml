@@ -1,5 +1,6 @@
 /// @description This object handles logic and drawing of the Heads Up Display (HUD)
 
+// HUD surface properties
 hud_scale = 2 // integer factor by how much to scale HUD
 hud_width = display_get_gui_width() / hud_scale // hud surface is GUI size divided by scale
 hud_height = display_get_gui_height() / hud_scale
@@ -20,3 +21,8 @@ for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
 // Create top scoreboard window
 scrboard_hud = create_hud(0, 0, obj_ui_window_hud_scoreboard)
 scrboard_hud.x = hud_width / 2 - scrboard_hud.width / 2
+
+// Outline shader variables
+uniform_texel_width = shader_get_uniform(sh_outline, "texel_width") // get link to shader variables (uniforms)
+uniform_texel_height = shader_get_uniform(sh_outline, "texel_height")
+uniform_outline_colour = shader_get_uniform(sh_outline, "outline_colour")

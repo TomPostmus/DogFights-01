@@ -8,8 +8,8 @@
   "name":"obj_block",
   "overriddenProperties":[],
   "parent":{
-    "name":"interactables",
-    "path":"folders/AssetsMaps/map_objects/interactables.yy",
+    "name":"dynamic objects",
+    "path":"folders/AssetsMaps/map_objects/dynamic objects.yy",
   },
   "parentObjectId":{
     "name":"obj_phygroup_full",

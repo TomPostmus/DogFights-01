@@ -9,8 +9,11 @@ input_attack2 = get_key(KEY_P2_ATTACK2, KEYACTION_HOLD)
 input_firemode = get_key(KEY_P2_FIREMODE, KEYACTION_HOLD)
 input_interact = get_key(KEY_P1_INTERACT, KEYACTION_PRESS)
 
-
+// Send inputs
 if (instance_exists(character)) {
+	
+	// Send to character
+	character.interact = input_interact
 	
 	// Send to weapon
 	if (instance_exists(character.weapon)) {

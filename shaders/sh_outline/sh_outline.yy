@@ -3,8 +3,8 @@
   "%Name":"sh_outline",
   "name":"sh_outline",
   "parent":{
-    "name":"interactable",
-    "path":"folders/Code/weapons/interactable.yy",
+    "name":"interactables",
+    "path":"folders/Code/interactables.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",
