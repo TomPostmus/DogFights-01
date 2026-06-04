@@ -1,7 +1,7 @@
 # Welcome to the DogFights repository!
 Hi everyone! My name is Tom, and this is my game passion project that I work on in my free time. It is called DogFights, and it is about cute dogs fighting each other with (less cute) weapons. Interesting combination, right?
 
-Here is an impression of the start of the game, when all the Pips (a Pip how the white dogs are called) are wavering out from their start-spawn location:
+Here is an impression of the start of the game, when all the Pips (a Pip is how the white dogs are called) are wavering out from their start-spawn location:
 
 ![Start of game impression](images_and_screenshots/start_game_with_pips.png)
 
