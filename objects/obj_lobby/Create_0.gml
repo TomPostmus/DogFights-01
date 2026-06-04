@@ -3,12 +3,12 @@
 players = ds_list_create()
 players_active = ds_list_create() // list that keeps track of active players, i.e. players followed by viewports
 
-var _p1 = instance_create_layer(0, 0, "Players", obj_player_p1) // first input player (WASD)
-ds_list_add(players_active, _p1) // add to active players list
-ds_list_add(players, _p1) // and general players list
-//var _p2 = instance_create_layer(0, 0, "Players", obj_player_p2) // second input player (arrow keys)
-//ds_list_add(players_active, _p2)
-//ds_list_add(players, _p2)
+//var _p1 = instance_create_layer(0, 0, "Players", obj_player_p1) // first input player (WASD)
+//ds_list_add(players_active, _p1) // add to active players list
+//ds_list_add(players, _p1) // and general players list
+var _p2 = instance_create_layer(0, 0, "Players", obj_player_p2) // second input player (arrow keys)
+ds_list_add(players_active, _p2)
+ds_list_add(players, _p2)
 
 // Create AI players
 var _num_ais = 4 // how many to create
