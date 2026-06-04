@@ -91,7 +91,7 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.14.4.222",
+    "IDEVersion":"2026.0.0.16",
   },
   "name":"DogFights",
   "resources":[
@@ -449,6 +449,7 @@
     {"id":{"name":"spr_oldpip_hand","path":"sprites/spr_oldpip_hand/spr_oldpip_hand.yy",},},
     {"id":{"name":"spr_oldpip_head","path":"sprites/spr_oldpip_head/spr_oldpip_head.yy",},},
     {"id":{"name":"spr_package","path":"sprites/spr_package/spr_package.yy",},},
+    {"id":{"name":"spr_pananimation","path":"sprites/spr_pananimation/spr_pananimation.yy",},},
     {"id":{"name":"spr_pellet_dark","path":"sprites/spr_pellet_dark/spr_pellet_dark.yy",},},
     {"id":{"name":"spr_pellet","path":"sprites/spr_pellet/spr_pellet.yy",},},
     {"id":{"name":"spr_physics_static","path":"sprites/spr_physics_static/spr_physics_static.yy",},},
@@ -560,6 +561,7 @@
     {"id":{"name":"sprite1621111","path":"sprites/sprite1621111/sprite1621111.yy",},},
     {"id":{"name":"sprite169","path":"sprites/sprite169/sprite169.yy",},},
     {"id":{"name":"Sprite199","path":"sprites/Sprite199/Sprite199.yy",},},
+    {"id":{"name":"Sprite203","path":"sprites/Sprite203/Sprite203.yy",},},
     {"id":{"name":"sprite55","path":"sprites/sprite55/sprite55.yy",},},
     {"id":{"name":"tl_floors","path":"tilesets/tl_floors/tl_floors.yy",},},
     {"id":{"name":"tl_walls_fences","path":"tilesets/tl_walls_fences/tl_walls_fences.yy",},},
