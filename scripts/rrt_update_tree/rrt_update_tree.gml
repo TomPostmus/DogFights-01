@@ -69,7 +69,7 @@ function rrt_update_tree(){
 					
 			//	if (_return_code != 0) { // if shorten succesful or unnecessary (collision free without shortening)
 			//		_new_branch.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
-			//		_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
+			//		_new_branch.h_cost = rrt_compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
 			//		ds_list_add(_nearest.links, _new_branch) // add new branch to branch links
 			//		ds_list_add(rrt_branches, _new_branch) // add to total list of branches
 			//		_nearest.grow() // backpropagate branch thickness growth
@@ -81,7 +81,7 @@ function rrt_update_tree(){
 					
 			//	if (_new_arc.collision_free(colslider, obstr_objects)) { // check if collision free
 			//		_new_arc.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
-			//		_new_arc.h_cost = compute_h_cost(_new_arc.x_end, _new_arc.y_end, _new_arc.th_end)
+			//		_new_arc.h_cost = rrt_compute_h_cost(_new_arc.x_end, _new_arc.y_end, _new_arc.th_end)
 			//		ds_list_add(_nearest.links, _new_arc) // add new branch to branch links
 			//		ds_list_add(rrt_branches, _new_arc) // add to total list of branches
 			//	} else {
@@ -90,7 +90,7 @@ function rrt_update_tree(){
 			//		//var _new_turn = new rrt_turn_element(_nearest, _nearest.x_end, _nearest.y_end, _nearest.th, _dir) // also make turn element with angle directly towards test point
 					
 			//		//_new_turn.compute_g_cost(rrt_branch.g_cost) // compute cost variables for RRT*
-			//		//_new_turn.h_cost = compute_h_cost(_new_turn.x_end, _new_turn.y_end, _new_turn.th_end)
+			//		//_new_turn.h_cost = rrt_compute_h_cost(_new_turn.x_end, _new_turn.y_end, _new_turn.th_end)
 			//		//ds_list_add(_nearest.links, _new_turn) // add new branch to branch links
 			//		//ds_list_add(rrt_branches, _new_turn) // add to total list of branches
 			//	}
@@ -158,7 +158,7 @@ function rrt_update_tree(){
 			}
 			
 			if (_chosen.type != RRT_TURN) {
-				var _furthvis_pt = compute_furthest_visible_point(_chosen.x_end, _chosen.y_end) // index of furthest visible point
+				var _furthvis_pt = astpath_compute_furthest_visible_point(_chosen.x_end, _chosen.y_end) // index of furthest visible point
 				
 				var _pt_x = path_get_point_x(astpath, _furthvis_pt)
 				var _pt_y = path_get_point_y(astpath, _furthvis_pt)
@@ -177,7 +177,7 @@ function rrt_update_tree(){
 			var _nr_added = ds_list_size(_bundle) // number of branches added at end of chosen branch
 			for (var i = 0; i < _nr_added; i ++) {
 				var _new_branch = _bundle[|i]
-				_new_branch.h_cost = compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
+				_new_branch.h_cost = rrt_compute_h_cost(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end)
 				ds_list_add(_chosen.links, _new_branch) // add new branch to chosen branch links
 				ds_list_add(rrt_branches, _new_branch) // add to total list of branches
 				ds_list_add(rrt_open_branches, _new_branch) // add new branch to open branches list

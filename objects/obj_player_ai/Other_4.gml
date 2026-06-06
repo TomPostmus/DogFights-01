@@ -1,5 +1,5 @@
 event_inherited()
 
 //Define motion-planning grids
-grid = generate_mp_grid(astpath_cell_size)
-grid_high = generate_mp_grid_high(8)
+grid = astpath_generate_mp_grid(astpath_cell_size)
+grid_high = astpath_generate_mp_grid_high(8)

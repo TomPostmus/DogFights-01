@@ -147,7 +147,7 @@ function death_effect(_body) {
 		rotation_vel: _body.get_speed_rot(),
 		sample_func: death_part_sample_color
 	}
-	var dth_part = instance_create_layer(_body.get_x(), _body.get_y(), "TexturesLow", obj_death_particles, _vars) // create death particles effect
+	var dth_part = instance_create_layer(_body.get_x(), _body.get_y(), "Textures_Low", obj_death_particles, _vars) // create death particles effect
 }
 
 // Death particles sample color

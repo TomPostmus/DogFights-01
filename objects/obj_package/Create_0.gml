@@ -7,7 +7,7 @@ opened = false // whether has been opened
 image_speed = 0 // stop automatically going to next frame
 
 // Interact function; open package
-function interact() {
+function open() {
 	opened = true
 	interactable = false // no more interactable
 	image_index = 1 // next sub image

@@ -1,7 +1,7 @@
 /// @description Insert description here
 // You can write your code in this editor
 
-global.hit_particles = part_system_create_layer("TexturesLow", false) // particle system for bullet hit effects
+global.hit_particles = part_system_create_layer("Ground_Low", false) // particle system for bullet hit effects
 global.pt_hit = part_type_create()
 part_type_sprite(global.pt_hit, spr_hit_particle, false, false, false)
 //part_type_shape(global.pt_hit, pt_shape_pixel)

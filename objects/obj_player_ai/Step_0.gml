@@ -37,7 +37,8 @@ if (global.ingame()) {
 			for (var i = 0; i < instance_number(obj_character); i ++) {
 				var target_character = instance_find(obj_character, i);
 				if (target_character != character && instance_exists(target_character.body)
-					&& (character.team_id == undefined || character.team_id != target_character.team_id)) {
+					&& (character.team_id == undefined || character.team_id != target_character.team_id)
+					&& !target_character.hp_protection) {
 					if (point_in_rectangle(target_character.body.get_x(), target_character.body.get_y(), camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2))
 						ds_list_add(targets, target_character.body)
 				}
@@ -52,17 +53,7 @@ if (global.ingame()) {
 				target = targets[|i];
 				dist = point_distance(body.get_x(), body.get_y(), targets[|i].get_x(), targets[|i].get_y())
 			}
-		}
-	
-		//Choose state
-		//var new_state = instance_exists(target) ? "attack" : "explore"
-		//if (new_state != state) {
-		//	if (path != undefined)
-		//		path_delete(path)
-		//	path = undefined
-		//	state = new_state
-		//}
-	
+		}	
 	
 		// Update decision tree
 		dtree_timer --
@@ -78,11 +69,11 @@ if (global.ingame()) {
 					var path_point_marker = instance_find(obj_ai_path_point, irandom(instance_number(obj_ai_path_point)-1));
 					astpath_targ_x = path_point_marker.x
 					astpath_targ_y = path_point_marker.y
-					compute_astpath()
+					astpath_compute()
 				} else {
 					astpath_targ_x = random(room_width)
 					astpath_targ_y = random(room_height)
-					compute_astpath()
+					astpath_compute()
 				}
 			}
 		} else if (conflict && instance_exists(target)) { // conflict state
@@ -95,7 +86,10 @@ if (global.ingame()) {
 			if (fight_or_flight == "fight") {
 				if (line_of_fire) {
 					shoot = true
-					reset_path()
+					
+					if (astpath != undefined)
+						path_delete(astpath)
+					astpath = undefined
 				
 					// Get closer
 					if (target_distance > 100) {
@@ -111,7 +105,11 @@ if (global.ingame()) {
 			} else if (fight_or_flight == "flight") {
 			
 			} else if (fight_or_flight == "await") {
-				reset_path()
+				
+				if (astpath != undefined)
+					path_delete(astpath)
+				astpath = undefined
+					
 				if (line_of_fire) {
 					shoot = true
 				}
@@ -173,18 +171,20 @@ if (global.ingame()) {
 			var _astpath_completion_tolerance = 30
 			if (_dist <= _astpath_completion_tolerance) {
 			
-				reset_path()
+				if (astpath != undefined)
+					path_delete(astpath)
+				astpath = undefined
 			
 			} else if (!line_movable(path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))) { // if no free line to path point
 			
-				compute_astpath() // recompute A* path
+				astpath_compute() // recompute A* path
 			
 			// RRT* motion planning
 			} else if (rrt_branch = undefined) { // if there is no current node
 			
 				// Initialize tree
 				rrt_branch = new rrt_root_element(_body_x, _body_y, _body_rot) // root node of tree
-				rrt_branch.h_cost = compute_h_cost(_body_x, _body_y, _body_rot) // H cost for init node
+				rrt_branch.h_cost = rrt_compute_h_cost(_body_x, _body_y, _body_rot) // H cost for init node
 				ds_list_add(rrt_branches, rrt_branch)
 				ds_list_add(rrt_open_branches, rrt_branch)
 				rrt_walk_timer = rrt_walk_maxtime // reset timer

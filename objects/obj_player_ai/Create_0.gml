@@ -48,10 +48,59 @@ rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
 
+/* --- A* FUNCTIONS --- */
+
+// Create A* path to target (defined outside)
+function astpath_compute() {
+	var body = character.body
+	
+	if (path_exists(astpath))
+		path_delete(astpath) // delete old path if exists
+	
+	astpath = path_add()
+	astpath_point = 0			// reset path point counter
+	
+	if (astpath_targ_x != undefined && astpath_targ_y != undefined) { // check if target was set
+		if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path, if not succesful
+			path_delete(astpath) // if not succesful
+			astpath = undefined
+		} else { // if succesful
+			astpath_compute_path_attributes()
+		}
+	}
+	
+}
+
+// When A* path is computed, this function computes path attributes
+function astpath_compute_path_attributes() {
+	ds_list_clear(astpath_costs) // clear lists keeping track of path point attributes
+	ds_list_clear(astpath_ths)
+	
+	var _len = path_get_length(astpath) // total path length
+	var _len_acc = 0 // accumulated length from start
+	var _cost, _th, _pt_x, _pt_y, _pt_x_next, _pt_y_next
+	for (var i = 0; i < path_get_number(astpath); i ++) {
+		_pt_x = path_get_point_x(astpath, i)
+		_pt_y = path_get_point_y(astpath, i)
+		
+		_cost = _len - _len_acc // compute path cost of point (total length minus accumulated length from start)
+		
+		if (i < path_get_number(astpath)-1) { // for all points except final point
+			_pt_x_next = path_get_point_x(astpath, i+1)
+			_pt_y_next = path_get_point_y(astpath, i+1)
+		
+			_th = point_direction(_pt_x, _pt_y, _pt_x_next, _pt_y_next) // compute angle to next point
+			_len_acc += point_distance(_pt_x, _pt_y, _pt_x_next, _pt_y_next)
+		}
+		
+		ds_list_add(astpath_costs, _cost)
+		ds_list_add(astpath_ths, _th)
+	}
+}
 
 // For a _x, _y, compute which point on A* path is the nearest
 // Returns the index of that path point and the distance to it
-function compute_nearest_point(_x, _y) {
+function astpath_compute_nearest_point(_x, _y) {
 	var _dist = infinity
 	var _path_pt = 0 // index on path of nearest point
 	for (var i = 0; i < path_get_number(astpath); i ++) {
@@ -69,7 +118,7 @@ function compute_nearest_point(_x, _y) {
 
 // For a _x, _y, compute furthest point on A* path that is visible
 // Returns the index of that path point
-function compute_furthest_visible_point(_x, _y) {
+function astpath_compute_furthest_visible_point(_x, _y) {
 	var _path_pt = 0 // index on path of nearest point
 	for (var i = 0; i < path_get_number(astpath); i ++) {
 		var _pt_x = path_get_point_x(astpath, i)
@@ -82,19 +131,9 @@ function compute_furthest_visible_point(_x, _y) {
 	
 	return _path_pt
 }
-	
-// Compute H cost (in A* terms) of a path element based on its distance to nearest point in A* path
-function compute_h_cost(_x_end, _y_end, _th_end) {
-	var _nearest = compute_nearest_point(_x_end, _y_end) // find index of nearest point and distance to it
-	var _nearest_pt = _nearest[0]
-	var _nearest_dist = _nearest[1]
-	
-	var _th = astpath_ths[|_nearest_pt]
-	return astpath_costs[|_nearest_pt] + _nearest_dist + abs(angle_difference(_th_end, _th)) // H cost is path cost of nearest point, plus distance to that point, plus difference in orientation of element end point and orientation of nearest path point
-}
 
 //Function to generate motion-planning grid
-function generate_mp_grid(_cell_size) {
+function astpath_generate_mp_grid(_cell_size) {
 	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
 	for (var i = 0; i < array_length(obstr_objects); i ++) {
 		mp_grid_add_instances(grid, obstr_objects[i], true)
@@ -103,7 +142,7 @@ function generate_mp_grid(_cell_size) {
 }
 
 // Generate mp grid with only high obstructions
-function generate_mp_grid_high(_cell_size) {
+function astpath_generate_mp_grid_high(_cell_size) {
 	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
 	for (var i = 0; i < array_length(obstr_objects); i ++) {
 		for (var j = 0; j < instance_number(obstr_objects[i]); j ++) {
@@ -114,6 +153,20 @@ function generate_mp_grid_high(_cell_size) {
 	}
 	return grid
 }
+
+/* --- RRT* FUNCTIONS --- */
+
+// Compute H cost of a path element based on its distance to nearest point in A* path
+function rrt_compute_h_cost(_x_end, _y_end, _th_end) {
+	var _nearest = astpath_compute_nearest_point(_x_end, _y_end) // find index of nearest point and distance to it
+	var _nearest_pt = _nearest[0]
+	var _nearest_dist = _nearest[1]
+	
+	var _th = astpath_ths[|_nearest_pt]
+	return astpath_costs[|_nearest_pt] + _nearest_dist + abs(angle_difference(_th_end, _th)) // H cost is path cost of nearest point, plus distance to that point, plus difference in orientation of element end point and orientation of nearest path point
+}
+
+/* --- LINE/POINT FREE FUNCTIONS --- */
 
 // Function to check whether line to target is not obstructed (by walls)
 function line_movable(_target_x, _target_y) {
@@ -175,70 +228,6 @@ function line_shootable_arbitrary(_point_x, _point_y, _target_x, _target_y) {
 	return true
 }
 
-// Reset RRT* tree
-function rrt_reset() {
-	if (rrt_branch != undefined) {
-		rrt_mark_del(rrt_branch) // destroy current RRT branch (and thereby the full tree)
-		rrt_branch = undefined
-	}
-}
-
-// Reset path
-function reset_path() {
-	if (astpath != undefined)
-		path_delete(astpath)
-	astpath = undefined
-	rrt_reset()
-}
-
-// When A* path is computed, this function computes path attributes
-function compute_path_attributes() {
-	ds_list_clear(astpath_costs) // clear lists keeping track of path point attributes
-	ds_list_clear(astpath_ths)
-	
-	var _len = path_get_length(astpath) // total path length
-	var _len_acc = 0 // accumulated length from start
-	var _cost, _th, _pt_x, _pt_y, _pt_x_next, _pt_y_next
-	for (var i = 0; i < path_get_number(astpath); i ++) {
-		_pt_x = path_get_point_x(astpath, i)
-		_pt_y = path_get_point_y(astpath, i)
-		
-		_cost = _len - _len_acc // compute path cost of point (total length minus accumulated length from start)
-		
-		if (i < path_get_number(astpath)-1) { // for all points except final point
-			_pt_x_next = path_get_point_x(astpath, i+1)
-			_pt_y_next = path_get_point_y(astpath, i+1)
-		
-			_th = point_direction(_pt_x, _pt_y, _pt_x_next, _pt_y_next) // compute angle to next point
-			_len_acc += point_distance(_pt_x, _pt_y, _pt_x_next, _pt_y_next)
-		}
-		
-		ds_list_add(astpath_costs, _cost)
-		ds_list_add(astpath_ths, _th)
-	}
-}
-
-// Create A* path to target
-function compute_astpath() { // create_holonomic_path
-	var body = character.body
-	
-	reset_path()
-	
-	astpath = path_add()
-	astpath_point = 0			// reset path point counter
-	if (astpath_targ_x != undefined && astpath_targ_y != undefined) {
-		if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path
-			path_delete(astpath) // if not succesful
-			astpath = undefined
-			astpath_targ_x = undefined
-			astpath_targ_y = undefined
-		} else {
-			compute_path_attributes()
-		}
-	}
-	
-}
-
 // Choose shortest out of 2 paths: a path for walking to the target,
 // and a path to a vantage point from which target can be shot
 function shoot_path(_target_x, _target_y) {
@@ -247,7 +236,8 @@ function shoot_path(_target_x, _target_y) {
 	// Try making a walk path to target
 	astpath_targ_x = _target_x
 	astpath_targ_y = _target_y
-	compute_astpath()
+	astpath_compute()
+	
 	var walk_path_length = astpath != undefined ? path_get_length(astpath) : infinity
 		
 	// Make path that goes over low objects, and try to find a line of fire on it
@@ -264,9 +254,10 @@ function shoot_path(_target_x, _target_y) {
 			
 			if (line_shootable_arbitrary(point_x, point_y, _target_x, _target_y)) { // if line of fire found
 				if (shoot_path_length < walk_path_length) { // if it is shorter, replace path with shoot path
-					reset_path() // remove old path
+					if (astpath != undefined)
+						path_delete(astpath) // remove old path
 					astpath = shoot_path // set new path
-					compute_path_attributes()
+					astpath_compute_path_attributes()
 					break // break loop
 				}
 			}

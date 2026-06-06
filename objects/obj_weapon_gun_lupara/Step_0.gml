@@ -20,7 +20,6 @@ if (instance_exists(character) && instance_exists(character.body)) {
 		}
 		
 		// Aiming down sight
-		aiming = character.input.input_attack2
 		var _goal_pos_x = aiming ? ads_pos_x : neut_pos_x // goal of aiming position
 		var _goal_pos_y = aiming ? ads_pos_y : neut_pos_y
 		

@@ -36,14 +36,25 @@ for (var i = 0; i < array_length(interactables); i ++) {
 		if (interactable) {
 			var _dist = point_distance(_xp, _yp, x, y)
 			if (_dist < _max_dist) { // if within range, and closest of other interactables
-				other.interact_focus = id // set as focus
+				other.interact_focus = id // set instance as focus
+				other.interact_type = _obj // safe object index
 			}
 		}
 	}
 }
 
-if (interact_focus != undefined && interact) { // if we have object in our interact focus
-	interact_focus.interact() // do interaction function of object of focus
+// Do interaction
+if (interact_focus != undefined && interact) { // if we have object in our interact focus and interact flag is set
+	if (interact_type == obj_package) { // if interacting with package
+		
+		interact_focus.open() // open package
+		
+	} else if (interact_type == obj_parent_pickups) { // if interacting with pickup
+		
+		var _pickup_item = interact_focus		
+		pickup(_pickup_item) // handle pickup
+		
+	}
 }
 
 // Die

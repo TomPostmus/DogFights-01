@@ -14,7 +14,7 @@ var _stats_default = {
 	damage: 120,
 	sound_fire: snd_striker_fire,
 	
-	fire_spread: 15,
+	fire_spread: 10,
 	fire_speed_var: 1,
 	fire_pellets: 7
 }

@@ -6,8 +6,8 @@ turn_input = get_key(KEY_P2_LEFT, KEYACTION_HOLD) - get_key(KEY_P2_RIGHT, KEYACT
 input_reload = get_key(KEY_P2_RELOAD, KEYACTION_PRESS)
 input_attack = get_key(KEY_P2_ATTACK, KEYACTION_HOLD)
 input_attack2 = get_key(KEY_P2_ATTACK2, KEYACTION_HOLD)
-input_firemode = get_key(KEY_P2_FIREMODE, KEYACTION_HOLD)
-input_interact = get_key(KEY_P1_INTERACT, KEYACTION_PRESS)
+input_firemode = get_key(KEY_P2_FIREMODE, KEYACTION_PRESS)
+input_interact = get_key(KEY_P2_INTERACT, KEYACTION_PRESS)
 
 // Send inputs
 if (instance_exists(character)) {

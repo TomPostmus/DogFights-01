@@ -4,7 +4,7 @@ for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
 	var _character = _player.character
 	
 	// Draw outline of object in interaction focus
-	if (_character.interact_focus != undefined) {
+	if (instance_exists(_character) && _character.interact_focus != undefined) {
 	with (_character.interact_focus) {
 			
 		var _tex = sprite_get_texture(sprite_index, image_index) // texture of current sprite

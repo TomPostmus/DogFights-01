@@ -16,7 +16,7 @@ path_point = 0
 state = "explore"
 
 //Function to generate motion-planning grid
-function generate_mp_grid(_cell_size) {
+function astpath_generate_mp_grid(_cell_size) {
 	var objects = tag_get_asset_ids("AIObstruction", asset_object)
 	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
 	for (var i = 0; i < array_length(objects); i ++) {
@@ -26,4 +26,4 @@ function generate_mp_grid(_cell_size) {
 }
 
 //Define motion-planning grid
-grid = generate_mp_grid(16)
+grid = astpath_generate_mp_grid(16)

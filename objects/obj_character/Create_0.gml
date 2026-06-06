@@ -18,7 +18,8 @@ team_id = undefined
 // Interact focus
 interact = false // whether to interact (e.g. if interact key is being pressed)
 interact_range = 100 // maximum range to be able to interact with object
-interact_focus = undefined // which object is currently in the interact focus of character (e.g. for pickups)
+interact_focus = undefined // which instance is currently in the interact focus of character (e.g. for pickups)
+interact_type = undefined // which object index the focused instance has
 interactables = [obj_package, obj_parent_pickups] // array of objects that char can interact with (interactable parent is not used, as it would interfer with physics parent of objects)
 
 // Health constants
@@ -56,4 +57,20 @@ function register_damage(_p_affector, _damage) {
 			damage_last_affector = _p_affector // remember the player as last affector player that dealt damage
 		}
 	}
+}
+
+// Handle pickup of item
+function pickup(_item) {
+	if (_item.type == "weapon") { // if picking up weapon
+
+		if (instance_exists(weapon))		
+			instance_destroy(weapon) // destroy old weapon
+			
+		weapon = create_controllers(_item.weapon_index) // create new weapon and assign
+		weapon.character = id
+		weapon.anim_init()
+		
+	}
+	
+	instance_destroy(_item) // destroy pickup
 }
