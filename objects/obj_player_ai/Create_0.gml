@@ -36,11 +36,16 @@ grid_high = undefined // motion planning grid for high objects
 // RRT*
 // This is the RTT tree that grows from current position
 // Each step, segments are added to tree to explore optimal path
+rrt_field = rrt_mouse_field // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // all branches of RRT* tree
-rrt_open_branches = ds_list_create() // list of branches that are still open, no connections at end point yet
-rrt_test_pt = undefined
-rrt_completed = false // whether current branch we're walking has been completed
+rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
+rrt_tolerance = 20 // H cost below which motion is no longer necessary
+rrt_powerlaw_p = 5 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
+rrt_gearshift_pen = 15 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
+rrt_steershift_pen = 10
+
+rrt_branch_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)
 rrt_walk_timer = -1 // timer for keeping completion time of element in check
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
@@ -155,6 +160,12 @@ function astpath_generate_mp_grid_high(_cell_size) {
 }
 
 /* --- RRT* FUNCTIONS --- */
+
+// RRT H cost field based on distance to mouse (cursor)
+function rrt_mouse_field(_x, _y, _th) {
+	var _lowest_cost_dir = point_direction(_x, _y, mouse_x, mouse_y) // direction to lowest cost from point
+	return [point_distance(_x, _y, mouse_x, mouse_y), _lowest_cost_dir]
+}
 
 // Compute H cost of a path element based on its distance to nearest point in A* path
 function rrt_compute_h_cost(_x_end, _y_end, _th_end) {

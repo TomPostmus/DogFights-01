@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"rrt_update_tree",
+  "%Name":"rrt_walk",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"rrt_update_tree",
+  "name":"rrt_walk",
   "parent":{
     "name":"ai_player_functions",
     "path":"folders/Code/player/ai_player_functions.yy",

@@ -5,6 +5,7 @@
 
 #macro RRT_R 50 // turning radius for arcs (in pixels)
 #macro RRT_V 2 // assumed speed of player (pixels/step)
+#macro RRT_TURN_TIME 141 // assumed number of frames for making full turn
 
 #macro RRT_GEARSHIFT_PEN 15 // constants for how much to penalise gear shifts and steering shifts in G cost
 #macro RRT_STEERSHIFT_PEN 10
@@ -49,7 +50,8 @@ function rrt_root_element(_x, _y, _th) constructor {
 	del = false // flag whether branch is to be deleted (necessary for safely removing branch in rrt_branches list)
 	
 	g_cost = 0
-	h_cost = undefined
+	h_cost = undefined // defined outside
+	lowest_cost_dir = undefined
 	
 	// Draw root element
 	static draw = function() {
@@ -85,10 +87,11 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	thickness = 0 // thickness of branch, i.e. how many branches are hanging from it
 	del = false // flag whether branch is to be deleted (necessary for safely removing branch in rrt_branches list)
 	
-	var _time = degtorad(abs(angle_difference(_th_end, _th))) * RRT_R / RRT_V // est. time (in steps) to complete element
+	var _time = abs(angle_difference(_th_end, _th)) / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
 	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
-	h_cost = undefined
+	h_cost = undefined // defined outside
+	lowest_cost_dir = undefined
 	
 	// Draw this turn element (little circle)
 	static draw = function() {
@@ -134,7 +137,8 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	var _time = l / RRT_V // est. time (in steps) to complete element
 	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
-	h_cost = undefined
+	h_cost = undefined // defined outside
+	lowest_cost_dir = undefined
 	
 	// Draw this line segment
 	static draw = function() {
@@ -234,7 +238,8 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	var _time = degtorad(l) * RRT_R / RRT_V // est. time (in steps) to complete element
 	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
-	h_cost = undefined
+	h_cost = undefined // defined outside
+	lowest_cost_dir = undefined
 	
 	// Draw this arc
 	static draw = function() {

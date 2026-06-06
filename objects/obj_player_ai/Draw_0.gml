@@ -22,14 +22,9 @@ if (instance_exists(character) && instance_exists(character.body)) {
 		_branch.draw()
 	}
 	
-	if (rrt_test_pt != undefined) {
-		draw_set_colour(c_lime)
-		draw_circle(rrt_test_pt[0], rrt_test_pt[1], 1, false)
-	}
-	
 	draw_set_colour(c_red)
-	for (var i = 0; i < ds_list_size(rrt_open_branches); i ++) {
-		var _branch = rrt_open_branches[|i]
+	for (var i = 0; i < ds_list_size(rrt_branches_open); i ++) {
+		var _branch = rrt_branches_open[|i]
 		draw_circle(_branch.x_end, _branch.y_end, 1, false) // draw red circles at end points of open branches
 	}
 

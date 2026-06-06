@@ -1,0 +1,181 @@
+// Grow RRT given a certain motion planning field (rrt_field)
+function rrt_update(_body_x, _body_y, _body_rot){
+
+	var _rrt_max_tree_size = 300
+	if (ds_list_size(rrt_branches) < _rrt_max_tree_size) {
+	repeat(1) { // how many branches to create per step
+				
+		// choose an open branch based on probability weighted with h cost
+		var _chosen = undefined // the chosen branch
+		var _nr_open = ds_list_size(rrt_branches_open)
+		if (_nr_open == 1) // if there is only 1 branch
+			_chosen = rrt_branches_open[|0]
+		else {
+			// find maximum and minimum h cost between open branches
+			var _cost_min = infinity
+			var _cost_max = -infinity
+			for (var i = 0; i < _nr_open; i ++) {
+				var _branch = rrt_branches_open[|i]
+				var _cost = _branch.h_cost + _branch.g_cost
+				if (_cost < _cost_min) 
+					_cost_min = _cost
+				if (_cost > _cost_max)
+					_cost_max = _cost
+			}
+				
+			// do power-law weighting
+			var _e = 0.00001 // small constant to avoid div by zero
+			var _ws = array_create(_nr_open)
+			var _w_sum = 0
+			for (var i = 0; i < _nr_open; i ++) {
+				var _branch = rrt_branches_open[|i]
+				var _cost = _branch.h_cost + _branch.g_cost
+				var _cost_norm = 1 + 9 * (_cost - _cost_min) / (_cost_max - _cost_min) // normalize cost vals between 1 and 10
+					
+				var _w = 1 / power(_cost_norm + _e, rrt_powerlaw_p) // compute weight
+				_w_sum += _w
+				_ws[i] = _w
+			}
+				
+			var _rn = random(1) // random number from 0 to 1
+			var _acc = 0 // var that accumulates probabilities
+			for (var i = 0; i < _nr_open; i ++) {
+				var _p_i = _ws[i] / _w_sum // probability of branch i
+				if (_rn >= _acc && _rn < _acc + _p_i) { // if _rn falls between weighted portion
+					_chosen = rrt_branches_open[|i] // choose this branch
+					break
+				}
+				_acc += _p_i
+			}
+		}
+				
+		// create new branch
+		if (_chosen != undefined) {
+			
+			// build bundle on chosen branch
+			var _straight_len = 20
+			var _arc_len = 22.5
+			var _bundle = ds_list_create() // bundle of five elements: left forward arc, straight forward segment and right forward arc, left backward arc, straight backward segment and right backward arc
+				// excluding the one that is identical to the one it came with
+				
+			if (_chosen.h_cost < rrt_tolerance) { // if chosen branch falls within completion tolerance
+				var _identity_turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _chosen.th_end) // make identity turn (this will prevent new elements being added to position we're already satisfied with)
+				ds_list_add(_bundle, _identity_turn)
+			} else {
+				if !(_chosen.type == RRT_STRAIGHT && _chosen.gear == RS_BACKWARD) { // check element type of how it came here
+					var _straight_f = new rrt_straight_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _straight_len, RS_FORWARD) // make forward straight element
+					if (_straight_f.collision_free(colslider, obstr_objects)) { // check if has no collisions
+						ds_list_add(_bundle, _straight_f) // add to list
+					} else {
+						ds_list_destroy(_straight_f.links) // else destroy
+					}
+				}
+				
+				if !(_chosen.type == RRT_STRAIGHT && _chosen.gear == RS_FORWARD) {
+					var _straight_b = new rrt_straight_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _straight_len, RS_BACKWARD) // make backward straight element
+					if (_straight_b.collision_free(colslider, obstr_objects)) { // check if has no collisions
+						ds_list_add(_bundle, _straight_b) // add to list
+					} else {
+						ds_list_destroy(_straight_b.links) // else destroy (freeing links list, struct itself is further not referenced so automatically garb. collected)
+					}
+				}
+				
+				if !(_chosen.steering == RS_LEFT && _chosen.gear == RS_BACKWARD) {
+					var _arc_left_f = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_LEFT, RS_FORWARD) // make forward left arc
+					if (_arc_left_f.collision_free(colslider, obstr_objects)) {
+						ds_list_add(_bundle, _arc_left_f) // add to list
+					} else {
+						ds_list_destroy(_arc_left_f.links) // else destroy
+					}
+				}
+				
+				if !(_chosen.steering == RS_LEFT && _chosen.gear == RS_FORWARD) {
+					var _arc_left_b = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_LEFT, RS_BACKWARD) // make backward left arc
+					if (_arc_left_b.collision_free(colslider, obstr_objects)) {
+						ds_list_add(_bundle, _arc_left_b) // add to list
+					} else {
+						ds_list_destroy(_arc_left_b.links) // else destroy
+					}
+				}
+				
+				if !(_chosen.steering == RS_RIGHT && _chosen.gear == RS_BACKWARD) {
+					var _arc_right_f = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_RIGHT, RS_FORWARD) // make forward right arc
+					if (_arc_right_f.collision_free(colslider, obstr_objects)) {
+						ds_list_add(_bundle, _arc_right_f) // add to list
+					} else {
+						ds_list_destroy(_arc_right_f.links) // else destroy
+					}
+				}
+				
+				if !(_chosen.steering == RS_LEFT && _chosen.gear == RS_FORWARD) {
+					var _arc_right_b = new rrt_arc_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _arc_len, RS_RIGHT, RS_BACKWARD) // make backward right arc
+					if (_arc_right_b.collision_free(colslider, obstr_objects)) {
+						ds_list_add(_bundle, _arc_right_b) // add to list
+					} else {
+						ds_list_destroy(_arc_right_b.links) // else destroy
+					}
+				}
+			
+				if (_chosen.type != RRT_TURN) {
+					//var _furthvis_pt = astpath_compute_furthest_visible_point(_chosen.x_end, _chosen.y_end) // index of furthest visible point
+				
+					//var _pt_x = path_get_point_x(astpath, _furthvis_pt)
+					//var _pt_y = path_get_point_y(astpath, _furthvis_pt)
+					//var _furthvis_dir = point_direction(_chosen.x_end, _chosen.y_end, _pt_x, _pt_y) // distance and direction from element end point to furthest visible point
+					//var _furthvis_dist = point_distance(_chosen.x_end, _chosen.y_end, _pt_x, _pt_y)
+				
+					//var _pt_dir = astpath_ths[|_furthvis_pt] // orientation of furthest visible  A* path point
+					//var _weight = min(1, _furthvis_dist / astpath_cell_size) // weight is 1 if dist is larger than or eq to A* cell size
+					//var _dir = _pt_dir * (1 - _weight) + _furthvis_dir * _weight // weigthed orientation
+				
+					var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end,  _chosen.lowest_cost_dir) // make turn element to direction of lowest cost of parent (_chosen) node
+					ds_list_add(_bundle, _turn)
+				}
+			}
+				
+			// for new branches in bundle, compute costs and add to relevant lists
+			var _nr_added = ds_list_size(_bundle) // number of branches added at end of chosen branch
+			for (var i = 0; i < _nr_added; i ++) {
+				var _new_branch = _bundle[|i]
+				var _field_vars = rrt_field(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end) // get H cost and angle to lowest cost of end point
+				_new_branch.h_cost = _field_vars[0]
+				_new_branch.lowest_cost_dir = _field_vars[1]
+				ds_list_add(_chosen.links, _new_branch) // add new branch to chosen branch links
+				ds_list_add(rrt_branches, _new_branch) // add to total list of branches
+				ds_list_add(rrt_branches_open, _new_branch) // add new branch to open branches list
+			}
+				
+			// if elements were added
+			if (_nr_added > 0) {
+				rrt_grow(_chosen) // backpropagate branch thickness growth
+				
+				var i = ds_list_find_index(rrt_branches_open, _chosen)
+				ds_list_delete(rrt_branches_open, i) // remove chosen branch from open branch list (it's no longer open)
+			}
+			ds_list_destroy(_bundle)
+		}
+			
+	}
+	}	
+	
+	// Prune RTT branch if it is in contact with dynamic objects (players)
+	//for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
+	//	var _branch = rrt_branches[|i]
+		
+	//	var _contact = instance_position(_branch.x_end, _branch.y_end, obj_hitmask)
+	//	if (instance_exists(_contact) && _contact.player != player) {// if endpoint is in contact with a hitmask
+	//		var _child_count = rrt_mark_del(_branch) // mark for deletion
+			
+	//		if (_branch.parent != undefined) { // if has parent
+	//			var _branch_i = ds_list_find_index(_branch.parent.links, _branch)
+	//			ds_list_delete(_branch.parent.links, _branch_i) // remove this branch from its parent's links
+				
+	//			_branch.parent.thickness -= _child_count // subtract number of children that was removed from thickness so that thickness represents again how many child branches are hanging from parent branch
+	//		}
+			
+	//		if (_branch == rrt_branch) // if to be pruned branch is current root branch
+	//			rrt_branch = undefined // reset current rrt_branch variable
+	//	}
+	//}
+
+}
