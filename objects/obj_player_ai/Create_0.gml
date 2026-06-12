@@ -36,14 +36,14 @@ grid_high = undefined // motion planning grid for high objects
 // RRT*
 // This is the RTT tree that grows from current position
 // Each step, segments are added to tree to explore optimal path
-rrt_field = rrt_mouse_field // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
+rrt_field = rrt_mouse_field_player_avoidance // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // all branches of RRT* tree
 rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
 rrt_tolerance = 20 // H cost below which motion is no longer necessary
 rrt_powerlaw_p = 5 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
-rrt_gearshift_pen = 15 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
-rrt_steershift_pen = 10
+rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
+rrt_steershift_pen = 0
 
 rrt_branch_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)
@@ -166,6 +166,33 @@ function rrt_mouse_field(_x, _y, _th) {
 	var _lowest_cost_dir = point_direction(_x, _y, mouse_x, mouse_y) // direction to lowest cost from point
 	return [point_distance(_x, _y, mouse_x, mouse_y), _lowest_cost_dir]
 }
+
+// RRT H cost field
+function rrt_mouse_field_player_avoidance(_x, _y, _th) {
+	var _r = 100 // radius from which to start avoiding players
+	var _min_dist = infinity
+	var _nearest = undefined
+	with (obj_character) {
+		if (id != other.character) {
+			var _dist = point_distance(_x, _y, x, y)
+			if (_dist < _min_dist) {
+				_min_dist = _dist
+				_nearest = id
+			}
+		}
+	}
+	
+	var _cost = point_distance(_x, _y, mouse_x, mouse_y)
+	var _lowest_cost_dir = point_direction(_x, _y, mouse_x, mouse_y) // direction to lowest cost from point
+	
+	if (_nearest != undefined) {
+		_cost += max(0, _r - _min_dist) // add penalty if within range of other character
+	}
+	
+	
+	return [_cost, _lowest_cost_dir]
+}
+
 
 // Compute H cost of a path element based on its distance to nearest point in A* path
 function rrt_compute_h_cost(_x_end, _y_end, _th_end) {

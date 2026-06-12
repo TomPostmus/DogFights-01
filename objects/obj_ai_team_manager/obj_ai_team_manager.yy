@@ -1,18 +1,18 @@
 {
   "$GMObject":"",
-  "%Name":"obj_ai_collision_slider",
+  "%Name":"obj_ai_team_manager",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_ai_collision_slider",
+  "name":"obj_ai_team_manager",
   "overriddenProperties":[],
   "parent":{
     "name":"player_ai_utils",
     "path":"folders/Code/player/player_ai_utils.yy",
   },
   "parentObjectId":null,
-  "persistent":true,
+  "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,
@@ -29,10 +29,7 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"spr_ai_collision_slider",
-    "path":"sprites/spr_ai_collision_slider/spr_ai_collision_slider.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
-  "visible":false,
+  "visible":true,
 }

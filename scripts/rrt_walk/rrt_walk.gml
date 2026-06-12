@@ -66,19 +66,19 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			//var _arc_angle = _to_player_dir + 90 * rrt_branch.steering // what the angle of the arc is from player progression
 			//var _progression = rrt_branch.steering * rrt_branch.gear * angle_difference(_arc_angle, rrt_branch.th) // difference from arc starting angle to where player is on arc
 			
-			var _progression = angle_difference(rrt_branch.th, _body_rot) // difference with target angle
+			var _progression = angle_difference(_body_rot, rrt_branch.th) * rrt_branch.steering * rrt_branch.gear // progression is measure as difference with start angle of arc, normalized to 0, arc_length
 			
 			// RRT path abortion
 			var _abortion_tolerance = 10 // distance from which to abort path
 			var _abrt_angle_tolerance = 10 //radtodeg(_abortion_tolerance / RRT_R) // tolerance in degrees for arc angle progression
 			if (_to_player_dist > RRT_R + _abortion_tolerance || _to_player_dist < RRT_R - _abortion_tolerance) // if distance from arc too large
 				_abort = true // raise flag
-			//if (rrt_branch.steering * _progression < -rrt_branch.steering * _abrt_angle_tolerance)
-			//	_abort = true
+			if ( _progression < -_abrt_angle_tolerance)
+				_abort = true
 				
 			// check completion
 			var _completion_tolerance = 1 // tolerance on when path element is considered to be completed
-			if (abs(_progression) <= _completion_tolerance) {
+			if (_progression >= rrt_branch.l - _completion_tolerance) {
 				rrt_branch_completed = true
 			}
 		}

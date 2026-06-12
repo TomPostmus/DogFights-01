@@ -119,8 +119,8 @@
   "maintainGms1Font":false,
   "name":"ft_path_debug",
   "parent":{
-    "name":"ai_player_functions",
-    "path":"folders/Code/player/ai_player_functions.yy",
+    "name":"player_ai_utils",
+    "path":"folders/Code/player/player_ai_utils.yy",
   },
   "pointRounding":0,
   "ranges":[

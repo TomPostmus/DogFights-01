@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"rrt_elements",
   "parent":{
-    "name":"ai_player_functions",
-    "path":"folders/Code/player/ai_player_functions.yy",
+    "name":"player_ai_utils",
+    "path":"folders/Code/player/player_ai_utils.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
