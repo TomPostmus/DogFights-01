@@ -31,19 +31,19 @@ if (global.ingame()) {
 		var _body_y = body.get_y()
 		var _body_rot = body.get_rotation()
 	
-		//Find targets
-		//if (instance_exists(camera)) {
-		//	ds_list_clear(targets)
-		//	for (var i = 0; i < instance_number(obj_character); i ++) {
-		//		var target_character = instance_find(obj_character, i);
-		//		if (target_character != character && instance_exists(target_character.body)
-		//			&& (character.team_id == undefined || character.team_id != target_character.team_id)
-		//			&& !target_character.hp_protection) {
-		//			if (point_in_rectangle(target_character.body.get_x(), target_character.body.get_y(), camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2))
-		//				ds_list_add(targets, target_character.body)
-		//		}
-		//	}
-		//}
+		// Spot enemies
+		if (instance_exists(camera)) {
+			ds_list_clear(enemies)
+			for (var i = 0; i < instance_number(obj_character); i ++) {
+				var _character_insight = instance_find(obj_character, i);
+				if (_character_insight != character && instance_exists(_character_insight.body)
+					&& (character.team_id == undefined || character.team_id != _character_insight.team_id)
+					&& !_character_insight.hp_protection) {
+					if (point_in_rectangle(_character_insight.body.trunk.x, _character_insight.body.trunk.y, camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2))
+						ds_list_add(enemies, _character_insight)
+				}
+			}
+		}
 	
 		////Find closest target
 		//target = noone

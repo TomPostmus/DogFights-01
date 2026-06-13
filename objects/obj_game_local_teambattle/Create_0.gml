@@ -4,7 +4,7 @@ event_inherited()
 friendly_fire = false
 teams_number = 2 // how many teams
 score_win = 60 // score for winning
-lives_init = 12 // how many lives each team begins with (army size)
+lives_init = 4 // how many lives each team begins with (army size)
 
 // Team vars
 team_colors = [c_red, c_blue, c_green] // team identification colors

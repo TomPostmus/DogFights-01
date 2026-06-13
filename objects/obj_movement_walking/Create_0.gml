@@ -14,7 +14,7 @@ character = noone
 // Movement constants
 lin_static_friction = 0.35					//linear friction when standing still
 
-ang_pid = new pid(2, 1.5, 0.03, 3000)//new pid(0.06, 0.04, 0.001, 300)	//pid object for angular movement
+ang_pid = new pid(2, 1.5, 0.03, 4)//new pid(0.06, 0.04, 0.001, 300)	//pid object for angular movement
 turn_speed = 0								//speed to update body rotation with
 turn_speed_max_change = 25					//maximal value to update turn speed with
 

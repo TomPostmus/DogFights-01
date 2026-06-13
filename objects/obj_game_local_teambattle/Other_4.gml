@@ -1,9 +1,14 @@
 // Create in-game related player objects (so outside of lobby room)
 if (global.ingame()) { // if in in-game room
 	
+	team_lives = array_create(teams_number, lives_init) // reset lives
+	team_scores = array_create(teams_number, 0)
+	
 	// Gather team spawns in lists
-	for (var i = 0; i < teams_number; i ++)
+	for (var i = 0; i < teams_number; i ++) {
 		ds_list_clear(team_spawns[i]) // clear lists
+		ds_list_clear(team_reserves[i])
+	}
 		
 	with (obj_marker_team_spawn) {
 		if (team_id < other.teams_number) // if team is used

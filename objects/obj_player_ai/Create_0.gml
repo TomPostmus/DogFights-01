@@ -11,6 +11,8 @@ trigger_timer = 0			// timer that turns input_attack true on zero
 
 state = "explore"
 
+enemies = ds_list_create() // list of enemies currently in sight
+
 // Decision tree
 dtree_timer = 0				// timer to call decision tree update
 dtree_update_time = 60		// number of steps between each dtree update
@@ -30,13 +32,11 @@ astpath_targ_x = undefined // target coordinates of A* path
 astpath_targ_y = undefined
 astpath_costs = ds_list_create() // list that maps path points to costs
 astpath_ths = ds_list_create() // list that maps path points to orientation values (thetas)
-grid = undefined // motion planning grid
-grid_high = undefined // motion planning grid for high objects
 
-// RRT*
+// RRT* motion planning
 // This is the RTT tree that grows from current position
 // Each step, segments are added to tree to explore optimal path
-rrt_field = rrt_mouse_field_player_avoidance // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
+rrt_field = rrt_enemy_repulsion // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // all branches of RRT* tree
 rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
@@ -66,7 +66,7 @@ function astpath_compute() {
 	astpath_point = 0			// reset path point counter
 	
 	if (astpath_targ_x != undefined && astpath_targ_y != undefined) { // check if target was set
-		if (!mp_grid_path(grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path, if not succesful
+		if (!mp_grid_path(obj_ai_topology_manager.grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path, if not succesful
 			path_delete(astpath) // if not succesful
 			astpath = undefined
 		} else { // if succesful
@@ -137,28 +137,6 @@ function astpath_compute_furthest_visible_point(_x, _y) {
 	return _path_pt
 }
 
-//Function to generate motion-planning grid
-function astpath_generate_mp_grid(_cell_size) {
-	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
-	for (var i = 0; i < array_length(obstr_objects); i ++) {
-		mp_grid_add_instances(grid, obstr_objects[i], true)
-	}
-	return grid
-}
-
-// Generate mp grid with only high obstructions
-function astpath_generate_mp_grid_high(_cell_size) {
-	var grid = mp_grid_create(0, 0, room_width/_cell_size, room_height/_cell_size, _cell_size, _cell_size)
-	for (var i = 0; i < array_length(obstr_objects); i ++) {
-		for (var j = 0; j < instance_number(obstr_objects[i]); j ++) {
-			var obstacle = instance_find(obstr_objects[i], j)
-			if (obstacle.height == HL.high)
-				mp_grid_add_instances(grid, obstacle, true)
-		}
-	}
-	return grid
-}
-
 /* --- RRT* FUNCTIONS --- */
 
 // RRT H cost field based on distance to mouse (cursor)
@@ -193,6 +171,33 @@ function rrt_mouse_field_player_avoidance(_x, _y, _th) {
 	return [_cost, _lowest_cost_dir]
 }
 
+// Repulsion to enemies
+function rrt_enemy_repulsion(_x, _y, _th) {
+	//var _enemy_attr_r = 200 // attraction and repulsion radii to and from enemy
+	var _enemy_rep_r = 200 // repulsion radius from enemy
+	var _cost = 0
+	
+	var _rep_vec_x = 0 // accumulated repulsion vector from all enemies
+	var _rep_vec_y = 0
+	for (var i = 0; i < ds_list_size(enemies); i ++) {
+		var _enemy_body = enemies[|i].body
+		var _dist = point_distance(_enemy_body.get_x(), _enemy_body.get_y(), _x, _y)
+		var _dir = point_direction(_enemy_body.get_x(), _enemy_body.get_y(), _x, _y) // direction from enemy to point
+		
+		var _rep_strength = max(_enemy_rep_r - _dist, 0) / _enemy_rep_r // (normalised) repulsion strength based on distance to enemy
+		_rep_vec_x += lengthdir_x(_rep_strength, _dir) // add to repulsion vector
+		_rep_vec_y += lengthdir_y(_rep_strength, _dir)
+		
+		_cost += max(_enemy_rep_r - _dist, 0) // add repulsion distance cost
+	}
+	
+	var _rep_dir = point_direction(0, 0, _rep_vec_x, _rep_vec_y) // direction of accumulated repulsion vector
+	
+	if (point_distance(0, 0, _rep_vec_x, _rep_vec_y) > 0.001)
+		_cost += abs(angle_difference(_rep_dir, _th)) // add (mis)alignment with repulsion vector to cost
+	
+	return [_cost, _rep_dir]
+}
 
 // Compute H cost of a path element based on its distance to nearest point in A* path
 function rrt_compute_h_cost(_x_end, _y_end, _th_end) {

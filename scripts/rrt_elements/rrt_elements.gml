@@ -149,29 +149,41 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		var _precision = 10
-		var _last_iter = false
-		var _d = 0 // distance over line of colslider
-		_col_slider.image_angle = th
-		while (true) {
-			if (_d > l) {
-				_d = l // cap at length
-				_last_iter = true
-			}
-			
-			_col_slider.x = x + lengthdir_x(gear * _d, th) // slide over line
-			_col_slider.y = y + lengthdir_y(gear * _d, th)
-			with (_col_slider) {
-				for (var i = 0; i < array_length(_obstr_objects); i ++)
-					if (place_meeting(x, y, _obstr_objects[i]))
-						return false
-			}
-			
-			if (_last_iter)
-				return true
-			
-			_d += _precision
+		_col_slider.image_xscale = gear // flip colslider for reverse gear segments (to check if backwards movement is possible)
+		_col_slider.x = x + lengthdir_x(gear * l, th) // place at end of line
+		_col_slider.y = y + lengthdir_y(gear * l, th)
+		with (_col_slider) {
+			for (var i = 0; i < array_length(_obstr_objects); i ++)
+				if (place_meeting(x, y, _obstr_objects[i]))
+					return false
 		}
+		
+		return true
+		
+		// Iterative (for longer segments)
+		//var _precision = 10
+		//var _last_iter = false
+		//var _d = 0 // distance over line of colslider
+		//_col_slider.image_angle = th
+		//while (true) {
+		//	if (_d > l) {
+		//		_d = l // cap at length
+		//		_last_iter = true
+		//	}
+			
+		//	_col_slider.x = x + lengthdir_x(gear * _d, th) // slide over line
+		//	_col_slider.y = y + lengthdir_y(gear * _d, th)
+		//	with (_col_slider) {
+		//		for (var i = 0; i < array_length(_obstr_objects); i ++)
+		//			if (place_meeting(x, y, _obstr_objects[i]))
+		//				return false
+		//	}
+			
+		//	if (_last_iter)
+		//		return true
+			
+		//	_d += _precision
+		//}
 	}
 	
 	// Same as collision_free in sense that we're sliding the collision slider over path checking for collisions
@@ -275,29 +287,42 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		var _precision = 25 // precision in degrees of collision check
-		var _d = 0 // distance of sliding over arc segment
-		var _last_iter = false
-		while (true) {
-			if (_d > l) {
-				_d = l // cap at length
-				_last_iter = true
-			}				
-				
-			_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * _d) // slide over arc
-			_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * _d)
-			_col_slider.image_angle = th + gear * steering * _d // slide angle over turn rotation
-			with (_col_slider) {
-				for (var i = 0; i < array_length(_obstr_objects); i ++)
-					if (place_meeting(x, y, _obstr_objects[i]))
-						return false
-			}
-		
-			if (_last_iter)
-				return true
-			
-			_d += _precision
+		_col_slider.image_xscale = gear // flip colslider for reverse gear segments (to check if backwards movement is possible)
+		_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * l) // slide over arc
+		_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * l)
+		_col_slider.image_angle = th + gear * steering * l // slide angle over turn rotation
+		with (_col_slider) {
+			for (var i = 0; i < array_length(_obstr_objects); i ++)
+				if (place_meeting(x, y, _obstr_objects[i]))
+					return false
 		}
+		
+		return true
+		
+		// Iterative (for longer segments)
+		//var _precision = 25 // precision in degrees of collision check
+		//var _d = 0 // distance of sliding over arc segment
+		//var _last_iter = false
+		//while (true) {
+		//	if (_d > l) {
+		//		_d = l // cap at length
+		//		_last_iter = true
+		//	}				
+				
+		//	_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * _d) // slide over arc
+		//	_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * _d)
+		//	_col_slider.image_angle = th + gear * steering * _d // slide angle over turn rotation
+		//	with (_col_slider) {
+		//		for (var i = 0; i < array_length(_obstr_objects); i ++)
+		//			if (place_meeting(x, y, _obstr_objects[i]))
+		//				return false
+		//	}
+		
+		//	if (_last_iter)
+		//		return true
+			
+		//	_d += _precision
+		//}
 	}
 	
 	// Same as collision_free in sense that we're sliding the collision slider over path checking for collisions

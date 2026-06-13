@@ -4,7 +4,7 @@
   "bboxMode":0,
   "bbox_bottom":11,
   "bbox_left":0,
-  "bbox_right":24,
+  "bbox_right":13,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -23,7 +23,7 @@
   ],
   "name":"spr_ai_collision_slider",
   "nineSlice":null,
-  "origin":4,
+  "origin":3,
   "parent":{
     "name":"dir_player",
     "path":"folders/AssetsWeaponsAndPlayer/dir_player.yy",
@@ -75,7 +75,7 @@
     ],
     "visibleRange":null,
     "volume":1.0,
-    "xorigin":12,
+    "xorigin":0,
     "yorigin":6,
   },
   "swatchColours":null,
@@ -86,5 +86,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":25,
+  "width":14,
 }
