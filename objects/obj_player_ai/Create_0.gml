@@ -66,7 +66,7 @@ function astpath_compute() {
 	astpath_point = 0			// reset path point counter
 	
 	if (astpath_targ_x != undefined && astpath_targ_y != undefined) { // check if target was set
-		if (!mp_grid_path(obj_ai_topology_manager.grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path, if not succesful
+		if (!mp_grid_path(obj_ai_topology.grid, astpath, body.get_x(), body.get_y(), astpath_targ_x, astpath_targ_y, true)) { // try making path, if not succesful
 			path_delete(astpath) // if not succesful
 			astpath = undefined
 		} else { // if succesful
@@ -165,11 +165,56 @@ function rrt_mouse_field_player_avoidance(_x, _y, _th) {
 	
 	if (_nearest != undefined) {
 		_cost += max(0, _r - _min_dist) // add penalty if within range of other character
-	}
-	
+	}	
 	
 	return [_cost, _lowest_cost_dir]
 }
+
+function rrt_topology_field(_x, _y, _th) {
+}
+
+// Attraction to enemies
+//function rrt_enemy_repulsion(_x, _y, _th) {
+//	//var _enemy_attr_r = 200 // attraction and repulsion radii to and from enemy
+//	var _enemy_rep_r = 200 // repulsion radius from enemy
+//	var _cost = 0
+	
+//	var _rep_vec_x = 0 // accumulated repulsion vector from all enemies
+//	var _rep_vec_y = 0
+//	for (var i = 0; i < ds_list_size(enemies); i ++) {
+//		var _enemy_body = enemies[|i].body
+//		var _dist = point_distance(_enemy_body.get_x(), _enemy_body.get_y(), _x, _y)
+//		var _dir = point_direction(_enemy_body.get_x(), _enemy_body.get_y(), _x, _y) // direction from enemy to point
+		
+//		var _rep_strength = max(_enemy_rep_r - _dist, 0) / _enemy_rep_r // (normalised) repulsion strength based on distance to enemy
+//		_rep_vec_x += lengthdir_x(_rep_strength, _dir) // add to repulsion vector
+//		_rep_vec_y += lengthdir_y(_rep_strength, _dir)
+		
+//		_cost += max(_enemy_rep_r - _dist, 0) // add repulsion distance cost
+//	}
+	
+//	var _rep_dir = point_direction(0, 0, _rep_vec_x, _rep_vec_y) // direction of accumulated repulsion vector
+	
+//	if (point_distance(0, 0, _rep_vec_x, _rep_vec_y) > 0.001)
+//		_cost += abs(angle_difference(_rep_dir, _th)) // add (mis)alignment with repulsion vector to cost
+		
+//	// add topology penalty
+//	var _cell_size = obj_ai_topology.cell_size
+//	var _cell_i = floor(_x / _cell_size) 
+//	var _cell_j = floor(_y / _cell_size)
+//	var _compass = obj_ai_topology.compasses[# _cell_i, _cell_j]
+//	if (_compass != undefined) { // if within grid range
+//		var _top_penalty = 0
+//		_top_penalty += _compass[0] * (1 - min(90, abs(angle_difference(90, _th))) / 90) // n
+//		_top_penalty += _compass[1] * (1 - min(90, abs(angle_difference(0, _th))) / 90) // e
+//		_top_penalty += _compass[2] * (1 - min(90, abs(angle_difference(270, _th))) / 90) // s
+//		_top_penalty += _compass[3] * (1 - min(90, abs(angle_difference(180, _th))) / 90) // w
+	
+//		_cost += _top_penalty * 360
+//	}
+	
+//	return [_cost, _rep_dir]
+//}
 
 // Repulsion to enemies
 function rrt_enemy_repulsion(_x, _y, _th) {
@@ -195,6 +240,21 @@ function rrt_enemy_repulsion(_x, _y, _th) {
 	
 	if (point_distance(0, 0, _rep_vec_x, _rep_vec_y) > 0.001)
 		_cost += abs(angle_difference(_rep_dir, _th)) // add (mis)alignment with repulsion vector to cost
+		
+	// add topology penalty
+	var _cell_size = obj_ai_topology.cell_size
+	var _cell_i = floor(_x / _cell_size) 
+	var _cell_j = floor(_y / _cell_size)
+	var _compass = obj_ai_topology.compasses[# _cell_i, _cell_j]
+	if (_compass != undefined) { // if within grid range
+		var _top_penalty = 0
+		_top_penalty += _compass[0] * (1 - min(90, abs(angle_difference(90, _th))) / 90) // n
+		_top_penalty += _compass[1] * (1 - min(90, abs(angle_difference(0, _th))) / 90) // e
+		_top_penalty += _compass[2] * (1 - min(90, abs(angle_difference(270, _th))) / 90) // s
+		_top_penalty += _compass[3] * (1 - min(90, abs(angle_difference(180, _th))) / 90) // w
+	
+		_cost += _top_penalty * 360
+	}
 	
 	return [_cost, _rep_dir]
 }

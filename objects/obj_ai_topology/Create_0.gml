@@ -29,12 +29,15 @@ function astpath_generate_mp_grid_high(_cell_size) {
 grid = astpath_generate_mp_grid(cell_size)
 grid_high = astpath_generate_mp_grid_high(cell_size)
 
-// Define normals
-normals = ds_grid_create(room_width/cell_size, room_height/cell_size)
-//mp_grid_to_ds_grid(grid, normals)
-
-//for (var i = 0; i < ds_grid_width(normals); i ++) {
-//	for (var j = 0; j < ds_grid_width(normals); j ++) {
-//		mp_grid_get_cell()
-//	}
-//}
+// Define topology
+compasses = ds_grid_create(room_width/cell_size, room_height/cell_size)
+for (var i = 0; i < ds_grid_width(compasses); i ++) {
+	for (var j = 0; j < ds_grid_height(compasses); j ++) {
+		var _north = mp_grid_get_cell(grid, i, j-1) == -1 // whether north is occupied
+		var _east = mp_grid_get_cell(grid, i+1, j) == -1
+		var _south = mp_grid_get_cell(grid, i, j+1) == -1
+		var _west = mp_grid_get_cell(grid, i-1, j) == -1
+		
+		compasses[# i, j] = [_north, _east, _south, _west]
+	}
+}

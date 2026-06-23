@@ -56,3 +56,38 @@ if (astpath != undefined && path_exists(astpath)) {
 
 // Draw collision slider
 with (colslider) draw_self()
+
+// Draw AI topology in camera
+for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
+	if (obj_lobby.players_active[|i] == id && view_current == i) { // check if is active player and drawing in its viewport
+		if (instance_exists(camera)) {
+			var _cell_size = obj_ai_topology.cell_size
+			var _n_cells_w = camera.get_width() / _cell_size // number of cells in width and height direction to draw
+			var _n_cells_h = camera.get_height() / _cell_size
+			
+			for (var _c_i = 0; _c_i < _n_cells_w; _c_i ++) {
+				for (var _c_j = 0; _c_j < _n_cells_h; _c_j ++) {
+					var _cell_abs_i = floor(camera.x / _cell_size) + _c_i - floor(_n_cells_w / 2) // indices of cells in world cell grid
+					var _cell_abs_j = floor(camera.y / _cell_size) + _c_j - floor(_n_cells_h / 2)
+					var _cell_x = _cell_abs_i* _cell_size // absolute loc of cell x, y
+					var _cell_y = _cell_abs_j * _cell_size
+					
+					var _compass = obj_ai_topology.compasses[# _cell_abs_i, _cell_abs_j]
+					if (_compass != undefined) { // if within grid range
+					
+						draw_set_colour(c_blue)
+						draw_set_font(ft_extra_small)
+					
+						// draw compass
+						var _m = 4
+						draw_text(_cell_x + _cell_size/2, _cell_y + _m, _compass[0]) // n
+						draw_text(_cell_x + _cell_size - _m, _cell_y + _cell_size/2, _compass[1]) // e
+						draw_text(_cell_x + _cell_size/2, _cell_y + _cell_size - _m, _compass[2]) // s
+						draw_text(_cell_x + _m, _cell_y + _cell_size/2, _compass[3]) // w
+						
+					}
+				}			
+			}
+		}
+	}
+}

@@ -1,5 +1,9 @@
 draw_surface(application_surface, 0, 0)
 ui_draw()
+
+draw_set_halign(fa_left)
+draw_set_valign(fa_middle)
+draw_set_font(ft_small)
 draw_text(20, 20, fps)
 
 // In debug mode, show DS report

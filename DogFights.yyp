@@ -97,6 +97,7 @@
   "resources":[
     {"id":{"name":"WinDev","path":"extensions/WinDev/WinDev.yy",},},
     {"id":{"name":"ft_description","path":"fonts/ft_description/ft_description.yy",},},
+    {"id":{"name":"ft_extra_small","path":"fonts/ft_extra_small/ft_extra_small.yy",},},
     {"id":{"name":"ft_menu_title","path":"fonts/ft_menu_title/ft_menu_title.yy",},},
     {"id":{"name":"ft_normal_bold","path":"fonts/ft_normal_bold/ft_normal_bold.yy",},},
     {"id":{"name":"ft_normal","path":"fonts/ft_normal/ft_normal.yy",},},
@@ -106,7 +107,7 @@
     {"id":{"name":"obj_ai_collision_slider","path":"objects/obj_ai_collision_slider/obj_ai_collision_slider.yy",},},
     {"id":{"name":"obj_ai_path_point","path":"objects/obj_ai_path_point/obj_ai_path_point.yy",},},
     {"id":{"name":"obj_ai_team_manager","path":"objects/obj_ai_team_manager/obj_ai_team_manager.yy",},},
-    {"id":{"name":"obj_ai_topology_manager","path":"objects/obj_ai_topology_manager/obj_ai_topology_manager.yy",},},
+    {"id":{"name":"obj_ai_topology","path":"objects/obj_ai_topology/obj_ai_topology.yy",},},
     {"id":{"name":"obj_animcomp_arm_left","path":"objects/obj_animcomp_arm_left/obj_animcomp_arm_left.yy",},},
     {"id":{"name":"obj_animcomp_arm_right","path":"objects/obj_animcomp_arm_right/obj_animcomp_arm_right.yy",},},
     {"id":{"name":"obj_animcomp_arm","path":"objects/obj_animcomp_arm/obj_animcomp_arm.yy",},},

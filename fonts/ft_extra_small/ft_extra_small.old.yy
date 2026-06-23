@@ -1,6 +1,6 @@
 {
   "$GMFont":"",
-  "%Name":"ft_small",
+  "%Name":"ft_extra_small",
   "AntiAlias":1,
   "applyKerning":0,
   "ascender":9,
@@ -117,7 +117,7 @@
   "last":0,
   "lineHeight":11,
   "maintainGms1Font":false,
-  "name":"ft_small",
+  "name":"ft_extra_small",
   "parent":{
     "name":"fonts",
     "path":"folders/AssetsUI/fonts.yy",
