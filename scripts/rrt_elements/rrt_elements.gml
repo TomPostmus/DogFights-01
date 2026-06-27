@@ -7,8 +7,8 @@
 #macro RRT_V 2 // assumed speed of player (pixels/step)
 #macro RRT_TURN_TIME 141 // assumed number of frames for making full turn
 
-#macro RRT_GEARSHIFT_PEN 15 // constants for how much to penalise gear shifts and steering shifts in G cost
-#macro RRT_STEERSHIFT_PEN 10
+#macro RRT_GEARSHIFT_PEN 0 // constants for how much to penalise gear shifts and steering shifts in G cost
+#macro RRT_STEERSHIFT_PEN 0
 #macro RRT_REVERSE_PEN 0 // how much to penalise reverse gear elements
 
 // Mark branch for deletion

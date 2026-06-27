@@ -235,28 +235,51 @@ function rrt_enemy_repulsion(_x, _y, _th) {
 		
 		_cost += max(_enemy_rep_r - _dist, 0) // add repulsion distance cost
 	}
-	
-	var _rep_dir = point_direction(0, 0, _rep_vec_x, _rep_vec_y) // direction of accumulated repulsion vector
-	
-	if (point_distance(0, 0, _rep_vec_x, _rep_vec_y) > 0.001)
-		_cost += abs(angle_difference(_rep_dir, _th)) // add (mis)alignment with repulsion vector to cost
 		
-	// add topology penalty
+	// compass topology penalty
+	//var _cell_size = obj_ai_topology.cell_size
+	//var _cell_i = floor(_x / _cell_size) 
+	//var _cell_j = floor(_y / _cell_size)
+	//var _compass = obj_ai_topology.compasses[# _cell_i, _cell_j]
+	//if (_compass != undefined) { // if within grid range
+	//	var _top_penalty = 0
+	//	_top_penalty += _compass[0] * (1 - min(90, abs(angle_difference(90, _th))) / 90) // n
+	//	_top_penalty += _compass[1] * (1 - min(90, abs(angle_difference(0, _th))) / 90) // e
+	//	_top_penalty += _compass[2] * (1 - min(90, abs(angle_difference(270, _th))) / 90) // s
+	//	_top_penalty += _compass[3] * (1 - min(90, abs(angle_difference(180, _th))) / 90) // w
+	
+	//	_cost += _top_penalty * 360
+	//}
+	
+	// project repulsion vector onto wall normals topology
+	var _rep_dir = point_direction(0, 0, _rep_vec_x, _rep_vec_y) // direction of accumulated repulsion vector
+	var _rep_dist = point_distance(0, 0, _rep_vec_x, _rep_vec_y) // length of repulsion vector
+	
 	var _cell_size = obj_ai_topology.cell_size
 	var _cell_i = floor(_x / _cell_size) 
 	var _cell_j = floor(_y / _cell_size)
-	var _compass = obj_ai_topology.compasses[# _cell_i, _cell_j]
-	if (_compass != undefined) { // if within grid range
-		var _top_penalty = 0
-		_top_penalty += _compass[0] * (1 - min(90, abs(angle_difference(90, _th))) / 90) // n
-		_top_penalty += _compass[1] * (1 - min(90, abs(angle_difference(0, _th))) / 90) // e
-		_top_penalty += _compass[2] * (1 - min(90, abs(angle_difference(270, _th))) / 90) // s
-		_top_penalty += _compass[3] * (1 - min(90, abs(angle_difference(180, _th))) / 90) // w
+	var _orientation = obj_ai_topology.orientations[# _cell_i, _cell_j]
+	var _strength = obj_ai_topology.strengths[# _cell_i, _cell_j]
+	var _proj_vec_dir = _rep_dir
+	if (_orientation != undefined) {
 	
-		_cost += _top_penalty * 360
+		if (abs(angle_difference(_rep_dir, _orientation+180)) < abs(angle_difference(_rep_dir, _orientation))) { // since orientation is bi-directional, check if repulsion vector is closer to backwards version of orientation direction
+			_orientation += 180
+		}
+	
+		var _diff = angle_difference(_rep_dir, _orientation) // angle between orientation and rep vector
+		var _par_proj = lengthdir_x(_rep_dist, _diff) // parallel projection onto orientation
+		var _perp_proj = lengthdir_y(_rep_dist, _diff) // perpendicular projection onto orientation
+		var _proj_vec_x = lengthdir_x(_par_proj, _orientation) + (1 - _strength) * lengthdir_x(_perp_proj, _orientation - 90) // compute projected vector as projected parallel to orientation plus perpendicular part that is weighted with strength (if 1 strength, completely parallel to orientation, if 0 strength it is just the original vector)
+		var _proj_vec_y = lengthdir_y(_par_proj, _orientation) + (1 - _strength) * lengthdir_y(_perp_proj, _orientation - 90)
+	
+		_proj_vec_dir = point_direction(0, 0, _proj_vec_x, _proj_vec_y)
+		if (point_distance(0, 0, _proj_vec_x, _proj_vec_y) > 0.001)
+			_cost += abs(angle_difference(_proj_vec_dir, _th)) // add (mis)alignment of current RRT element with projected vector to cost
+			
 	}
 	
-	return [_cost, _rep_dir]
+	return [_cost, _proj_vec_dir]
 }
 
 // Compute H cost of a path element based on its distance to nearest point in A* path

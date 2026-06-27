@@ -57,9 +57,13 @@ if (astpath != undefined && path_exists(astpath)) {
 // Draw collision slider
 with (colslider) draw_self()
 
+// Draw lowest cost dir at mouse
+var _lowest_cost_dir = rrt_field(mouse_x, mouse_y, 0)[1]
+draw_arrow(mouse_x, mouse_y, mouse_x + lengthdir_x(10, _lowest_cost_dir), mouse_y + lengthdir_y(10, _lowest_cost_dir), 2)
+
 // Draw AI topology in camera
 for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
-	if (obj_lobby.players_active[|i] == id && view_current == i) { // check if is active player and drawing in its viewport
+	if (/*obj_lobby.players_active[|i] == id && */view_current == i) { // check if is active player and drawing in its viewport
 		if (instance_exists(camera)) {
 			var _cell_size = obj_ai_topology.cell_size
 			var _n_cells_w = camera.get_width() / _cell_size // number of cells in width and height direction to draw
@@ -72,19 +76,50 @@ for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
 					var _cell_x = _cell_abs_i* _cell_size // absolute loc of cell x, y
 					var _cell_y = _cell_abs_j * _cell_size
 					
-					var _compass = obj_ai_topology.compasses[# _cell_abs_i, _cell_abs_j]
-					if (_compass != undefined) { // if within grid range
+					// Draw compass
+					//var _compass = obj_ai_topology.compasses[# _cell_abs_i, _cell_abs_j]
+					//if (_compass != undefined) { // if within grid range
 					
-						draw_set_colour(c_blue)
-						draw_set_font(ft_extra_small)
+					//	draw_set_colour(c_blue)
+					//	draw_set_font(ft_extra_small)
 					
-						// draw compass
-						var _m = 4
-						draw_text(_cell_x + _cell_size/2, _cell_y + _m, _compass[0]) // n
-						draw_text(_cell_x + _cell_size - _m, _cell_y + _cell_size/2, _compass[1]) // e
-						draw_text(_cell_x + _cell_size/2, _cell_y + _cell_size - _m, _compass[2]) // s
-						draw_text(_cell_x + _m, _cell_y + _cell_size/2, _compass[3]) // w
+					//	// draw compass
+					//	var _m = 4
+					//	draw_text(_cell_x + _cell_size/2, _cell_y + _m, _compass[0]) // n
+					//	draw_text(_cell_x + _cell_size - _m, _cell_y + _cell_size/2, _compass[1]) // e
+					//	draw_text(_cell_x + _cell_size/2, _cell_y + _cell_size - _m, _compass[2]) // s
+					//	draw_text(_cell_x + _m, _cell_y + _cell_size/2, _compass[3]) // w
 						
+					//}
+					
+					// Draw dist transform
+					if (_cell_abs_i >= 0 && _cell_abs_i < ds_grid_width(obj_ai_topology.dist_transform)
+						&& _cell_abs_j >= 0 && _cell_abs_j < ds_grid_height(obj_ai_topology.dist_transform)) {
+						//var _source = obj_ai_topology.dist_transform[# _cell_abs_i, _cell_abs_j]
+						
+						//if (_source <= 3) {
+					
+						//	draw_set_colour(c_blue)
+						//	draw_set_font(ft_small)
+					
+						//	draw_text(_cell_x + _cell_size/2, _cell_y + _cell_size/2, _source)
+						
+						//}
+						
+						var _orientation = obj_ai_topology.orientations[# _cell_abs_i, _cell_abs_j]
+						var _strength = obj_ai_topology.strengths[# _cell_abs_i, _cell_abs_j]
+						if (_strength > 0) {
+						
+							var _l = 6 * _strength
+						
+							draw_set_colour(c_blue)
+							draw_line(
+								_cell_x + _cell_size/2 + lengthdir_x(-_l, _orientation), 
+								_cell_y + _cell_size/2 + lengthdir_y(-_l, _orientation),
+								_cell_x + _cell_size/2 + lengthdir_x(_l, _orientation), 
+								_cell_y + _cell_size/2 + lengthdir_y(_l, _orientation)
+							)
+						}				
 					}
 				}			
 			}
