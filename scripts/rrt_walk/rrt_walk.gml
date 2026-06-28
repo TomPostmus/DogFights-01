@@ -1,6 +1,9 @@
 // Walk RRT branch element and when completed choose new one
 function rrt_walk(_body_x, _body_y, _body_rot){
 	
+	if (rrt_branch == undefined) // if in rrt_update the tree was reset
+		exit // exit function
+	
 	var _abort = false // abort flag, e.g. in case player has drifted too far from tree
 	if (!rrt_branch_completed) {
 		

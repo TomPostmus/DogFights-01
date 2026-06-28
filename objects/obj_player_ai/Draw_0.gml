@@ -57,13 +57,9 @@ if (astpath != undefined && path_exists(astpath)) {
 // Draw collision slider
 with (colslider) draw_self()
 
-// Draw lowest cost dir at mouse
-var _lowest_cost_dir = rrt_field(mouse_x, mouse_y, 0)[1]
-draw_arrow(mouse_x, mouse_y, mouse_x + lengthdir_x(10, _lowest_cost_dir), mouse_y + lengthdir_y(10, _lowest_cost_dir), 2)
-
 // Draw AI topology in camera
 for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
-	if (/*obj_lobby.players_active[|i] == id && */view_current == i) { // check if is active player and drawing in its viewport
+	if (obj_lobby.players_active[|i] == id && view_current == i) { // check if is active player and drawing in its viewport
 		if (instance_exists(camera)) {
 			var _cell_size = obj_ai_topology.cell_size
 			var _n_cells_w = camera.get_width() / _cell_size // number of cells in width and height direction to draw

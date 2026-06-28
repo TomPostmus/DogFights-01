@@ -576,8 +576,8 @@
   "RoomOrderNodes":[
     {"roomId":{"name":"rm_config","path":"rooms/rm_config/rm_config.yy",},},
     {"roomId":{"name":"rm_lobby","path":"rooms/rm_lobby/rm_lobby.yy",},},
-    {"roomId":{"name":"rm_map_josephsfarm","path":"rooms/rm_map_josephsfarm/rm_map_josephsfarm.yy",},},
     {"roomId":{"name":"rm_test","path":"rooms/rm_test/rm_test.yy",},},
+    {"roomId":{"name":"rm_map_josephsfarm","path":"rooms/rm_map_josephsfarm/rm_map_josephsfarm.yy",},},
     {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"roomId":{"name":"rm_ingame_parent","path":"rooms/rm_ingame_parent/rm_ingame_parent.yy",},},
     {"roomId":{"name":"rm_direct_connect","path":"rooms/rm_direct_connect/rm_direct_connect.yy",},},

@@ -96,15 +96,42 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	
 	// Draw this turn element (little circle)
 	static draw = function() {
+		draw_set_colour(c_blue)
 		draw_circle(x, y, 2, false)
+		draw_set_colour(c_red)
 		draw_arrow(x, y, x + lengthdir_x(8, th_end), y + lengthdir_y(8, th_end), 2)
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		return true // turning in place is considered to be always possible, even if there are obstacles that the player hits, it is still able to turn
-		// therefore the collision free function always returns true
+		var _precision = 25
+		var _last_iter = false
+		var _d = 0 // distance over turn
+		_col_slider.x = x
+		_col_slider.y = y
+		//if (abs(angle_difference(th_end, th)) > 30) {
+		//	_d = _d
+		//}
+		
+		while (true) {
+			if (_d > th_end) {
+				_d = th_end // cap at end angle
+				_last_iter = true
+			}
+			
+			_col_slider.image_angle = th + _d // slide over angles
+			with (_col_slider) {
+				for (var i = 0; i < array_length(_obstr_objects); i ++)
+					if (place_meeting(x, y, _obstr_objects[i]))
+						return false
+			}
+			
+			if (_last_iter)
+				return true
+			
+			_d += _precision
+		}
 	}
 	
 	// Same as collision_free in sense that we're sliding the collision slider over path checking for collisions
@@ -143,13 +170,13 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	
 	// Draw this line segment
 	static draw = function() {
+		draw_set_colour(c_blue)
 		draw_line_width(x, y, x_end, y_end, 1 + (thickness > 5) + (thickness > 10) + (thickness > 15))
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		_col_slider.image_xscale = gear // flip colslider for reverse gear segments (to check if backwards movement is possible)
 		_col_slider.x = x + lengthdir_x(gear * l, th) // place at end of line
 		_col_slider.y = y + lengthdir_y(gear * l, th)
 		with (_col_slider) {
@@ -260,6 +287,7 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 		var _d_start = 0 // start of line segment
 		var _d_end = gear * steering * _precision // end of line segment
 		var _last_iter = false
+		draw_set_colour(c_blue)
 		while (true) {
 			if (abs(_d_end) > l) {
 				_d_end = gear * steering * l // cap at length
@@ -287,7 +315,6 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		_col_slider.image_xscale = gear // flip colslider for reverse gear segments (to check if backwards movement is possible)
 		_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * l) // slide over arc
 		_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * l)
 		_col_slider.image_angle = th + gear * steering * l // slide angle over turn rotation

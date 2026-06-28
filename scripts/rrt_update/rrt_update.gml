@@ -8,9 +8,12 @@ function rrt_update(_body_x, _body_y, _body_rot){
 		// choose an open branch based on probability weighted with h cost
 		var _chosen = undefined // the chosen branch
 		var _nr_open = ds_list_size(rrt_branches_open)
-		if (_nr_open == 1) // if there is only 1 branch
+		if (_nr_open == 0) { // if there are no open branches
+			rrt_mark_del(rrt_branch) // reset tree
+			rrt_branch = undefined
+		} else if (_nr_open == 1) { // if there is only 1 branch
 			_chosen = rrt_branches_open[|0]
-		else {
+		} else {
 			// find maximum and minimum h cost between open branches
 			var _cost_min = infinity
 			var _cost_max = -infinity
@@ -129,7 +132,11 @@ function rrt_update(_body_x, _body_y, _body_rot){
 					//var _dir = _pt_dir * (1 - _weight) + _furthvis_dir * _weight // weigthed orientation
 				
 					var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end,  _chosen.lowest_cost_dir) // make turn element to direction of lowest cost of parent (_chosen) node
-					ds_list_add(_bundle, _turn)
+					if (_turn.collision_free(colslider, obstr_objects)) {
+						ds_list_add(_bundle, _turn) // add to list
+					} else {
+						ds_list_destroy(_turn.links) // else destroy
+					}
 				}
 			}
 				
@@ -148,11 +155,17 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			// if elements were added
 			if (_nr_added > 0) {
 				rrt_grow(_chosen) // backpropagate branch thickness growth
-				
-				var i = ds_list_find_index(rrt_branches_open, _chosen)
-				ds_list_delete(rrt_branches_open, i) // remove chosen branch from open branch list (it's no longer open)
 			}
+				
+			var i = ds_list_find_index(rrt_branches_open, _chosen) // find in open list
+			ds_list_delete(rrt_branches_open, i) // remove chosen branch from open branch list (it's no longer open), also if 0 branches were added (it's not suitable for choice in later steps)
 			ds_list_destroy(_bundle)
+			
+			// if only 1 open branch and 0 branches could be added
+			if (_nr_open == 1 && _nr_added == 0) {
+				rrt_mark_del(rrt_branch) // mark root for deletion, player is likely stuck or drifted away from tree root position (not well tested yet)
+				rrt_branch = undefined
+			}
 		}
 			
 	}
