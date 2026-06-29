@@ -30,17 +30,23 @@ if (global.ingame()) {
 		var _body_x = body.get_x()
 		var _body_y = body.get_y()
 		var _body_rot = body.get_rotation()
+		
+		// Clear APF sources list
+		ds_list_clear(apf_sources)
 	
 		// Spot enemies
 		if (instance_exists(camera)) {
-			ds_list_clear(enemies)
+			//ds_list_clear(enemies)
 			for (var i = 0; i < instance_number(obj_character); i ++) {
 				var _character_insight = instance_find(obj_character, i);
 				if (_character_insight != character && instance_exists(_character_insight.body)
 					&& (character.team_id == undefined || character.team_id != _character_insight.team_id)
 					&& !_character_insight.hp_protection) {
-					if (point_in_rectangle(_character_insight.body.trunk.x, _character_insight.body.trunk.y, camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2))
-						ds_list_add(enemies, _character_insight)
+					if (point_in_rectangle(_character_insight.body.trunk.x, _character_insight.body.trunk.y, camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2)) {
+						//ds_list_add(enemies, _character_insight)
+						var _trunk = _character_insight.body.trunk
+						ds_list_add(apf_sources, [_trunk.x, _trunk.y, 0, 300]) // add enemy with 200 repulsion radius, no attraction
+					}
 				}
 			}
 		}

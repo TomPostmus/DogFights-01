@@ -61,7 +61,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			var _bundle = ds_list_create() // bundle of five elements: left forward arc, straight forward segment and right forward arc, left backward arc, straight backward segment and right backward arc
 				// excluding the one that is identical to the one it came with
 				
-			if (_chosen.h_cost < rrt_tolerance) { // if chosen branch falls within completion tolerance
+			if (abs(_chosen.h_cost) < rrt_tolerance) { // if chosen branch falls within completion tolerance
 				var _identity_turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _chosen.th_end) // make identity turn (this will prevent new elements being added to position we're already satisfied with)
 				ds_list_add(_bundle, _identity_turn)
 			} else {

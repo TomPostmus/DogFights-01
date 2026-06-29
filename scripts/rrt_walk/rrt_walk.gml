@@ -95,7 +95,7 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 	// When completed walking the current branch
 	} else if (rrt_branch_completed) {
 		
-		if (rrt_branch.h_cost < rrt_tolerance) { // if current branch has H cost tolerance within completion tolerance of motion planning
+		if (abs(rrt_branch.h_cost) < rrt_tolerance) { // if current branch has H cost tolerance within completion tolerance of motion planning
 			
 			rrt_mark_del(rrt_branch) // delete RRT
 			rrt_branch = undefined // stop motion planning
