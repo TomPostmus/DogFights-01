@@ -19,13 +19,31 @@ if (instance_exists(character) && instance_exists(character.body)) {
 	draw_set_colour(c_blue)
 	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
 		var _branch = rrt_branches[|i]
-		_branch.draw()
+		_branch.draw()	
+	}
+	
+	// Draw cost every N iterations
+	draw_set_colour(c_lime)
+	draw_set_font(ft_small)
+	for (var i = 0; i < ds_list_size(rrt_branches); i += 20) {
+		var _branch = rrt_branches[|i]
+		draw_text(_branch.x, _branch.y, _branch.h_cost)
 	}
 	
 	draw_set_colour(c_red)
 	for (var i = 0; i < ds_list_size(rrt_branches_open); i ++) {
 		var _branch = rrt_branches_open[|i]
 		draw_circle(_branch.x_end, _branch.y_end, 1, false) // draw red circles at end points of open branches
+	}
+	
+	// Draw repulsion source drops
+	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
+		var _source = apf_sources[|i]
+		
+		draw_set_font(ft_normal)
+		draw_set_colour(_source.rep_type ? c_red : c_aqua)
+		draw_text(_source.x, _source.y, _source.rep_type ? "R" : "A")
+		draw_circle(_source.x, _source.y, _source.radius * _source.strength, true)
 	}
 
 }

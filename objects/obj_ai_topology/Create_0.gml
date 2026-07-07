@@ -157,7 +157,7 @@ for (var i = 0; i < ds_grid_width(orientations); i ++) {
 			
 			var _gradient = 0.5 * arctan2(-2*_jxy, _jxx - _jyy)
 			orientations[# i, j] = radtodeg(_gradient + 0.5 * pi)
-			strengths[# i, j] = 1 - min(5, max(0, dist_transform[# i, j]-1)) / 5
+			strengths[# i, j] = 1 - min(4, max(0, dist_transform[# i, j]-3)) / 4
 		}
 		
 	}

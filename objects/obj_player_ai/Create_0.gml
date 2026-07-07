@@ -3,23 +3,14 @@ event_inherited();
 
 last_seen_target_x = 0		// position where target is and was last seen if no longer in-sight
 last_seen_target_y = 0
-targets = ds_list_create()	// list of bodies that are potential targets
+targets = ds_list_create()	// list of characters that are potential targets
 target = noone				// current target (body object)
-scope_w = 640
-scope_h = 320
-trigger_timer = 0			// timer that turns input_attack true on zero
+target_x = 0				// position of current target
+target_y = 0
 
 state = "explore"
 
-enemies = ds_list_create() // list of enemies currently in sight
-
-// Decision tree
-dtree_timer = 0				// timer to call decision tree update
-dtree_update_time = 60		// number of steps between each dtree update
-conflict = false			// whether there are enemies to conflict with
-fight_or_flight = ""		// when conflict, whether to fight, flight or await
-path_recompute_timer = 0	// timer to recompute path when dealing with dynamic goal
-path_recompute_time = 20	// number of steps between each path recompute
+obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
 
 // A* path
 // This is a path that is used for the higher level motion planning
@@ -36,12 +27,12 @@ astpath_ths = ds_list_create() // list that maps path points to orientation valu
 // RRT* motion planning
 // This is the RTT tree that grows from current position
 // Each step, segments are added to tree to explore optimal path
-rrt_field = rrt_apf_with_topology_constraints // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
+rrt_field = undefined // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
 rrt_branch = undefined // current RRT* branch we're walking
 rrt_branches = ds_list_create() // all branches of RRT* tree
 rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
-rrt_tolerance = 20 // H cost below which motion is no longer necessary
-rrt_powerlaw_p = 5 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
+rrt_tolerance = 50 // H cost below which motion is no longer necessary
+rrt_powerlaw_p = 30 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
 rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 rrt_steershift_pen = 0
 
@@ -49,12 +40,15 @@ rrt_branch_completed = false // whether current branch we're walking has been co
 rrt_pause = false // pause rrt (for debugging purposes)
 rrt_walk_timer = -1 // timer for keeping completion time of element in check
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
+rrt_repdrop_counter = 0 // counter increasing on each bundle addition
+rrt_repdrop_every = 20 // after how many added bundle to add repulsion source
+colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned RRT paths (it 'slides' over the RRT paths)
 
 // Artificial potential field
-apf_sources = ds_list_create() // list of arrays, that represent attraction or repulsion sources
+apf_sources = ds_list_create() // list of APF source objects, attraction or repulsion sources
+apf_target_attraction_timer = 0 // timer incrementing each step
+apf_target_attraction_every = 20 // after how many steps to drop attraction sources at target
 
-colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned motion paths (it 'slides' over the motion paths)
-obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
 
 /* --- A* FUNCTIONS --- */
 
@@ -148,29 +142,87 @@ function rrt_mouse_field(_x, _y, _th) {
 	return [point_distance(_x, _y, mouse_x, mouse_y), _lowest_cost_dir]
 }
 
-// RRT H cost field
-function rrt_mouse_field_player_avoidance(_x, _y, _th) {
-	var _r = 100 // radius from which to start avoiding players
-	var _min_dist = infinity
-	var _nearest = undefined
-	with (obj_character) {
-		if (id != other.character) {
-			var _dist = point_distance(_x, _y, x, y)
-			if (_dist < _min_dist) {
-				_min_dist = _dist
-				_nearest = id
-			}
+// RRT target field, where AI approaches target and takes into account moving around walls
+function rrt_approach_target_field(_x, _y, _th) {
+	var _cost = 0
+	
+	//var _target_dist = point_distance(_x, _y, target_x, target_y)
+	//var _target_dir = point_direction(_x, _y, target_x, target_y)
+	//var _line_collision = line_shootable(target_x, target_y)
+	//if (!_line_collision) {
+	//	_cost += _target_dist
+	//}
+	
+	var _potential_vec_x = 0 // initialize potential vector
+	var _potential_vec_y = 0
+	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
+		var _source = apf_sources[|i]
+		var _radius = _source.radius
+		var _strength = _source.strength
+		
+		var _dist = point_distance(_x, _y, _source.x, _source.y) // direction from RTT element point to APF source
+		var _dir = point_direction(_x, _y, _source.x, _source.y)
+		
+		_strength *= (_radius == 0) ? 0 : (max(_radius - _dist, 0) / _radius) // (normalised) source strength based on distance to source
+		
+		_potential_vec_x += lengthdir_x(_strength, _dir + _source.rep_type * 180) // add attraction/repulsion to potential vector
+		_potential_vec_y += lengthdir_y(_strength, _dir + _source.rep_type * 180)
+		
+		if (_source.rep_type)
+			_cost += _radius * _strength
+		else {
+			_cost += _radius * (1 - _strength)
 		}
 	}
 	
-	var _cost = point_distance(_x, _y, mouse_x, mouse_y)
-	var _lowest_cost_dir = point_direction(_x, _y, mouse_x, mouse_y) // direction to lowest cost from point
+	// project potential vector onto wall normals topology
+	var _pot_dir = point_direction(0, 0, _potential_vec_x, _potential_vec_y) // direction of accumulated potential vector
+	var _pot_dist = point_distance(0, 0, _potential_vec_x, _potential_vec_y) // length of potential vector
 	
-	if (_nearest != undefined) {
-		_cost += max(0, _r - _min_dist) // add penalty if within range of other character
-	}	
+	var _cell_size = obj_ai_topology.cell_size
+	var _cell_i = floor(_x / _cell_size) 
+	var _cell_j = floor(_y / _cell_size)
+	var _orientation = obj_ai_topology.orientations[# _cell_i, _cell_j]
+	var _strength = obj_ai_topology.strengths[# _cell_i, _cell_j]
+	var _proj_vec_dir = _pot_dir
+	if (_orientation != undefined) {
 	
-	return [_cost, _lowest_cost_dir]
+		if (abs(angle_difference(_pot_dir, _orientation+180)) < abs(angle_difference(_pot_dir, _orientation))) { // since orientation is bi-directional, check if potential vector is closer to backwards version of orientation direction
+			_orientation += 180
+		}
+	
+		var _diff = angle_difference(_pot_dir, _orientation) // angle between orientation and potential vector
+		var _par_proj = lengthdir_x(_pot_dir, _diff) // parallel projection onto orientation
+		var _perp_proj = lengthdir_y(_pot_dir, _diff) // perpendicular projection onto orientation
+		var _proj_vec_x = lengthdir_x(_par_proj, _orientation) + (1 - _strength) * lengthdir_x(_perp_proj, _orientation - 90) // compute projected vector as projected parallel to orientation plus perpendicular part that is weighted with strength (if 1 strength, completely parallel to orientation, if 0 strength it is just the original vector)
+		var _proj_vec_y = lengthdir_y(_par_proj, _orientation) + (1 - _strength) * lengthdir_y(_perp_proj, _orientation - 90)
+	
+		_proj_vec_dir = point_direction(0, 0, _proj_vec_x, _proj_vec_y)
+		if (point_distance(0, 0, _proj_vec_x, _proj_vec_y) > 0.001)
+			_cost += degtorad(abs(angle_difference(_proj_vec_dir, _th))) * 18 // add (mis)alignment of current RRT element with projected vector to cost
+			
+	}
+	
+	return [_cost, _proj_vec_dir]
+}
+
+// RRT target field, where AI focuses its rotation (shooting direction) on target
+function rrt_shoot_target_field(_x, _y, _th) {
+	var _cost = 0
+		
+	var _line_collision = line_shootable(target_x, target_y)
+	if (!_line_collision) {
+		var _dist = point_distance(_x, _y, target_x, target_y)
+			
+		_cost += _dist
+	}
+		
+	var _aim_precision = 3 // tolerance in which we are happy with shooting angle
+	var _target_dir = point_direction(_x, _y, target_x, target_y)
+	_cost += abs(angle_difference(_target_dir, _th)) / _aim_precision * rrt_tolerance
+		
+		
+	return [_cost, _target_dir]
 }
 
 // RRT APF field
@@ -183,26 +235,54 @@ function rrt_apf_with_topology_constraints(_x, _y, _th) {
 		var _source = apf_sources[|i]
 		var _source_x = _source[0]
 		var _source_y = _source[1]
-		var _repulsion = _source[2]
-		var _attraction = _source[3]
+		var _rep_radius = _source[2]
+		var _rep_strength = _source[3]
+		var _attr_radius = _source[4]
+		var _attr_strength = _source[5]
 		
 		var _dist = point_distance(_x, _y, _source_x, _source_y) // direction from RTT element point to APF source
 		var _dir = point_direction(_x, _y, _source_x, _source_y)
 		
-		var _rep_strength = (_repulsion == 0) ? 0 : (max(_repulsion - _dist, 0) / _repulsion) // (normalised) repulsion strength based on distance to source
-		var _attr_strength = (_attraction == 0) ? 0 : (max(_attraction - _dist, 0) / _attraction) // (normalised) repulsion strength based on distance to source
+		_rep_strength *= (_rep_radius == 0) ? 0 : (max(_rep_radius - _dist, 0) / _rep_radius) // (normalised) repulsion strength based on distance to source
+		_attr_strength *= (_attr_radius == 0) ? 0 : (max(_attr_radius - _dist, 0) / _attr_radius) // (normalised) attraction strength based on distance to source
 		
 		_potential_vec_x += lengthdir_x(_attr_strength, _dir) + lengthdir_x(_rep_strength, _dir + 180) // add attraction and repulsion to potential vector
 		_potential_vec_y += lengthdir_y(_attr_strength, _dir) + lengthdir_y(_rep_strength, _dir + 180)
 		
-		_cost += (_rep_strength - _attr_strength) * 100 // add to cost positive influence of repulsion strength and negative influence of attraction strength
+		_cost += _rep_radius * _rep_strength - _attr_radius * _attr_strength // add to cost positive influence of repulsion strength and negative influence of attraction strength
 			// so the closer we are to repulsion source, the higher the cost, the further away the lower the cost
 			// for the attraction source the other way around; the closer, the lower the cost, the further away the higher the cost
 	}
 	
-	var _lowest_cost_dir = point_direction(0, 0, _potential_vec_x, _potential_vec_y)
+	// project potential vector onto wall normals topology
+	var _pot_dir = point_direction(0, 0, _potential_vec_x, _potential_vec_y) // direction of accumulated potential vector
+	var _pot_dist = point_distance(0, 0, _potential_vec_x, _potential_vec_y) // length of potential vector
 	
-	return [_cost, _lowest_cost_dir]
+	var _cell_size = obj_ai_topology.cell_size
+	var _cell_i = floor(_x / _cell_size) 
+	var _cell_j = floor(_y / _cell_size)
+	var _orientation = obj_ai_topology.orientations[# _cell_i, _cell_j]
+	var _strength = obj_ai_topology.strengths[# _cell_i, _cell_j]
+	var _proj_vec_dir = _pot_dir
+	if (_orientation != undefined) {
+	
+		if (abs(angle_difference(_pot_dir, _orientation+180)) < abs(angle_difference(_pot_dir, _orientation))) { // since orientation is bi-directional, check if potential vector is closer to backwards version of orientation direction
+			_orientation += 180
+		}
+	
+		var _diff = angle_difference(_pot_dir, _orientation) // angle between orientation and potential vector
+		var _par_proj = lengthdir_x(_pot_dist, _diff) // parallel projection onto orientation
+		var _perp_proj = lengthdir_y(_pot_dist, _diff) // perpendicular projection onto orientation
+		var _proj_vec_x = lengthdir_x(_par_proj, _orientation) + (1 - _strength) * lengthdir_x(_perp_proj, _orientation - 90) // compute projected vector as projected parallel to orientation plus perpendicular part that is weighted with strength (if 1 strength, completely parallel to orientation, if 0 strength it is just the original vector)
+		var _proj_vec_y = lengthdir_y(_par_proj, _orientation) + (1 - _strength) * lengthdir_y(_perp_proj, _orientation - 90)
+	
+		_proj_vec_dir = point_direction(0, 0, _proj_vec_x, _proj_vec_y)
+		if (point_distance(0, 0, _proj_vec_x, _proj_vec_y) > 0.001)
+			_cost += abs(angle_difference(_proj_vec_dir, _th)) / 180 // add (mis)alignment of current RRT element with projected vector to cost
+			
+	}
+	
+	return [_cost, _proj_vec_dir] // return cost and the direction of the projected potential vector as the direction of lowest cost
 }
 
 // Repulsion to enemies
@@ -418,19 +498,4 @@ function aim_weapon(_target_x, _target_y) {
 	if (angle_diff < -dead_angle) return 1
 	if (angle_diff > dead_angle) return -1
 	return 0
-}
-
-// Update decision tree state
-function update_decision_tree() {
-	var body = character.body
-	var weapon = character.weapon
-
-	conflict = instance_exists(target)
-	if (conflict) {
-		var fight = (character.hp / character.hp_max) - 0.5 * weapon.get_fire_unready()
-		var flight = 1 - (character.hp / character.hp_max) + weapon.ammo_reserve == 0
-		var await = 1 - 0.5 * (character.hp / character.hp_max) + 0.5 * weapon.get_fire_unready()
-		var max_state = max(fight, flight, await)
-		fight_or_flight = fight == max_state ? "fight" : (flight == max_state ? "flight" : "await")	
-	}
 }

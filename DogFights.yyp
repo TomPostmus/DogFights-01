@@ -104,6 +104,7 @@
     {"id":{"name":"ft_path_debug","path":"fonts/ft_path_debug/ft_path_debug.yy",},},
     {"id":{"name":"ft_score_big","path":"fonts/ft_score_big/ft_score_big.yy",},},
     {"id":{"name":"ft_small","path":"fonts/ft_small/ft_small.yy",},},
+    {"id":{"name":"obj_ai_apf_source","path":"objects/obj_ai_apf_source/obj_ai_apf_source.yy",},},
     {"id":{"name":"obj_ai_collision_slider","path":"objects/obj_ai_collision_slider/obj_ai_collision_slider.yy",},},
     {"id":{"name":"obj_ai_path_point","path":"objects/obj_ai_path_point/obj_ai_path_point.yy",},},
     {"id":{"name":"obj_ai_team_manager","path":"objects/obj_ai_team_manager/obj_ai_team_manager.yy",},},

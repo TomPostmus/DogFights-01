@@ -89,7 +89,8 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	del = false // flag whether branch is to be deleted (necessary for safely removing branch in rrt_branches list)
 	
 	var _time = abs(angle_difference(_th_end, _th)) / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
-	g_cost = _parent.g_cost + _time * 0.5 + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
+	var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
+	g_cost = _parent.g_cost + _analogous_dist * 0.5 + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined
@@ -107,7 +108,7 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	static collision_free = function(_col_slider, _obstr_objects) {
 		var _precision = 25
 		var _last_iter = false
-		var _d = 0 // distance over turn
+		var _d = _precision // distance over turn
 		_col_slider.x = x
 		_col_slider.y = y
 		//if (abs(angle_difference(th_end, th)) > 30) {
@@ -163,7 +164,8 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	del = false // flag to mark for deletion
 	
 	var _time = l / RRT_V // est. time (in steps) to complete element
-	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
+	var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
+	g_cost = _parent.g_cost + _analogous_dist + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined
@@ -276,7 +278,8 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	del = false
 	
 	var _time = degtorad(l) * RRT_R / RRT_V // est. time (in steps) to complete element
-	g_cost = _parent.g_cost + _time + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
+	var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
+	g_cost = _parent.g_cost + _analogous_dist + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined

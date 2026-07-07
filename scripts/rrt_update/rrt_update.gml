@@ -155,6 +155,13 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			// if elements were added
 			if (_nr_added > 0) {
 				rrt_grow(_chosen) // backpropagate branch thickness growth
+				
+				//rrt_repdrop_counter += 1
+				//if (rrt_repdrop_counter >= rrt_repdrop_every) {
+				//	var _rep_source = create_groundhigh(_chosen.x, _chosen.y, obj_ai_apf_source)
+				//	ds_list_add(apf_sources, _rep_source)
+				//	rrt_repdrop_counter = 0
+				//}
 			}
 				
 			var i = ds_list_find_index(rrt_branches_open, _chosen) // find in open list
