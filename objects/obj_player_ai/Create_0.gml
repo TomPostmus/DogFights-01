@@ -142,6 +142,17 @@ function rrt_mouse_field(_x, _y, _th) {
 	return [point_distance(_x, _y, mouse_x, mouse_y), _lowest_cost_dir]
 }
 
+// For given RRT branch, return H cost based on resistance/compliance with APF-manifold
+function rrt_apf_manifold(_branch) {
+	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
+		var _source = apf_sources[|i]
+		var _radius = _source.radius
+		var _strength = _source.strength
+		
+		
+	}
+}
+
 // RRT target field, where AI approaches target and takes into account moving around walls
 function rrt_approach_target_field(_x, _y, _th) {
 	var _cost = 0
