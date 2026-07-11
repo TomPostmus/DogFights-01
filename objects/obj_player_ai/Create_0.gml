@@ -143,26 +143,40 @@ function rrt_mouse_field(_x, _y, _th) {
 }
 
 // For given RRT branch, return H cost based on resistance/compliance with APF-manifold
-function rrt_apf_manifold(_branch) {
+function rrt_apf_manifold(_x, _y, _th) {
+	var _ri;
+	var _fx = 0; var _fy = 0
 	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
 		var _source = apf_sources[|i]
-		var _radius = _source.radius
-		var _strength = _source.strength
+		var _Ri = _source.radius // radius of course
+		var _Di = _source.strength // depth/height of source
+		var _A = !_source.rep_type * 2 - 1 // sign of source (1 for repulsion -1 for attraction)
 		
+		_ri = point_distance(_x, _y, _source.x, _source.y)  // distance to source
+		//var _z = -_Di * sqr(1 - sqr(_ri) / sqr(_Ri))
 		
+		if (_ri <= _Ri) { // if falls within source radius
+			_fx += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x)
+			_fy += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_y - _source.y)
+		}
 	}
+	
+	var _s = _fx * lengthdir_x(1, _th) + _fy * lengthdir_y(1, _th)
+	var _alpha = darctan(_s)// * 600
+	
+	return [_alpha, 0]
 }
 
 // RRT target field, where AI approaches target and takes into account moving around walls
 function rrt_approach_target_field(_x, _y, _th) {
 	var _cost = 0
 	
-	//var _target_dist = point_distance(_x, _y, target_x, target_y)
-	//var _target_dir = point_direction(_x, _y, target_x, target_y)
-	//var _line_collision = line_shootable(target_x, target_y)
-	//if (!_line_collision) {
-	//	_cost += _target_dist
-	//}
+	var _target_dist = point_distance(_x, _y, target_x, target_y)
+	var _target_dir = point_direction(_x, _y, target_x, target_y)
+	var _line_collision = line_shootable(target_x, target_y)
+	if (!_line_collision) {
+		_cost += _target_dist
+	}
 	
 	var _potential_vec_x = 0 // initialize potential vector
 	var _potential_vec_y = 0

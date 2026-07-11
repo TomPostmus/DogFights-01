@@ -87,7 +87,8 @@ if (global.ingame()) {
 			
 			var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
 			
-			rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_approach_target_field
+			rrt_field = rrt_apf_manifold
+			//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold
 			//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
 		}
 		
