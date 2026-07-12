@@ -56,7 +56,7 @@ if (global.ingame()) {
 						
 						if (_attrdrop) {
 							var _attr_source = create_groundhigh(_target_x, _target_y, obj_ai_apf_source)
-							_attr_source.rep_type = false // set to attraction sourece
+							_attr_source.rep_type = false // set to attraction source
 							ds_list_add(apf_sources, _attr_source)
 						}
 					}
@@ -65,32 +65,33 @@ if (global.ingame()) {
 		}
 	
 		// Pick target
-		target = noone
-		rrt_field = undefined // by default (e.g. no target), no motion planning field
-		var _dist = infinity;
-		for (var i = 0; i < ds_list_size(targets); i ++) {
-			var _target = targets[|i]
-			if (instance_exists(_target.body) && instance_exists(_target.body.trunk)) {
-				var _trunk = _target.body.trunk
-				var _new_dist = point_distance(_body_x, _body_x, _trunk.x, _trunk.y)
+		rrt_field = rrt_apf_manifold
+		//target = noone
+		//rrt_field = undefined // by default (e.g. no target), no motion planning field
+		//var _dist = infinity;
+		//for (var i = 0; i < ds_list_size(targets); i ++) {
+		//	var _target = targets[|i]
+		//	if (instance_exists(_target.body) && instance_exists(_target.body.trunk)) {
+		//		var _trunk = _target.body.trunk
+		//		var _new_dist = point_distance(_body_x, _body_x, _trunk.x, _trunk.y)
 				
-				if (_new_dist < _dist) { // check distance
-					target = _target // pick target at closest distance
-					_dist = _new_dist
-				}
-			}
-		}
+		//		if (_new_dist < _dist) { // check distance
+		//			target = _target // pick target at closest distance
+		//			_dist = _new_dist
+		//		}
+		//	}
+		//}
 		
-		if (instance_exists(target) && instance_exists(target.body) && instance_exists(target.body.trunk)) {
-			target_x = target.body.trunk.x
-			target_y = target.body.trunk.y
+		//if (instance_exists(target) && instance_exists(target.body) && instance_exists(target.body.trunk)) {
+		//	target_x = target.body.trunk.x
+		//	target_y = target.body.trunk.y
 			
-			var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
+		//	var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
 			
-			rrt_field = rrt_apf_manifold
-			//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold
-			//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
-		}
+		//	rrt_field = rrt_apf_manifold
+		//	//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold
+		//	//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
+		//}
 		
 		// RRT* motion planning
 		if (rrt_field != undefined) {

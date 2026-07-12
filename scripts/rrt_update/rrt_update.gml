@@ -8,6 +8,19 @@ function rrt_update(_body_x, _body_y, _body_rot){
 		// choose an open branch based on probability weighted with h cost
 		var _chosen = undefined // the chosen branch
 		var _nr_open = ds_list_size(rrt_branches_open)
+		
+		// (re)compute manifold properties for each open branch
+		for (var i = 0; i < _nr_open; i ++) {
+			var _branch = rrt_branches_open[|i]
+							
+			var _field_vars = rrt_field(_branch.x_end, _branch.y_end, _branch.th_end)
+			_branch.mani_z = _field_vars[0]
+			_branch.mani_tang_x = _field_vars[1]
+			_branch.mani_tang_y = _field_vars[2]
+			_branch.mani_slope = _field_vars[3]
+		}
+		
+		
 		if (_nr_open == 0) { // if there are no open branches
 			rrt_mark_del(rrt_branch) // reset tree
 			rrt_branch = undefined
@@ -19,7 +32,8 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			var _cost_max = -infinity
 			for (var i = 0; i < _nr_open; i ++) {
 				var _branch = rrt_branches_open[|i]
-				var _cost = _branch.h_cost + _branch.g_cost
+				
+				var _cost = _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0)
 				if (_cost < _cost_min) 
 					_cost_min = _cost
 				if (_cost > _cost_max)
@@ -32,7 +46,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			var _w_sum = 0
 			for (var i = 0; i < _nr_open; i ++) {
 				var _branch = rrt_branches_open[|i]
-				var _cost = _branch.h_cost + _branch.g_cost
+				var _cost = _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0)
 				var _cost_norm = 1 + 9 * (_cost - _cost_min) / (_cost_max - _cost_min) // normalize cost vals between 1 and 10
 					
 				var _w = 1 / power(_cost_norm + _e, rrt_powerlaw_p) // compute weight
@@ -61,7 +75,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			var _bundle = ds_list_create() // bundle of five elements: left forward arc, straight forward segment and right forward arc, left backward arc, straight backward segment and right backward arc
 				// excluding the one that is identical to the one it came with
 				
-			if (abs(_chosen.h_cost) < rrt_tolerance) { // if chosen branch falls within completion tolerance
+			if (false && abs(_chosen.h_cost) < rrt_tolerance) { // if chosen branch falls within completion tolerance
 				var _identity_turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _chosen.th_end) // make identity turn (this will prevent new elements being added to position we're already satisfied with)
 				ds_list_add(_bundle, _identity_turn)
 			} else {
@@ -131,11 +145,17 @@ function rrt_update(_body_x, _body_y, _body_rot){
 					//var _weight = min(1, _furthvis_dist / astpath_cell_size) // weight is 1 if dist is larger than or eq to A* cell size
 					//var _dir = _pt_dir * (1 - _weight) + _furthvis_dir * _weight // weigthed orientation
 				
-					var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end,  _chosen.lowest_cost_dir) // make turn element to direction of lowest cost of parent (_chosen) node
-					if (_turn.collision_free(colslider, obstr_objects)) {
-						ds_list_add(_bundle, _turn) // add to list
-					} else {
-						ds_list_destroy(_turn.links) // else destroy
+					var _mani_dist = point_distance(0, 0, _chosen.mani_tang_x, _chosen.mani_tang_y) // magnitude and direction of projected normal vector of tangent plane
+					var _mani_dir = point_direction(0, 0, _chosen.mani_tang_x, _chosen.mani_tang_y)
+					if (_mani_dist > 0.25) { // if tangent plane is sufficiently inclined
+						
+						var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _mani_dir) // make turn element in direction of tangent plane slope
+						if (_turn.collision_free(colslider, obstr_objects)) {
+							ds_list_add(_bundle, _turn) // add to list
+						} else {
+							ds_list_destroy(_turn.links) // else destroy
+						}
+						
 					}
 				}
 			}
@@ -144,9 +164,6 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			var _nr_added = ds_list_size(_bundle) // number of branches added at end of chosen branch
 			for (var i = 0; i < _nr_added; i ++) {
 				var _new_branch = _bundle[|i]
-				var _field_vars = rrt_field(_new_branch.x_end, _new_branch.y_end, _new_branch.th_end) // get H cost and angle to lowest cost of end point
-				_new_branch.h_cost = _field_vars[0]
-				_new_branch.lowest_cost_dir = _field_vars[1]
 				ds_list_add(_chosen.links, _new_branch) // add new branch to chosen branch links
 				ds_list_add(rrt_branches, _new_branch) // add to total list of branches
 				ds_list_add(rrt_branches_open, _new_branch) // add new branch to open branches list
@@ -156,12 +173,12 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			if (_nr_added > 0) {
 				rrt_grow(_chosen) // backpropagate branch thickness growth
 				
-				//rrt_repdrop_counter += 1
-				//if (rrt_repdrop_counter >= rrt_repdrop_every) {
-				//	var _rep_source = create_groundhigh(_chosen.x, _chosen.y, obj_ai_apf_source)
-				//	ds_list_add(apf_sources, _rep_source)
-				//	rrt_repdrop_counter = 0
-				//}
+				rrt_repdrop_counter += 1
+				if (rrt_repdrop_counter >= rrt_repdrop_every) {
+					var _rep_source = create_groundhigh(_chosen.x, _chosen.y, obj_ai_apf_source)
+					ds_list_add(apf_sources, _rep_source)
+					rrt_repdrop_counter = 0
+				}
 			}
 				
 			var i = ds_list_find_index(rrt_branches_open, _chosen) // find in open list
@@ -176,7 +193,10 @@ function rrt_update(_body_x, _body_y, _body_rot){
 		}
 			
 	}
-	}	
+	} else { // if tree has reached max size, reset
+		rrt_mark_del(rrt_branch)
+		rrt_branch = undefined
+	}
 	
 	// Prune RTT branch if it is in contact with dynamic objects (players)
 	//for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches

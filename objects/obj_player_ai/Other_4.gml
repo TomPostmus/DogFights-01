@@ -8,5 +8,6 @@ for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
 }
 ds_list_clear(rrt_branches)
 ds_list_clear(rrt_branches_open)
+ds_list_clear(apf_sources)
 
 rrt_branch = undefined

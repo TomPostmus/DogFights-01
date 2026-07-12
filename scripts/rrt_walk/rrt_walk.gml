@@ -95,37 +95,67 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 	// When completed walking the current branch
 	} else if (rrt_branch_completed) {
 		
-		if (abs(rrt_branch.h_cost) < rrt_tolerance) { // if current branch has H cost tolerance within completion tolerance of motion planning
+		// Pick destination branch as branch lowest z value, and lower z value than current RRT branch
+		rrt_dest = undefined
+		var _cur_z = rrt_branch.mani_z
+		var _thresh = 0.2 // threshold below which lower z is interesting
+		for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
+			var _branch = rrt_branches[|i]
 			
-			rrt_mark_del(rrt_branch) // delete RRT
-			rrt_branch = undefined // stop motion planning
-			
-		} else { // otherwise choose next branch that has largest thickness
-		
-			var _max_thickness = 0
-			var _next_branch = undefined
-			var _next_branch_i = 0
-			for (var i = 0; i < ds_list_size(rrt_branch.links); i ++) { // loop through linked branches of current branch
-				var _link = rrt_branch.links[|i]
-				if (_link.thickness > _max_thickness) {
-					_max_thickness = _link.thickness
-					_next_branch = _link
-					_next_branch_i = i // remember index in list
-				}
+			if (_branch.mani_z < _cur_z - _thresh) { // find branch with lowest z
+				_cur_z = _branch.mani_z
+				rrt_dest = _branch
 			}
-					
-			if (_next_branch != undefined) { // if found the next branch to walk			
-				ds_list_delete(rrt_branch.links, _next_branch_i) // decouple chosen branch from old branch, to avoid deleting the chosen branch along with deleting old branch
-				rrt_mark_del(rrt_branch) // delete old branch
-				rrt_branch = _next_branch
-				rrt_branch.parent = undefined // new branch is root, so has no parent
-				rrt_branch_completed = false
-				rrt_walk_timer = rrt_walk_maxtime // reset timer
-			} else { // otherwise, wait
-				move_input = 0
-				turn_input = 0
-			}
-		
 		}
+		
+		if (rrt_dest != undefined) { // if found destination branch
+		
+			var _next_branch = rrt_dest
+			while (_next_branch.parent != rrt_branch) { // backtrack from until found current rrt branch
+				_next_branch = _next_branch.parent
+			}
+						
+			var _next_branch_i = ds_list_find_index(rrt_branch.links, _next_branch)
+			ds_list_delete(rrt_branch.links, _next_branch_i) // decouple chosen branch from old branch, to avoid deleting the chosen branch along with deleting old branch
+			rrt_mark_del(rrt_branch) // delete old branch
+			rrt_branch = _next_branch
+			rrt_branch.parent = undefined // new branch is root, so has no parent
+			rrt_branch_completed = false
+			rrt_walk_timer = rrt_walk_maxtime // reset timer
+			
+		}
+		
+		//if (abs(rrt_branch.h_cost) < rrt_tolerance) { // if current branch has H cost tolerance within completion tolerance of motion planning
+			
+		//	rrt_mark_del(rrt_branch) // delete RRT
+		//	rrt_branch = undefined // stop motion planning
+			
+		//} else { // otherwise choose next branch that has largest thickness
+		
+		//	var _max_thickness = 0
+		//	var _next_branch = undefined
+		//	var _next_branch_i = 0
+		//	for (var i = 0; i < ds_list_size(rrt_branch.links); i ++) { // loop through linked branches of current branch
+		//		var _link = rrt_branch.links[|i]
+		//		if (_link.thickness > _max_thickness) {
+		//			_max_thickness = _link.thickness
+		//			_next_branch = _link
+		//			_next_branch_i = i // remember index in list
+		//		}
+		//	}
+					
+		//	if (_next_branch != undefined) { // if found the next branch to walk			
+		//		ds_list_delete(rrt_branch.links, _next_branch_i) // decouple chosen branch from old branch, to avoid deleting the chosen branch along with deleting old branch
+		//		rrt_mark_del(rrt_branch) // delete old branch
+		//		rrt_branch = _next_branch
+		//		rrt_branch.parent = undefined // new branch is root, so has no parent
+		//		rrt_branch_completed = false
+		//		rrt_walk_timer = rrt_walk_maxtime // reset timer
+		//	} else { // otherwise, wait
+		//		move_input = 0
+		//		turn_input = 0
+		//	}
+		
+		//}
 	}
 }

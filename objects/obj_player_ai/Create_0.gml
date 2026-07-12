@@ -29,10 +29,11 @@ astpath_ths = ds_list_create() // list that maps path points to orientation valu
 // Each step, segments are added to tree to explore optimal path
 rrt_field = undefined // the current field we are using for motion planning, the RRT field is a function that maps x, y, th coordinate to an H cost and th angle pointing towards lowest cost
 rrt_branch = undefined // current RRT* branch we're walking
-rrt_branches = ds_list_create() // all branches of RRT* tree
+rrt_dest = undefined // destination branch of RRT
+rrt_branches = ds_list_create() // all branches of RRT
 rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
 rrt_tolerance = 50 // H cost below which motion is no longer necessary
-rrt_powerlaw_p = 30 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
+rrt_powerlaw_p = 3 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
 rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 rrt_steershift_pen = 0
 
@@ -145,26 +146,29 @@ function rrt_mouse_field(_x, _y, _th) {
 // For given RRT branch, return H cost based on resistance/compliance with APF-manifold
 function rrt_apf_manifold(_x, _y, _th) {
 	var _ri;
-	var _fx = 0; var _fy = 0
+	var _z = 0; var _fx = 0; var _fy = 0
 	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
 		var _source = apf_sources[|i]
 		var _Ri = _source.radius // radius of course
 		var _Di = _source.strength // depth/height of source
-		var _A = !_source.rep_type * 2 - 1 // sign of source (1 for repulsion -1 for attraction)
+		var _A = !_source.rep_type * 2 - 1 // sign of source (-1 for repulsion 1 for attraction)
 		
 		_ri = point_distance(_x, _y, _source.x, _source.y)  // distance to source
-		//var _z = -_Di * sqr(1 - sqr(_ri) / sqr(_Ri))
 		
 		if (_ri <= _Ri) { // if falls within source radius
-			_fx += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x)
+			_z += -_A * _Di * sqr(1 - sqr(_ri) / sqr(_Ri)) // height on manifold of _x, _y point
+			_fx += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x) // gradient in x and y directions of tangent plane at _x, _y
 			_fy += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_y - _source.y)
 		}
 	}
 	
 	var _s = _fx * lengthdir_x(1, _th) + _fy * lengthdir_y(1, _th)
-	var _alpha = darctan(_s)// * 600
+	var _slope = darctan(_s)// * 600
 	
-	return [_alpha, 0]
+	if (_z == undefined || _fx == undefined ||_fy == undefined || _slope == undefined)
+		_z = 0
+	
+	return [_z, -_fx, -_fy, _slope] // return height on manifold, normal vector (projected onto xy-plane), and the slope of tangent plane in direction of _th
 }
 
 // RRT target field, where AI approaches target and takes into account moving around walls

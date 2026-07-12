@@ -53,6 +53,10 @@ function rrt_root_element(_x, _y, _th) constructor {
 	g_cost = 0
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined
+	mani_z = undefined // height on manifold
+	mani_slope = undefined // slope on manifold
+	mani_tang_x = undefined // x and y component of tangent plane normal
+	mani_tang_y = undefined
 	
 	// Draw root element
 	static draw = function() {
@@ -94,11 +98,19 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined
+	mani_z = undefined // height on manifold
+	mani_slope = undefined // slope on manifold
+	mani_tang_x = undefined // x and y component of tangent plane normal
+	mani_tang_y = undefined
 	
 	// Draw this turn element (little circle)
 	static draw = function() {
-		draw_set_colour(c_blue)
+		if (argument_count > 0)
+			draw_set_colour(argument[0])
+		else
+			draw_set_colour(c_blue)
 		draw_circle(x, y, 2, false)
+		
 		draw_set_colour(c_red)
 		draw_arrow(x, y, x + lengthdir_x(8, th_end), y + lengthdir_y(8, th_end), 2)
 	}
@@ -169,10 +181,18 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined
+	mani_z = undefined // height on manifold
+	mani_slope = undefined // slope on manifold
+	mani_tang_x = undefined // x and y component of tangent plane normal
+	mani_tang_y = undefined
 	
 	// Draw this line segment
 	static draw = function() {
-		draw_set_colour(c_blue)
+		if (argument_count > 0)
+			draw_set_colour(argument[0])
+		else
+			draw_set_colour(c_blue)
+			
 		draw_line_width(x, y, x_end, y_end, 1 + (thickness > 5) + (thickness > 10) + (thickness > 15))
 	}
 	
@@ -283,6 +303,10 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	
 	h_cost = undefined // defined outside
 	lowest_cost_dir = undefined
+	mani_z = undefined // height on manifold
+	mani_slope = undefined // slope on manifold
+	mani_tang_x = undefined // x and y component of tangent plane normal
+	mani_tang_y = undefined
 	
 	// Draw this arc
 	static draw = function() {
@@ -290,7 +314,12 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 		var _d_start = 0 // start of line segment
 		var _d_end = gear * steering * _precision // end of line segment
 		var _last_iter = false
-		draw_set_colour(c_blue)
+		
+		if (argument_count > 0)
+			draw_set_colour(argument[0])
+		else
+			draw_set_colour(c_blue)
+			
 		while (true) {
 			if (abs(_d_end) > l) {
 				_d_end = gear * steering * l // cap at length

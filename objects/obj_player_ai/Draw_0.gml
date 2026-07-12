@@ -22,12 +22,22 @@ if (instance_exists(character) && instance_exists(character.body)) {
 		_branch.draw()	
 	}
 	
+	// Draw path towards destination branch in green
+	if (rrt_dest != undefined) {
+		var _branch = rrt_dest
+		
+		while (_branch != undefined) { // backtrack and draw in green
+			_branch.draw(c_lime)
+			_branch = _branch.parent
+		}
+	}
+	
 	// Draw cost every N iterations
 	draw_set_colour(c_lime)
 	draw_set_font(ft_small)
 	for (var i = 0; i < ds_list_size(rrt_branches); i += 20) {
 		var _branch = rrt_branches[|i]
-		draw_text(_branch.x, _branch.y, _branch.h_cost)
+		draw_text(_branch.x, _branch.y, _branch.mani_slope)
 	}
 	
 	draw_set_colour(c_red)
