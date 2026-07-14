@@ -36,7 +36,6 @@ rrt_tolerance = 50 // H cost below which motion is no longer necessary
 rrt_powerlaw_p = 3 // p constant in power-law weighing for node-selection. p = 0 means uniform dist., p = 1 means mild preference for lower H cost, p = high means strong preference
 rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 rrt_steershift_pen = 0
-
 rrt_branch_completed = false // whether current branch we're walking has been completed
 rrt_pause = false // pause rrt (for debugging purposes)
 rrt_walk_timer = -1 // timer for keeping completion time of element in check
@@ -44,11 +43,12 @@ rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_repdrop_counter = 0 // counter increasing on each bundle addition
 rrt_repdrop_every = 20 // after how many added bundle to add repulsion source
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned RRT paths (it 'slides' over the RRT paths)
+prune_count = 0
 
 // Artificial potential field
 apf_sources = ds_list_create() // list of APF source objects, attraction or repulsion sources
 apf_target_attraction_timer = 0 // timer incrementing each step
-apf_target_attraction_every = 20 // after how many steps to drop attraction sources at target
+apf_target_attraction_every = 40 // after how many steps to drop attraction sources at target
 
 
 /* --- A* FUNCTIONS --- */
@@ -150,20 +150,20 @@ function rrt_apf_manifold(_x, _y, _th) {
 	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
 		var _source = apf_sources[|i]
 		var _Ri = _source.radius // radius of course
-		var _Di = _source.strength // depth/height of source
+		var _Hi = _source.height // height of source
 		var _A = !_source.rep_type * 2 - 1 // sign of source (-1 for repulsion 1 for attraction)
 		
 		_ri = point_distance(_x, _y, _source.x, _source.y)  // distance to source
 		
 		if (_ri <= _Ri) { // if falls within source radius
-			_z += -_A * _Di * sqr(1 - sqr(_ri) / sqr(_Ri)) // height on manifold of _x, _y point
-			_fx += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x) // gradient in x and y directions of tangent plane at _x, _y
-			_fy += _A * 4 * _Di / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_y - _source.y)
+			_z += -_A * _Hi * sqr(1 - sqr(_ri) / sqr(_Ri)) // height on manifold of _x, _y point
+			_fx += _A * 4 * _Hi / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x) // gradient in x and y directions of tangent plane at _x, _y
+			_fy += _A * 4 * _Hi / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_y - _source.y)
 		}
 	}
 	
 	var _s = _fx * lengthdir_x(1, _th) + _fy * lengthdir_y(1, _th)
-	var _slope = darctan(_s)// * 600
+	var _slope = darctan(_s)
 	
 	if (_z == undefined || _fx == undefined ||_fy == undefined || _slope == undefined)
 		_z = 0

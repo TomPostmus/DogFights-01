@@ -97,19 +97,18 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 		
 		// Pick destination branch as branch lowest z value, and lower z value than current RRT branch
 		rrt_dest = undefined
-		var _cost = rrt_branch.mani_z
+		var _cur_z = rrt_branch.mani_z // height of current RRT branch
 		var _thresh = 0.0 // threshold below which lower z is interesting
 		for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
 			var _branch = rrt_branches[|i]
 			
-			if (_branch.mani_z == undefined) // if manifold properties have not been computed yet (happens at start of step)
+			if (_branch.mani_z == undefined) // if manifold properties have not been computed yet (happens at start of step), continue
 				continue
+			if (_branch == rrt_branch)
+				continue // if root branch, continue
 			
-			var _dist = point_distance(_branch.x, _branch.y, rrt_branch.x, rrt_branch.y)
-			var _new_cost = _branch.mani_z * 300// - _dist
-			
-			if (_new_cost < _cost) { // find branch with lowest z
-				_cost = _new_cost
+			if (_branch.mani_z < _cur_z - _thresh) { // find branch with lowest z
+				_cur_z = _branch.mani_z
 				rrt_dest = _branch
 			}
 		}

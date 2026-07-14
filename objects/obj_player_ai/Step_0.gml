@@ -11,13 +11,39 @@ if (global.ingame()) {
 		var _branch = rrt_branches[|i]
 		
 		if (_branch.del) {
+			// reset root and dest variables
+			if (_branch == rrt_branch) // if to be deleted branch is current root branch
+				rrt_branch = undefined // reset current rrt_branch variable
+			if (_branch == rrt_dest) // same for destination branch
+				rrt_dest = undefined
+			
+			// remove from parent links
+			if (_branch.parent != undefined && !_branch.parent.del) { // if has parent that is not marked for deletion
+				var _branch_i = ds_list_find_index(_branch.parent.links, _branch)
+				ds_list_delete(_branch.parent.links, _branch_i) // remove this branch from its parent's links
+				
+				_branch.parent.thickness -= 1 + _branch.thickness // subtract number of children that was removed from thickness so that thickness represents again how many child branches are hanging from parent branch
+			}
+			
+			// remove from branches lists
 			var j = ds_list_find_index(rrt_branches_open, _branch) // also find in open branches list
 			if (j != -1)
 				ds_list_delete(rrt_branches_open, j) // remove from open branches
 		
+			ds_list_delete(rrt_branches, i) // remove from list
+			i --
+			
+			// destroy branch data structures
 			ds_list_destroy(_branch.links) // destroy its links data structure
 			delete _branch // delete struct
-			ds_list_delete(rrt_branches, i) // remove from list
+		}
+	}
+	
+	
+	// Prune APF sources from list that no longer exist
+	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
+		if (!instance_exists(apf_sources[|i])) {
+			ds_list_delete(apf_sources, i)
 			i --
 		}
 	}
@@ -105,16 +131,6 @@ if (global.ingame()) {
 				rrt_update(_body_x, _body_y, _body_rot) // update RRT
 				rrt_walk(_body_x, _body_y, _body_rot) // walk current RRT branch
 			
-			}
-		}
-		
-		// Prune repulsion sources that have maxed out in strength
-		for (var i = 0; i < ds_list_size(apf_sources); i ++) {
-			var _source = apf_sources[|i]
-			if (_source.strength >= 1) {
-				instance_destroy(_source)
-				ds_list_delete(apf_sources, i)
-				i --
 			}
 		}
 	}

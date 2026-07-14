@@ -46,14 +46,14 @@ if (instance_exists(character) && instance_exists(character.body)) {
 		draw_circle(_branch.x_end, _branch.y_end, 1, false) // draw red circles at end points of open branches
 	}
 	
-	// Draw repulsion source drops
+	// Draw APF source drops
 	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
 		var _source = apf_sources[|i]
 		
 		draw_set_font(ft_normal)
 		draw_set_colour(_source.rep_type ? c_red : c_aqua)
 		draw_text(_source.x, _source.y, _source.rep_type ? "R" : "A")
-		draw_circle(_source.x, _source.y, _source.radius * _source.strength, true)
+		draw_circle(_source.x, _source.y, _source.radius, true)
 	}
 
 }

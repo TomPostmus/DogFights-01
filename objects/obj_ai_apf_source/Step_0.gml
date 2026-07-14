@@ -1,2 +1,4 @@
-strength += 0.01
-strength = min(1, strength)
+radius -= 2
+height = radius
+if (radius <= 0)
+	instance_destroy()

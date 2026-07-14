@@ -66,7 +66,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 				}
 				
 				// _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0) -
-				var _cost = _branch.mani_z * 300 - 10 * _avg_dist + max(_branch.g_cost-10, 0) - 1 * _avg_ang_dist
+				var _cost = _branch.mani_z - 10 * _avg_dist + max(_branch.g_cost-10, 0) - 1 * _avg_ang_dist
 				ds_list_add(_costs, _cost)
 				
 				// define min and max costs
@@ -271,8 +271,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 				_avg_ang_dist = abs(angle_difference(_branch.th_end, _avg_th))
 			}
 				
-			// _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0) -
-			var _cost = _branch.mani_z * 300 - 10 * _avg_dist - _branch.thickness * 100 //- 0.5 * _avg_ang_dist
+			var _cost = _branch.mani_z - 2 * _avg_dist - _branch.thickness * 100 //- 0.5 * _avg_ang_dist
 			ds_list_add(_costs, _cost)
 				
 			// define min and max costs
@@ -312,16 +311,6 @@ function rrt_update(_body_x, _body_y, _body_rot){
 		// Prune branch
 		if (_chosen != undefined) {
 			var _child_count = rrt_mark_del(_chosen) // mark for deletion
-			
-			if (_chosen.parent != undefined) { // if has parent
-				var _branch_i = ds_list_find_index(_chosen.parent.links, _chosen)
-				ds_list_delete(_chosen.parent.links, _branch_i) // remove this branch from its parent's links
-				
-				_chosen.parent.thickness -= _child_count // subtract number of children that was removed from thickness so that thickness represents again how many child branches are hanging from parent branch
-			}
-			
-			if (_chosen == rrt_branch) // if to be pruned branch is current root branch
-				rrt_branch = undefined // reset current rrt_branch variable
 		}
 		
 	}
