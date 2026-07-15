@@ -12,7 +12,8 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 		if (rrt_walk_timer <= 0)
 			_abort = true // maximal time for completing element elapsed, abort RRT tree
 			
-			
+		
+		var _abortion_tolerance = 50 // distance from which to abort path
 		if (rrt_branch.type == RRT_ROOT) {
 			rrt_branch_completed = true
 		} else if (rrt_branch.type == RRT_TURN) { // execute turn					
@@ -20,7 +21,6 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			turn_input = input_dir(rrt_branch.th_end)
 					
 			// RRT path abortion
-			var _abortion_tolerance = 10 // distance from which to abort path
 			if (point_distance(_body_x, _body_y, rrt_branch.x, rrt_branch.y) > _abortion_tolerance)
 				_abort = true // raise flag
 					
@@ -49,7 +49,6 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			//}
 					
 			// RRT path abortion
-			var _abortion_tolerance = 10 // distance from which to abort path
 			if (abs(_center_offset) > _abortion_tolerance)
 				_abort = true // raise flag
 			if (_progression < -_abortion_tolerance || _progression > rrt_branch.l + _abortion_tolerance)
@@ -72,7 +71,6 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			var _progression = angle_difference(_body_rot, rrt_branch.th) * rrt_branch.steering * rrt_branch.gear // progression is measure as difference with start angle of arc, normalized to 0, arc_length
 			
 			// RRT path abortion
-			var _abortion_tolerance = 10 // distance from which to abort path
 			var _abrt_angle_tolerance = 10 //radtodeg(_abortion_tolerance / RRT_R) // tolerance in degrees for arc angle progression
 			if (_to_player_dist > RRT_R + _abortion_tolerance || _to_player_dist < RRT_R - _abortion_tolerance) // if distance from arc too large
 				_abort = true // raise flag
@@ -97,18 +95,18 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 		
 		// Pick destination branch as branch lowest z value, and lower z value than current RRT branch
 		rrt_dest = undefined
-		var _cur_z = rrt_branch.mani_z // height of current RRT branch
+		var _cur_z = rrt_branch.s_cost // height of current RRT branch
 		var _thresh = 0.0 // threshold below which lower z is interesting
 		for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
 			var _branch = rrt_branches[|i]
 			
-			if (_branch.mani_z == undefined) // if manifold properties have not been computed yet (happens at start of step), continue
+			if (_branch.s_cost == undefined) // if manifold properties have not been computed yet (happens at start of step), continue
 				continue
 			if (_branch == rrt_branch)
 				continue // if root branch, continue
 			
-			if (_branch.mani_z < _cur_z - _thresh) { // find branch with lowest z
-				_cur_z = _branch.mani_z
+			if (_branch.s_cost < _cur_z - _thresh) { // find branch with lowest z
+				_cur_z = _branch.s_cost
 				rrt_dest = _branch
 			}
 		}
@@ -127,6 +125,11 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			rrt_branch.parent = undefined // new branch is root, so has no parent
 			rrt_branch_completed = false
 			rrt_walk_timer = rrt_walk_maxtime // reset timer
+			
+			var _g_cost_before = rrt_branch.g_cost // remember G cost before reset
+			for (var i = 0; i < ds_list_size(rrt_branches); i ++) {				
+				rrt_branches[|i].g_cost -= _g_cost_before // subtract G cost for every branch	
+			}
 			
 		}
 		

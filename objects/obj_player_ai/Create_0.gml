@@ -43,7 +43,7 @@ rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_repdrop_counter = 0 // counter increasing on each bundle addition
 rrt_repdrop_every = 20 // after how many added bundle to add repulsion source
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned RRT paths (it 'slides' over the RRT paths)
-prune_count = 0
+rrt_exp = 0 // whether to compute cost for bushy growth (exp = 0) suited for accurate and efficient movement, or in long branches (exp = 1) suited for exploration
 
 // Artificial potential field
 apf_sources = ds_list_create() // list of APF source objects, attraction or repulsion sources
@@ -154,6 +154,8 @@ function rrt_apf_manifold(_x, _y, _th) {
 		var _A = !_source.rep_type * 2 - 1 // sign of source (-1 for repulsion 1 for attraction)
 		
 		_ri = point_distance(_x, _y, _source.x, _source.y)  // distance to source
+		if (!line_shootable_arbitrary(_x, _y, _source.x, _source.y)) // if no line collision to source
+			_Hi *= 0.25 // source is weakened
 		
 		if (_ri <= _Ri) { // if falls within source radius
 			_z += -_A * _Hi * sqr(1 - sqr(_ri) / sqr(_Ri)) // height on manifold of _x, _y point

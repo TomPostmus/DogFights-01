@@ -3,7 +3,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 	
 	var _nr_branches = ds_list_size(rrt_branches)
 	
-	// (re)compute manifold properties for each branch
+	// (re)compute manifold properties and S cost for each branch
 	for (var i = 0; i < _nr_branches; i ++) {
 		var _branch = rrt_branches[|i]
 							
@@ -12,9 +12,25 @@ function rrt_update(_body_x, _body_y, _body_rot){
 		_branch.mani_tang_x = _field_vars[1]
 		_branch.mani_tang_y = _field_vars[2]
 		_branch.mani_slope = _field_vars[3]
+		
+		rrt_compute_s_cost(_branch)
+	}
+	
+	// find maximum and minimum S cost between open branches
+	var _s_cost_min = infinity
+	var _s_cost_max = -infinity
+	for (var i = 0; i < _nr_branches; i ++) {
+		var _branch = rrt_branches[|i]
+		var _s_cost = _branch.s_cost
+				
+		// define min and max S costs
+		if (_s_cost < _s_cost_min) 
+			_s_cost_min = _s_cost
+		if (_s_cost > _s_cost_max)
+			_s_cost_max = _s_cost
 	}
 
-	var _rrt_max_tree_size = 100
+	var _rrt_max_tree_size = 50
 	var _prune_chance = max(0, (_nr_branches / _rrt_max_tree_size - 0.5) * 2) // random chance for pruning
 	var _grow_or_prune = _nr_branches < _rrt_max_tree_size //&& !(irandom(100 * _prune_chance)) // whether to grow tree (true) or prune (false)
 	
@@ -30,66 +46,19 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			rrt_branch = undefined
 		} else if (_nr_open == 1) { // if there is only 1 branch
 			_chosen = rrt_branches_open[|0]
-		} else {
-			// find maximum and minimum h cost between open branches
-			var _cost_min = infinity
-			var _cost_max = -infinity
-			var _costs = ds_list_create()
-			for (var i = 0; i < _nr_open; i ++) {
-				var _branch = rrt_branches_open[|i]
-				
-				// compute average spatial properties of near branches
-				var _avg_radius = 50 // distance within which to compute averages
-				var _avg_x = 0; var _avg_y = 0; var _avg_th = 0 // average x, y, th of branches within radius
-				var _obranch_count = 0 // how many other branches we are computing average for
-				for (var j = 0; j < _nr_open; j ++) {
-					if (i == j) // if same branch, skip iteration
-						continue
-						
-					var _obranch = rrt_branches_open[|j] // other branch
-					
-					if (point_distance(_branch.x_end, _branch.y_end, _obranch.x_end, _obranch.y_end) < _avg_radius) {
-						_avg_x += _obranch.x_end
-						_avg_y += _obranch.y_end
-						_avg_th += _obranch.th_end
-						_obranch_count ++
-					}
-				}
-				var _avg_dist = 0
-				var _avg_ang_dist = 0
-				if (_obranch_count > 0) {
-					_avg_x /= _obranch_count // divide by count to define average
-					_avg_y /= _obranch_count
-					_avg_th /= _obranch_count
-					_avg_dist = point_distance(_branch.x_end, _branch.y_end, _avg_x, _avg_y)
-					_avg_ang_dist = abs(angle_difference(_branch.th_end, _avg_th))
-				}
-				
-				// _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0) -
-				var _cost = _branch.mani_z - 10 * _avg_dist + max(_branch.g_cost-10, 0) - 1 * _avg_ang_dist
-				ds_list_add(_costs, _cost)
-				
-				// define min and max costs
-				if (_cost < _cost_min) 
-					_cost_min = _cost
-				if (_cost > _cost_max)
-					_cost_max = _cost
-			}
-				
+		} else {				
 			// do power-law weighting to determine weights for branches
 			var _ws = array_create(_nr_open) // weights
 			var _w_sum = 0 // sum of weights
 			for (var i = 0; i < _nr_open; i ++) {
 				var _branch = rrt_branches_open[|i]
-				var _cost = _costs[|i]
 				
-				var _cost_norm = 1 + 9 * (_cost - _cost_min) / (_cost_max - _cost_min) // normalize cost vals between 1 and 10 to avoid div by zero (or close to zero)
+				var _cost_norm = 1 + 9 * (_branch.s_cost - _s_cost_min) / (_s_cost_max - _s_cost_min) // normalize cost vals between 1 and 10 to avoid div by zero (or close to zero)
 					
 				var _w = 1 / power(_cost_norm, rrt_powerlaw_p) // compute weight
 				_w_sum += _w
 				_ws[i] = _w
 			}
-			ds_list_destroy(_costs)
 			
 			// choose branch randomly, taking into account weights
 			var _rn = random(1) // random number from 0 to 1
@@ -185,7 +154,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 				
 					var _mani_dist = point_distance(0, 0, _chosen.mani_tang_x, _chosen.mani_tang_y) // magnitude and direction of projected normal vector of tangent plane
 					var _mani_dir = point_direction(0, 0, _chosen.mani_tang_x, _chosen.mani_tang_y)
-					if (_mani_dist > 0.25) { // if tangent plane is sufficiently inclined
+					//if (_mani_dist >= 0.001) { // if tangent plane is sufficiently inclined
 						
 						var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _mani_dir) // make turn element in direction of tangent plane slope
 						if (_turn.collision_free(colslider, obstr_objects)) {
@@ -194,7 +163,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 							ds_list_destroy(_turn.links) // else destroy
 						}
 						
-					}
+					//}
 				}
 			}
 				
@@ -208,16 +177,15 @@ function rrt_update(_body_x, _body_y, _body_rot){
 			}
 				
 			// if elements were added
-			if (_nr_added > 0) {
-				rrt_grow(_chosen) // backpropagate branch thickness growth
-				
+			rrt_grow(_chosen, _nr_added) // backpropagate branch thickness growth
+			//if (_nr_added > 0) {
 				//rrt_repdrop_counter += 1
 				//if (rrt_repdrop_counter >= rrt_repdrop_every) {
 				//	var _rep_source = create_groundhigh(_chosen.x, _chosen.y, obj_ai_apf_source)
 				//	ds_list_add(apf_sources, _rep_source)
 				//	rrt_repdrop_counter = 0
 				//}
-			}
+			//}
 				
 			var i = ds_list_find_index(rrt_branches_open, _chosen) // find in open list
 			ds_list_delete(rrt_branches_open, i) // remove chosen branch from open branch list (it's no longer open), also if 0 branches were added (it's not suitable for choice in later steps)
@@ -236,65 +204,19 @@ function rrt_update(_body_x, _body_y, _body_rot){
 	} else {
 		
 		var _chosen = undefined // the chosen branch to prune
-		
-		// find maximum and minimum h cost between branches
-		var _cost_min = infinity
-		var _cost_max = -infinity
-		var _costs = ds_list_create()
-		for (var i = 0; i < _nr_branches; i ++) {
-			var _branch = rrt_branches[|i]
-				
-			// compute average spatial properties of near branches
-			var _avg_radius = 50 // distance within which to compute averages
-			var _avg_x = 0; var _avg_y = 0; var _avg_th = 0 // average x, y, th of branches within radius
-			var _obranch_count = 0 // how many other branches we are computing average for
-			for (var j = 0; j < _nr_branches; j ++) {
-				if (i == j) // if same branch, skip iteration
-					continue
-						
-				var _obranch = rrt_branches[|j] // other branch
-					
-				if (point_distance(_branch.x_end, _branch.y_end, _obranch.x_end, _obranch.y_end) < _avg_radius) {
-					_avg_x += _obranch.x_end
-					_avg_y += _obranch.y_end
-					_avg_th += _obranch.th_end
-					_obranch_count ++
-				}
-			}
-			var _avg_dist = 0
-			var _avg_ang_dist = 0
-			if (_obranch_count > 0) {
-				_avg_x /= _obranch_count // divide by count to define average
-				_avg_y /= _obranch_count
-				_avg_th /= _obranch_count
-				_avg_dist = point_distance(_branch.x_end, _branch.y_end, _avg_x, _avg_y)
-				_avg_ang_dist = abs(angle_difference(_branch.th_end, _avg_th))
-			}
-				
-			var _cost = _branch.mani_z - 2 * _avg_dist - _branch.thickness * 100 //- 0.5 * _avg_ang_dist
-			ds_list_add(_costs, _cost)
-				
-			// define min and max costs
-			if (_cost < _cost_min) 
-				_cost_min = _cost
-			if (_cost > _cost_max)
-				_cost_max = _cost
-		}
 				
 		// do power-law weighting to determine weights for branches
 		var _ws = array_create(_nr_branches) // weights
 		var _w_sum = 0 // sum of weights
 		for (var i = 0; i < _nr_branches; i ++) {
 			var _branch = rrt_branches[|i]
-			var _cost = _costs[|i]
 				
-			var _cost_norm = 1 + 9 * (_cost - _cost_min) / (_cost_max - _cost_min) // normalize cost vals between 1 and 10 to avoid div by zero (or close to zero)
+			var _cost_norm = 1 + 9 * (_branch.s_cost - _s_cost_min) / (_s_cost_max - _s_cost_min) // normalize cost vals between 1 and 10 to avoid div by zero (or close to zero)
 					
 			var _w = power(_cost_norm, rrt_powerlaw_p) // compute weight
 			_w_sum += _w
 			_ws[i] = _w
 		}
-		ds_list_destroy(_costs)
 			
 		// choose branch randomly, taking into account weights
 		var _rn = random(1) // random number from 0 to 1
@@ -310,7 +232,7 @@ function rrt_update(_body_x, _body_y, _body_rot){
 		
 		// Prune branch
 		if (_chosen != undefined) {
-			var _child_count = rrt_mark_del(_chosen) // mark for deletion
+			rrt_mark_del(_chosen) // mark for deletion
 		}
 		
 	}

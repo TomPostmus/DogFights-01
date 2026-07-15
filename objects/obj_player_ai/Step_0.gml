@@ -19,10 +19,12 @@ if (global.ingame()) {
 			
 			// remove from parent links
 			if (_branch.parent != undefined && !_branch.parent.del) { // if has parent that is not marked for deletion
-				var _branch_i = ds_list_find_index(_branch.parent.links, _branch)
-				ds_list_delete(_branch.parent.links, _branch_i) // remove this branch from its parent's links
+				var _branch_parent = _branch.parent
+				var _branch_i = ds_list_find_index(_branch_parent.links, _branch)
+				ds_list_delete(_branch_parent.links, _branch_i) // remove this branch from its parent's links
 				
-				_branch.parent.thickness -= 1 + _branch.thickness // subtract number of children that was removed from thickness so that thickness represents again how many child branches are hanging from parent branch
+				var _thickness = 1 + _branch.thickness // thickness of branch with itself included
+				rrt_grow(_branch_parent, -_thickness) // subtract
 			}
 			
 			// remove from branches lists
@@ -77,47 +79,46 @@ if (global.ingame()) {
 						
 					if (point_in_rectangle(_target_x, _target_y, camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2)) {
 						ds_list_add(targets, _character_insight)
-						//var _trunk = _character_insight.body.trunk
-						//ds_list_add(apf_sources, [_trunk.x, _trunk.y, 150, 0, 300, 1])
 						
-						if (_attrdrop) {
-							var _attr_source = create_groundhigh(_target_x, _target_y, obj_ai_apf_source)
-							_attr_source.rep_type = false // set to attraction source
-							ds_list_add(apf_sources, _attr_source)
-						}
+						//if (_attrdrop) {
+						//	var _attr_source = create_groundhigh(_target_x, _target_y, obj_ai_apf_source)
+						//	_attr_source.rep_type = false // set to attraction source
+						//	ds_list_add(apf_sources, _attr_source)
+						//}
 					}
 				}
 			}
 		}
 	
 		// Pick target
-		rrt_field = rrt_apf_manifold
-		//target = noone
+		target = noone
 		//rrt_field = undefined // by default (e.g. no target), no motion planning field
-		//var _dist = infinity;
-		//for (var i = 0; i < ds_list_size(targets); i ++) {
-		//	var _target = targets[|i]
-		//	if (instance_exists(_target.body) && instance_exists(_target.body.trunk)) {
-		//		var _trunk = _target.body.trunk
-		//		var _new_dist = point_distance(_body_x, _body_x, _trunk.x, _trunk.y)
+		var _dist = infinity;
+		for (var i = 0; i < ds_list_size(targets); i ++) {
+			var _target = targets[|i]
+			if (instance_exists(_target.body) && instance_exists(_target.body.trunk)) {
+				var _trunk = _target.body.trunk
+				var _new_dist = point_distance(_body_x, _body_x, _trunk.x, _trunk.y)
 				
-		//		if (_new_dist < _dist) { // check distance
-		//			target = _target // pick target at closest distance
-		//			_dist = _new_dist
-		//		}
-		//	}
-		//}
+				if (_new_dist < _dist) { // check distance
+					target = _target // pick target at closest distance
+					_dist = _new_dist
+				}
+			}
+		}
 		
-		//if (instance_exists(target) && instance_exists(target.body) && instance_exists(target.body.trunk)) {
-		//	target_x = target.body.trunk.x
-		//	target_y = target.body.trunk.y
+		if (instance_exists(target) && instance_exists(target.body) && instance_exists(target.body.trunk)) {
+			target_x = target.body.trunk.x
+			target_y = target.body.trunk.y
 			
-		//	var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
+			rrt_field = rrt_apf_manifold
+			apf_sources[|0].x = target_x // put attraction source onto target
+			apf_sources[|0].y = target_y
 			
-		//	rrt_field = rrt_apf_manifold
-		//	//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold
-		//	//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
-		//}
+			//var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
+			//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold
+			//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
+		}
 		
 		// RRT* motion planning
 		if (rrt_field != undefined) {

@@ -16,19 +16,50 @@
 function rrt_mark_del(_branch) {
 	_branch.del = true
 	
-	var _child_count = 0
 	for (var i = 0; i < ds_list_size(_branch.links); i ++)
-		_child_count += rrt_mark_del(_branch.links[|i]) // recursively call on child elements
-	
-	return _child_count
+		rrt_mark_del(_branch.links[|i]) // recursively call on child elements
 }
 
 // Propagate growth into parent elements
-function rrt_grow(_branch) {
-	_branch.thickness ++ // increase thickness
+function rrt_grow(_branch, _amount) {
+	_branch.thickness += _amount // increase thickness
 	
 	if (_branch.parent != undefined)
-		rrt_grow(_branch.parent) // recursively do for parent elements
+		rrt_grow(_branch.parent, _amount) // recursively do for parent elements
+}
+
+// Compute S cost (combination of G cost and H cost) for RRT branch
+function rrt_compute_s_cost(_branch) {
+	// compute average spatial properties of near branches
+	var _avg_radius = 50 // distance within which to compute averages
+	var _avg_x = 0; var _avg_y = 0; var _avg_th = 0 // average x, y, th of branches within radius
+	var _obranch_count = 0 // how many other branches we are computing average for
+	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
+		var _obranch = rrt_branches[|i] // other branch
+		
+		if (_obranch == _branch) // if same branch, skip iteration
+			continue
+						
+					
+		if (point_distance(_branch.x_end, _branch.y_end, _obranch.x_end, _obranch.y_end) < _avg_radius) {
+			_avg_x += _obranch.x_end
+			_avg_y += _obranch.y_end
+			_avg_th += _obranch.th_end
+			_obranch_count ++
+		}
+	}
+	var _avg_dist = 0
+	var _avg_ang_dist = 0
+	if (_obranch_count > 0) {
+		_avg_x /= _obranch_count // divide by count to define average
+		_avg_y /= _obranch_count
+		_avg_th /= _obranch_count
+		_avg_dist = point_distance(_branch.x_end, _branch.y_end, _avg_x, _avg_y)
+		_avg_ang_dist = abs(angle_difference(_branch.th_end, _avg_th))
+	}
+				
+	// _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0) -
+	_branch.s_cost = (0.5 + (1 - rrt_exp) * 0.5) * (_branch.mani_z + _branch.mani_slope) - (0.2 + rrt_exp * 0.8) * (5 * _avg_dist + 0.5 * _avg_ang_dist) + 1.5 * _branch.g_cost// - 10 *_branch.thickness
 }
 
 // Root element that is start of tree
@@ -52,6 +83,7 @@ function rrt_root_element(_x, _y, _th) constructor {
 	
 	g_cost = 0
 	h_cost = undefined // defined outside
+	s_cost = undefined
 	lowest_cost_dir = undefined
 	mani_z = undefined // height on manifold
 	mani_slope = undefined // slope on manifold
@@ -97,6 +129,7 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	g_cost = _parent.g_cost + _analogous_dist * 0.5 + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined // defined outside
+	s_cost = undefined
 	lowest_cost_dir = undefined
 	mani_z = undefined // height on manifold
 	mani_slope = undefined // slope on manifold
@@ -180,6 +213,7 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	g_cost = _parent.g_cost + _analogous_dist + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined // defined outside
+	s_cost = undefined
 	lowest_cost_dir = undefined
 	mani_z = undefined // height on manifold
 	mani_slope = undefined // slope on manifold
@@ -199,8 +233,9 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		_col_slider.x = x + lengthdir_x(gear * l, th) // place at end of line
-		_col_slider.y = y + lengthdir_y(gear * l, th)
+		_col_slider.x = x_end // put collision slider on end point
+		_col_slider.y = y_end
+		_col_slider.image_angle = th
 		with (_col_slider) {
 			for (var i = 0; i < array_length(_obstr_objects); i ++)
 				if (place_meeting(x, y, _obstr_objects[i]))
@@ -302,6 +337,7 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	g_cost = _parent.g_cost + _analogous_dist + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
 	h_cost = undefined // defined outside
+	s_cost = undefined
 	lowest_cost_dir = undefined
 	mani_z = undefined // height on manifold
 	mani_slope = undefined // slope on manifold
@@ -347,9 +383,9 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
 	static collision_free = function(_col_slider, _obstr_objects) {
-		_col_slider.x = center_x + lengthdir_x(RRT_R, th - steering * 90 + gear * steering * l) // slide over arc
-		_col_slider.y = center_y + lengthdir_y(RRT_R, th - steering * 90 + gear * steering * l)
-		_col_slider.image_angle = th + gear * steering * l // slide angle over turn rotation
+		_col_slider.x = x_end // put collision slider on end point
+		_col_slider.y = y_end
+		_col_slider.image_angle = th_end
 		with (_col_slider) {
 			for (var i = 0; i < array_length(_obstr_objects); i ++)
 				if (place_meeting(x, y, _obstr_objects[i]))

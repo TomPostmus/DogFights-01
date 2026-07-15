@@ -10,4 +10,8 @@ ds_list_clear(rrt_branches)
 ds_list_clear(rrt_branches_open)
 ds_list_clear(apf_sources)
 
+var _attr_source = create_groundhigh(0, 0, obj_ai_apf_source) // single attraction source for single target
+_attr_source.rep_type = false // set to attraction source
+ds_list_add(apf_sources, _attr_source)
+
 rrt_branch = undefined
