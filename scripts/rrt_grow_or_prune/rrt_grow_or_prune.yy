@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"rrt_init",
+  "%Name":"rrt_grow_or_prune",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"rrt_init",
+  "name":"rrt_grow_or_prune",
   "parent":{
     "name":"player_ai_utils",
     "path":"folders/Code/player/player_ai_utils.yy",

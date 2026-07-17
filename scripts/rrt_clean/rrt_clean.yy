@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"rrt_update",
+  "%Name":"rrt_clean",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"rrt_update",
+  "name":"rrt_clean",
   "parent":{
     "name":"player_ai_utils",
     "path":"folders/Code/player/player_ai_utils.yy",

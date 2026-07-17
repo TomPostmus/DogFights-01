@@ -1,10 +1,8 @@
 // Walk RRT branch element and when completed choose new one
 function rrt_walk(_body_x, _body_y, _body_rot){
 	
-	if (rrt_branch == undefined) // if in rrt_update the tree was reset
-		exit // exit function
-	
 	var _abort = false // abort flag, e.g. in case player has drifted too far from tree
+	var _abortion_tolerance = 35 // deviation distance from path, from which to abort path
 	if (!rrt_branch_completed) {
 		
 		// check timer for completing element
@@ -13,7 +11,6 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			_abort = true // maximal time for completing element elapsed, abort RRT tree
 			
 		
-		var _abortion_tolerance = 50 // distance from which to abort path
 		if (rrt_branch.type == RRT_ROOT) {
 			rrt_branch_completed = true
 		} else if (rrt_branch.type == RRT_TURN) { // execute turn					
@@ -82,88 +79,19 @@ function rrt_walk(_body_x, _body_y, _body_rot){
 			if (_progression >= rrt_branch.l - _completion_tolerance) {
 				rrt_branch_completed = true
 			}
-		}
+		}			
+				
+	// If completed walking the current branch wait until next branch is chosen
+	} else {
+		// do check if we are not drifting in the mean time
+		var _dist = point_distance(_body_x, _body_y, rrt_branch.x_end, rrt_branch.y_end) // deviation to end point
+		if (_dist >= _abortion_tolerance)
+			_abort = true
+		
 	}
-			
+		
 	// Check if abort flag was raised
 	if (_abort) {
 		rrt_mark_del(rrt_branch)
-		rrt_branch = undefined
-				
-	// When completed walking the current branch
-	} else if (rrt_branch_completed) {
-		
-		// Pick destination branch as branch lowest z value, and lower z value than current RRT branch
-		rrt_dest = undefined
-		var _cur_z = rrt_branch.s_cost // height of current RRT branch
-		var _thresh = 0.0 // threshold below which lower z is interesting
-		for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
-			var _branch = rrt_branches[|i]
-			
-			if (_branch.s_cost == undefined) // if manifold properties have not been computed yet (happens at start of step), continue
-				continue
-			if (_branch == rrt_branch)
-				continue // if root branch, continue
-			
-			if (_branch.s_cost < _cur_z - _thresh) { // find branch with lowest z
-				_cur_z = _branch.s_cost
-				rrt_dest = _branch
-			}
-		}
-		
-		if (rrt_dest != undefined) { // if found destination branch
-		
-			var _next_branch = rrt_dest
-			while (_next_branch.parent != rrt_branch) { // backtrack from until found current rrt branch
-				_next_branch = _next_branch.parent
-			}
-						
-			var _next_branch_i = ds_list_find_index(rrt_branch.links, _next_branch)
-			ds_list_delete(rrt_branch.links, _next_branch_i) // decouple chosen branch from old branch, to avoid deleting the chosen branch along with deleting old branch
-			rrt_mark_del(rrt_branch) // delete old branch
-			rrt_branch = _next_branch
-			rrt_branch.parent = undefined // new branch is root, so has no parent
-			rrt_branch_completed = false
-			rrt_walk_timer = rrt_walk_maxtime // reset timer
-			
-			var _g_cost_before = rrt_branch.g_cost // remember G cost before reset
-			for (var i = 0; i < ds_list_size(rrt_branches); i ++) {				
-				rrt_branches[|i].g_cost -= _g_cost_before // subtract G cost for every branch	
-			}
-			
-		}
-		
-		//if (abs(rrt_branch.h_cost) < rrt_tolerance) { // if current branch has H cost tolerance within completion tolerance of motion planning
-			
-		//	rrt_mark_del(rrt_branch) // delete RRT
-		//	rrt_branch = undefined // stop motion planning
-			
-		//} else { // otherwise choose next branch that has largest thickness
-		
-		//	var _max_thickness = 0
-		//	var _next_branch = undefined
-		//	var _next_branch_i = 0
-		//	for (var i = 0; i < ds_list_size(rrt_branch.links); i ++) { // loop through linked branches of current branch
-		//		var _link = rrt_branch.links[|i]
-		//		if (_link.thickness > _max_thickness) {
-		//			_max_thickness = _link.thickness
-		//			_next_branch = _link
-		//			_next_branch_i = i // remember index in list
-		//		}
-		//	}
-					
-		//	if (_next_branch != undefined) { // if found the next branch to walk			
-		//		ds_list_delete(rrt_branch.links, _next_branch_i) // decouple chosen branch from old branch, to avoid deleting the chosen branch along with deleting old branch
-		//		rrt_mark_del(rrt_branch) // delete old branch
-		//		rrt_branch = _next_branch
-		//		rrt_branch.parent = undefined // new branch is root, so has no parent
-		//		rrt_branch_completed = false
-		//		rrt_walk_timer = rrt_walk_maxtime // reset timer
-		//	} else { // otherwise, wait
-		//		move_input = 0
-		//		turn_input = 0
-		//	}
-		
-		//}
 	}
 }

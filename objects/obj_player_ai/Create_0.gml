@@ -153,24 +153,58 @@ function rrt_apf_manifold(_x, _y, _th) {
 		var _Hi = _source.height // height of source
 		var _A = !_source.rep_type * 2 - 1 // sign of source (-1 for repulsion 1 for attraction)
 		
-		_ri = point_distance(_x, _y, _source.x, _source.y)  // distance to source
+		_ri = point_distance(_x, _y, _source.x, _source.y) // distance to source
 		if (!line_shootable_arbitrary(_x, _y, _source.x, _source.y)) // if no line collision to source
 			_Hi *= 0.25 // source is weakened
 		
 		if (_ri <= _Ri) { // if falls within source radius
+			
 			_z += -_A * _Hi * sqr(1 - sqr(_ri) / sqr(_Ri)) // height on manifold of _x, _y point
 			_fx += _A * 4 * _Hi / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x) // gradient in x and y directions of tangent plane at _x, _y
 			_fy += _A * 4 * _Hi / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_y - _source.y)
+			
+			
+			var _thi = point_direction(_x, _y, _source.x, _source.y) // orientation to source
+			_z += abs(angle_difference(_thi, _th)) / 360 * 100 // add angle difference to height
+			
 		}
 	}
 	
-	var _s = _fx * lengthdir_x(1, _th) + _fy * lengthdir_y(1, _th)
-	var _slope = darctan(_s)
+	//var _s = _fx * lengthdir_x(1, _th) + _fy * lengthdir_y(1, _th)
+	//var _slope = darctan(_s)
 	
-	if (_z == undefined || _fx == undefined ||_fy == undefined || _slope == undefined)
-		_z = 0
-	
-	return [_z, -_fx, -_fy, _slope] // return height on manifold, normal vector (projected onto xy-plane), and the slope of tangent plane in direction of _th
+	return [_z, -_fx, -_fy] // return height on manifold, normal vector (projected onto xy-plane), and the slope of tangent plane in direction of _th
+}
+
+
+// RRT target field, where AI focuses its rotation (shooting direction) on target
+function rrt_shoot_target_manifold(_x, _y, _th) {
+	var _ri;
+	var _z = 0; var _fx = 0; var _fy = 0
+	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
+		var _source = apf_sources[|i]
+		var _Ri = _source.radius // radius of course
+		var _Hi = _source.height // height of source
+		var _A = !_source.rep_type * 2 - 1 // sign of source (-1 for repulsion 1 for attraction)
+		
+		_ri = point_distance(_x, _y, _source.x, _source.y) // distance to source
+		//if (!line_shootable_arbitrary(_x, _y, _source.x, _source.y)) // if no line collision to source
+		//	_Hi *= 0.25 // source is weakened
+		
+		if (_ri <= _Ri) { // if falls within source radius
+			
+			_z += -_A * _Hi * sqr(1 - sqr(max(0, _ri - 200)) / sqr(_Ri)) // height on manifold of _x, _y point
+			//_fx += _A * 4 * _Hi / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_x - _source.x) // gradient in x and y directions of tangent plane at _x, _y
+			//_fy += _A * 4 * _Hi / sqr(_Ri) * (1 - sqr(_ri) / sqr(_Ri)) * (_y - _source.y)
+			
+			
+			var _thi = point_direction(_x, _y, _source.x, _source.y) // orientation to source
+			_z += abs(angle_difference(_thi, _th)) / 360 * 1500 // add angle difference to height
+			
+		}
+	}
+		
+	return [_z, _fx, _fy]
 }
 
 // RRT target field, where AI approaches target and takes into account moving around walls

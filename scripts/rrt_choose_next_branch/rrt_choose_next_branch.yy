@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"rrt_choose_next_branch",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"rrt_choose_next_branch",
+  "parent":{
+    "name":"player_ai_utils",
+    "path":"folders/Code/player/player_ai_utils.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

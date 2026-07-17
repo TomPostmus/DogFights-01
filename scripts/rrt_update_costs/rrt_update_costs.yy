@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"rrt_update_costs",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"rrt_update_costs",
+  "parent":{
+    "name":"player_ai_utils",
+    "path":"folders/Code/player/player_ai_utils.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

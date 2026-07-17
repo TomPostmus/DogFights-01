@@ -4,43 +4,7 @@ turn_input = 0 // reset controls
 move_input = 0
 input_attack = false
 
-if (global.ingame()) {
-		
-	// Delete RTT branch if it is marked for deletion
-	for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
-		var _branch = rrt_branches[|i]
-		
-		if (_branch.del) {
-			// reset root and dest variables
-			if (_branch == rrt_branch) // if to be deleted branch is current root branch
-				rrt_branch = undefined // reset current rrt_branch variable
-			if (_branch == rrt_dest) // same for destination branch
-				rrt_dest = undefined
-			
-			// remove from parent links
-			if (_branch.parent != undefined && !_branch.parent.del) { // if has parent that is not marked for deletion
-				var _branch_parent = _branch.parent
-				var _branch_i = ds_list_find_index(_branch_parent.links, _branch)
-				ds_list_delete(_branch_parent.links, _branch_i) // remove this branch from its parent's links
-				
-				var _thickness = 1 + _branch.thickness // thickness of branch with itself included
-				rrt_grow(_branch_parent, -_thickness) // subtract
-			}
-			
-			// remove from branches lists
-			var j = ds_list_find_index(rrt_branches_open, _branch) // also find in open branches list
-			if (j != -1)
-				ds_list_delete(rrt_branches_open, j) // remove from open branches
-		
-			ds_list_delete(rrt_branches, i) // remove from list
-			i --
-			
-			// destroy branch data structures
-			ds_list_destroy(_branch.links) // destroy its links data structure
-			delete _branch // delete struct
-		}
-	}
-	
+if (global.ingame()) {	
 	
 	// Prune APF sources from list that no longer exist
 	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
@@ -112,28 +76,62 @@ if (global.ingame()) {
 			target_y = target.body.trunk.y
 			
 			rrt_field = rrt_apf_manifold
-			apf_sources[|0].x = target_x // put attraction source onto target
-			apf_sources[|0].y = target_y
 			
-			//var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
-			//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold
+			var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
+			if (_line_of_sight) {
+				
+				//rrt_field = undefined
+				//if (rrt_branch != undefined) {
+				//	rrt_mark_del(rrt_branch)
+				//	rrt_branch = undefined
+				//}
+				
+				//var _target_dir = point_direction(_body_x, _body_y, target_x, target_y)
+				//turn_input = input_dir(_target_dir)
+				
+				//var _shoot_precision = 3
+				//input_attack = abs(angle_difference(_body_rot, _target_dir) <= _shoot_precision)
+				
+				apf_sources[|0].x = target_x // put attraction source onto target
+				apf_sources[|0].y = target_y
+				rrt_field = rrt_shoot_target_manifold
+				input_attack = true
+				
+			} else {
+				
+				apf_sources[|0].x = target_x // put attraction source onto target
+				apf_sources[|0].y = target_y
+				rrt_field = rrt_apf_manifold
+				input_attack = false
+				
+			}
+			//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold // oneliners
 			//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
 		}
 		
 		// RRT* motion planning
 		if (rrt_field != undefined) {
-			if (rrt_branch = undefined) { // if there is no current node
-			
-				rrt_init(_body_x, _body_y, _body_rot) // initialize RRT
+			if (rrt_branch == undefined) { // if there is no current node
+				rrt_branch = new rrt_root_element(_body_x, _body_y, _body_rot) // create root node of tree
+				ds_list_add(rrt_branches, rrt_branch)
+				ds_list_add(rrt_branches_open, rrt_branch)
 				rrt_walk_timer = rrt_walk_maxtime // reset timer
-			
-			} else {
-			
-				rrt_update(_body_x, _body_y, _body_rot) // update RRT
-				rrt_walk(_body_x, _body_y, _body_rot) // walk current RRT branch
-			
+				rrt_update_costs()
 			}
+			
+			// do movement for walking current RRT branch
+			rrt_walk(_body_x, _body_y, _body_rot) 
+			if (rrt_branch_completed) {// choose next branch if completed current branch
+				rrt_choose_next_branch()
+				rrt_clean() // delete branches marked for deletion
+			}
+			
+			// update tree
+			rrt_grow_or_prune(_body_x, _body_y, _body_rot) // update RRT
+			rrt_update_costs() // update cost variables of branches based on current field status
+			rrt_clean() // delete branches marked for deletion
 		}
+		
 	}
 	
 	// Send inputs

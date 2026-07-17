@@ -28,40 +28,6 @@ function rrt_grow(_branch, _amount) {
 		rrt_grow(_branch.parent, _amount) // recursively do for parent elements
 }
 
-// Compute S cost (combination of G cost and H cost) for RRT branch
-function rrt_compute_s_cost(_branch) {
-	// compute average spatial properties of near branches
-	var _avg_radius = 50 // distance within which to compute averages
-	var _avg_x = 0; var _avg_y = 0; var _avg_th = 0 // average x, y, th of branches within radius
-	var _obranch_count = 0 // how many other branches we are computing average for
-	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
-		var _obranch = rrt_branches[|i] // other branch
-		
-		if (_obranch == _branch) // if same branch, skip iteration
-			continue
-						
-					
-		if (point_distance(_branch.x_end, _branch.y_end, _obranch.x_end, _obranch.y_end) < _avg_radius) {
-			_avg_x += _obranch.x_end
-			_avg_y += _obranch.y_end
-			_avg_th += _obranch.th_end
-			_obranch_count ++
-		}
-	}
-	var _avg_dist = 0
-	var _avg_ang_dist = 0
-	if (_obranch_count > 0) {
-		_avg_x /= _obranch_count // divide by count to define average
-		_avg_y /= _obranch_count
-		_avg_th /= _obranch_count
-		_avg_dist = point_distance(_branch.x_end, _branch.y_end, _avg_x, _avg_y)
-		_avg_ang_dist = abs(angle_difference(_branch.th_end, _avg_th))
-	}
-				
-	// _branch.mani_z * 300 + max(-_branch.g_cost, -10) + max(_branch.g_cost-10, 0) -
-	_branch.s_cost = (0.5 + (1 - rrt_exp) * 0.5) * (_branch.mani_z + _branch.mani_slope) - (0.2 + rrt_exp * 0.8) * (5 * _avg_dist + 0.5 * _avg_ang_dist) + 1.5 * _branch.g_cost// - 10 *_branch.thickness
-}
-
 // Root element that is start of tree
 function rrt_root_element(_x, _y, _th) constructor {
 	type = RRT_ROOT
@@ -113,7 +79,8 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	x = _x // starting position
 	y = _y
 	th = _th // angle (orientation of line)
-	steering = sign(angle_difference(_th_end, _th))
+	l = angle_difference(_th_end, _th) // length of turn in degrees
+	steering = sign(l)
 	gear = 0 // no gear
 	
 	x_end = x
@@ -124,7 +91,7 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	thickness = 0 // thickness of branch, i.e. how many branches are hanging from it
 	del = false // flag whether branch is to be deleted (necessary for safely removing branch in rrt_branches list)
 	
-	var _time = abs(angle_difference(_th_end, _th)) / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
+	var _time = abs(l) / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
 	var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
 	g_cost = _parent.g_cost + _analogous_dist * 0.5 + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	
@@ -156,13 +123,10 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 		var _d = _precision // distance over turn
 		_col_slider.x = x
 		_col_slider.y = y
-		//if (abs(angle_difference(th_end, th)) > 30) {
-		//	_d = _d
-		//}
 		
 		while (true) {
-			if (_d > th_end) {
-				_d = th_end // cap at end angle
+			if (_d > l) {
+				_d = l // cap at end angle
 				_last_iter = true
 			}
 			
@@ -232,7 +196,10 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
-	static collision_free = function(_col_slider, _obstr_objects) {
+	static collision_free = function(_col_slider, _obstr_objects, _player_x, _player_y) {
+		if (point_distance(x_end, y_end, _player_x, _player_y) < 3)
+			return true
+			
 		_col_slider.x = x_end // put collision slider on end point
 		_col_slider.y = y_end
 		_col_slider.image_angle = th
@@ -382,7 +349,10 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor
 	
 	// Check collision using collision slider and given obstruction objects types
 	// Return true if there is no collision, false otherwise
-	static collision_free = function(_col_slider, _obstr_objects) {
+	static collision_free = function(_col_slider, _obstr_objects, _player_x, _player_y) {
+		if (point_distance(x_end, y_end, _player_x, _player_y) < 3)
+			return true
+		
 		_col_slider.x = x_end // put collision slider on end point
 		_col_slider.y = y_end
 		_col_slider.image_angle = th_end
