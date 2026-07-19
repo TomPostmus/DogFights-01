@@ -147,13 +147,14 @@ function rrt_grow_or_prune(_body_x, _body_y, _body_rot){
 				ds_list_add(rrt_branches, _new_branch) // add to total list of branches
 				ds_list_add(rrt_branches_open, _new_branch) // add new branch to open branches list
 			}
-				
+			
+			// if stuff was added to bundle, branch is no longer open
 			if (_nr_added > 0) {
 				rrt_grow(_chosen, _nr_added) // backpropagate branch thickness growth
 				var i = ds_list_find_index(rrt_branches_open, _chosen) // find in open list
 				ds_list_delete(rrt_branches_open, i) // remove chosen branch from open branch list (it's no longer open), also if 0 branches were added (it's not suitable for choice in later steps)
-				ds_list_destroy(_bundle)
 			}
+			ds_list_destroy(_bundle)
 			
 			// if only 1 open branch and 0 branches could be added
 			if (_nr_branches == 1 && _nr_added == 0) {
