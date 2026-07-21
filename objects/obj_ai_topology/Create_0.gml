@@ -1,5 +1,3 @@
-grid = undefined // motion planning grid
-grid_high = undefined // motion planning grid for high objects
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
 
 cell_size = 8
@@ -7,13 +5,16 @@ n_cells_x = ceil(room_width/cell_size)
 n_cells_y = ceil(room_height/cell_size)
 
 // Generate motion-planning grid
-grid = mp_grid_create(0, 0, n_cells_x, n_cells_y, cell_size, cell_size)
+grid_cell_size = 16 // cell size for A* Grid
+grid_n_cells_x = ceil(room_width/grid_cell_size)
+grid_n_cells_y = ceil(room_height/grid_cell_size)
+grid = mp_grid_create(0, 0, grid_n_cells_x, grid_n_cells_y, grid_cell_size, grid_cell_size)
 for (var i = 0; i < array_length(obstr_objects); i ++) {
 	mp_grid_add_instances(grid, obstr_objects[i], true)
 }
 
 // Generate mp grid with only high obstructions
-grid_high = mp_grid_create(0, 0, n_cells_x, n_cells_y, cell_size, cell_size)
+grid_high = mp_grid_create(0, 0, grid_n_cells_x, grid_n_cells_y, grid_cell_size, grid_cell_size)
 for (var i = 0; i < array_length(obstr_objects); i ++) {
 	for (var j = 0; j < instance_number(obstr_objects[i]); j ++) {
 		var obstacle = instance_find(obstr_objects[i], j)

@@ -1,157 +1,144 @@
-event_inherited()
+// (Dynamically) Define APF with cost function
+// The Artificial Potential Field (APF) is simply a map from a position (x, y) to a cost, or a height (z) value if you consider it as a 2-manifold (3D object)
+apf_costf = function(_x, _y) {
+	var _cost = 0
 
-turn_input = 0 // reset controls
-move_input = 0
-input_attack = false
+	if (state == "explore")
+		_cost += apf_explgrid_costf(_x, _y)
 
-if (global.ingame()) {	
+	return _cost
+} // TODO: in-line function call? If function is called only once per step, having it be a function does not make sense
+
+if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
+	var body = character.body
+	var weapon = character.weapon
 	
-	// Prune APF sources from list that no longer exist
-	for (var i = 0; i < ds_list_size(apf_sources); i ++) {
-		if (!instance_exists(apf_sources[|i])) {
-			ds_list_delete(apf_sources, i)
-			i --
-		}
+	var _body_x = body.get_x()
+	var _body_y = body.get_y()
+	var _body_rot = body.get_rotation()
+	
+	// Update APF layer
+	var _body_cell_i = ceil(_body_x / apf_explgrid_cell_size)
+	var _body_cell_j = ceil(_body_y / apf_explgrid_cell_size)
+	
+	if (_body_cell_i >= 0 && _body_cell_i < ds_grid_width(apf_explgrid)
+		&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(apf_explgrid)) {
+	
+		apf_explgrid[# _body_cell_i, _body_cell_j] = 0 // eat candy, set to zero
+	
 	}
-
-	// Basic behaviour
-	if (instance_exists(character) && instance_exists(character.body)) {
-		var body = character.body
-		var weapon = character.weapon
 	
-		var _body_x = body.get_x()
-		var _body_y = body.get_y()
-		var _body_rot = body.get_rotation()
+	// Update A* Grid layer
+	var _body_cell_i = ceil(_body_x / agrid_cell_size)
+	var _body_cell_j = ceil(_body_y / agrid_cell_size)
 	
-		// Spot enemies
-		if (instance_exists(camera)) {
-			var _attrdrop = false
-			apf_target_attraction_timer ++
-			if (apf_target_attraction_timer > apf_target_attraction_every) {
-				_attrdrop = true
-				apf_target_attraction_timer = 0
-			}
+	if (_body_cell_i >= 0 && _body_cell_i < ds_grid_width(agrid_grid)
+		&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(agrid_grid)) {
 			
-			ds_list_clear(targets)
-			for (var i = 0; i < instance_number(obj_character); i ++) {
-				var _character_insight = instance_find(obj_character, i);
-				if (_character_insight != character && instance_exists(_character_insight.body) && instance_exists(_character_insight.body.trunk)
-					&& (character.team_id == undefined || character.team_id != _character_insight.team_id)
-					&& !_character_insight.hp_protection) {
-					var _target_x = _character_insight.body.trunk.x
-					var _target_y = _character_insight.body.trunk.y
-						
-					if (point_in_rectangle(_target_x, _target_y, camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2)) {
-						ds_list_add(targets, _character_insight)
-						
-						//if (_attrdrop) {
-						//	var _attr_source = create_groundhigh(_target_x, _target_y, obj_ai_apf_source)
-						//	_attr_source.rep_type = false // set to attraction source
-						//	ds_list_add(apf_sources, _attr_source)
-						//}
-					}
+		agrid_curcell ??= new agrid_cell(_body_cell_i, _body_cell_j) // if current cell not initialized, create cell with zero cost
+	
+		// choose whether to grow or prune
+		var _agrid_size = ds_list_size(agrid_list)
+		var _agrid_max_size = 50
+		//var _prune_chance = max(0, (_agrid_size / _agrid_max_size - 0.5) * 2) // random chance for pruning
+		var _prune = _agrid_size >= _agrid_max_size// || irandom(100 * _prune_chance) // whether to prune grid
+	
+		var _cost_min = infinity
+		var _cost_max = -infinity
+		for (var i = 0; i < _agrid_size; i ++) { // update costs and determine min and max costs
+			var _cell = agrid_list[|i]
+		
+			var _cost = apf_costf(_cell.i * agrid_cell_size, _cell.j * agrid_cell_size)
+			_cell.cost = _cost // update cost
+				
+			if (_cost < _cost_min) // define min and max S costs
+				_cost_min = _cost
+			if (_cost > _cost_max)
+				_cost_max = _cost
+		}
+	
+		var _chosen = undefined // chosen cell for exploration
+		var _nr_open = ds_list_size(agrid_list_open) // number of open cells
+	
+		if (_nr_open == 1) { // if just one cell
+		
+			_chosen = agrid_list_open[|0] // choose that one
+		
+		} else if (_nr_open > 1) { // do power law weighting for choosing cell
+	
+			var _ws = array_create(_nr_open) // weights
+			var _w_sum = 0 // sum of weights
+			var _cost_range = _cost_max - _cost_min // range of cost (same for each cell)
+			for (var i = 0; i < _nr_open; i ++) {
+				var _cell = agrid_list_open[|i]
+		
+				var _cost_norm = 0.1 + 0.9 * (_cell.cost - _cost_min) / _cost_range // normalise in range of 0, 1
+				if (!_prune)		
+					_ws[i] = 1 / power(_cost_norm, 3) // power of cost (the higher the power, the stronger lower costs are favoured)
+				else
+					_ws[i] = power(_cost_norm, 3) // otherwise weight is inverse (the higher costs are favoured for pruning)
+				_w_sum += _ws[i]
+			}
+	
+			// choose cell randomly, weighted with cost
+			var _rn = random(1) // draw random number within 0, 1
+			var _acc = 0 // var that accumulates probabilities
+			for (var i = 0; i < _nr_open; i ++) {
+				var _p_i = _ws[i] / _w_sum // probability of branch i
+				if (_rn >= _acc && _rn < _acc + _p_i) { // if _rn falls between weighted portion
+					_chosen = agrid_list_open[|i] // choose this cell
+					break
 				}
+				_acc += _p_i
 			}
+		
 		}
 	
-		// Pick target
-		target = noone
-		//rrt_field = undefined // by default (e.g. no target), no motion planning field
-		var _dist = infinity;
-		for (var i = 0; i < ds_list_size(targets); i ++) {
-			var _target = targets[|i]
-			if (instance_exists(_target.body) && instance_exists(_target.body.trunk)) {
-				var _trunk = _target.body.trunk
-				var _new_dist = point_distance(_body_x, _body_x, _trunk.x, _trunk.y)
+		if (_chosen != undefined) { // if cell was chosen
+		
+			var _i = _chosen.i
+			var _j = _chosen.j
+	
+			if (!_prune) { // if explore
 				
-				if (_new_dist < _dist) { // check distance
-					target = _target // pick target at closest distance
-					_dist = _new_dist
+				// Explore neighbours
+				var _mp_grid = obj_ai_topology.grid
+				if (mp_grid_get_cell(_mp_grid, _i+1, _j) != -1) // explore open cells to north, east, south, west of chosen cell
+					agrid_grid[# _i+1, _j] ??= new agrid_cell(_i+1, _j)
+				if (mp_grid_get_cell(_mp_grid, _i, _j+1) != -1)
+					agrid_grid[# _i, _j+1] ??= new agrid_cell(_i, _j+1)
+				if (mp_grid_get_cell(_mp_grid, _i-1, _j) != -1)
+					agrid_grid[# _i-1, _j] ??= new agrid_cell(_i-1, _j)
+				if (mp_grid_get_cell(_mp_grid, _i, _j-1) != -1)
+					agrid_grid[# _i, _j-1] ??= new agrid_cell(_i, _j-1)
+			
+				_chosen.open = false
+				var _list_i = ds_list_find_index(agrid_list_open, _chosen)
+				ds_list_delete(agrid_list_open, _list_i) // remove from open list			
+				
+			} else { // if prune
+	
+				_chosen.destroy() // destroy cell
+
+				// If there are closed neighbours, add them to open list
+				if (agrid_grid[# _i+1, _j] != undefined && !agrid_grid[# _i+1, _j].open) {
+					ds_list_add(agrid_list_open, agrid_grid[# _i+1, _j])
+					agrid_grid[# _i+1, _j].open = true
+				}			
+				if (agrid_grid[# _i, _j+1] != undefined && !agrid_grid[# _i, _j+1].open) {
+					ds_list_add(agrid_list_open, agrid_grid[# _i, _j+1])
+					agrid_grid[# _i, _j+1].open = true
 				}
+				if (agrid_grid[# _i-1, _j] != undefined && !agrid_grid[# _i-1, _j].open) {
+					ds_list_add(agrid_list_open, agrid_grid[# _i-1, _j])
+					agrid_grid[# _i-1, _j].open = true
+				}
+				if (agrid_grid[# _i, _j-1] != undefined && !agrid_grid[# _i, _j-1].open) {
+					ds_list_add(agrid_list_open, agrid_grid[# _i, _j-1])
+					agrid_grid[# _i, _j-1].open = true
+				}
+			
 			}
 		}
-		
-		if (instance_exists(target) && instance_exists(target.body) && instance_exists(target.body.trunk)) {
-			target_x = target.body.trunk.x
-			target_y = target.body.trunk.y
-			
-			rrt_field = rrt_apf_manifold
-			
-			var _line_of_sight = line_shootable(target_x, target_y) // check if line shootable to target
-			if (_line_of_sight) {
-				
-				//rrt_field = undefined
-				//if (rrt_branch != undefined) {
-				//	rrt_mark_del(rrt_branch)
-				//	rrt_branch = undefined
-				//}
-				
-				//var _target_dir = point_direction(_body_x, _body_y, target_x, target_y)
-				//turn_input = input_dir(_target_dir)
-				
-				//var _shoot_precision = 3
-				//input_attack = abs(angle_difference(_body_rot, _target_dir) <= _shoot_precision)
-				
-				apf_sources[|0].x = target_x // put attraction source onto target
-				apf_sources[|0].y = target_y
-				rrt_field = rrt_shoot_target_manifold
-				input_attack = true
-				
-			} else {
-				
-				apf_sources[|0].x = target_x // put attraction source onto target
-				apf_sources[|0].y = target_y
-				rrt_field = rrt_apf_manifold
-				input_attack = false
-				
-			}
-			//rrt_field = _line_of_sight ? rrt_shoot_target_field : rrt_apf_manifold // oneliners
-			//input_attack = _line_of_sight && rrt_branch != undefined && rrt_branch.h_cost <= rrt_tolerance
-		}
-		
-		// RRT* motion planning
-		if (rrt_field != undefined) {
-			if (rrt_branch == undefined) { // if there is no current node
-				rrt_branch = new rrt_root_element(_body_x, _body_y, _body_rot) // create root node of tree
-				ds_list_add(rrt_branches, rrt_branch)
-				ds_list_add(rrt_branches_open, rrt_branch)
-				rrt_walk_timer = rrt_walk_maxtime // reset timer
-				rrt_update_costs()
-			}
-			
-			// do movement for walking current RRT branch
-			rrt_walk(_body_x, _body_y, _body_rot) 
-			if (rrt_branch_completed) {// choose next branch if completed current branch
-				rrt_choose_next_branch()
-				rrt_clean() // delete branches marked for deletion
-			}
-			
-			// update tree
-			rrt_grow_or_prune(_body_x, _body_y, _body_rot) // update RRT
-			rrt_update_costs() // update cost variables of branches based on current field status
-			rrt_clean() // delete branches marked for deletion
-		}
-		
 	}
-	
-	// Send inputs
-	if (instance_exists(character)) {
-	
-		// Send to character
-		character.interact = input_interact
-	
-		// Send to weapon
-		if (instance_exists(character.weapon)) {
-			character.weapon.trigger = input_attack
-			character.weapon.aiming = input_attack2
-			character.weapon.input_reload = input_reload
-			character.weapon.input_firemode = input_firemode
-		}
-
-		// Send to movement controller
-		character.movement.move_input = move_input
-		character.movement.turn_input = turn_input
-
-	}
-
 }

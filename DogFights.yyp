@@ -169,6 +169,7 @@
     {"id":{"name":"obj_phygroup_half","path":"objects/obj_phygroup_half/obj_phygroup_half.yy",},},
     {"id":{"name":"obj_physics_pip_head","path":"objects/obj_physics_pip_head/obj_physics_pip_head.yy",},},
     {"id":{"name":"obj_physics_pip_trunk","path":"objects/obj_physics_pip_trunk/obj_physics_pip_trunk.yy",},},
+    {"id":{"name":"obj_player_ai_old","path":"objects/obj_player_ai_old/obj_player_ai_old.yy",},},
     {"id":{"name":"obj_player_ai","path":"objects/obj_player_ai/obj_player_ai.yy",},},
     {"id":{"name":"obj_player_local_ai","path":"objects/obj_player_local_ai/obj_player_local_ai.yy",},},
     {"id":{"name":"obj_player_local_human_controller","path":"objects/obj_player_local_human_controller/obj_player_local_human_controller.yy",},},
