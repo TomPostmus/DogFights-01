@@ -3,17 +3,37 @@ event_inherited();
 
 state = "explore"
 
-// APF layer (Attraction and Repulsion sources)
+// APF layer (Artificial Potential Field, with Attraction and Repulsion sources)
 apf_explgrid_cell_size = 64
 apf_explgrid = ds_grid_create(room_width/apf_explgrid_cell_size, room_height/apf_explgrid_cell_size) // exploration grid
 apf_costf = undefined // cost function, that maps position (x, y) to cost (manifold height)
 apf_explgrid_costf = function(_x, _y) { // cost function for exploration grid, mapping position to exploration cost
+	
 	var _cell_x = ceil(_x / apf_explgrid_cell_size) // indices of cells in ds grid
 	var _cell_y = ceil(_y / apf_explgrid_cell_size)
 	
-	var _cost = apf_explgrid[# _cell_x, _cell_y]
+	var _cost = 1 - apf_explgrid[# _cell_x, _cell_y]
 	
 	return _cost
+	
+}
+apf_enemies = ds_list_create() // list of enemies in sight
+apf_social_costf = function(_x, _y) { // cost function for social bonds (teammates or enemies)
+	
+	var _cost = 0
+	var _R = 400 // radius of sources
+	for (var i = 0; i < ds_list_size(apf_enemies); i ++) {
+		var _enemy = apf_enemies[|i]
+		
+		var _r = point_distance(_x, _y, _enemy.x, _enemy.y) // radius (distance) to enemy
+		
+		if (_r <= _R) { // if falls within source radius
+			_cost += -_R * sqr(1 - sqr(_r) / sqr(_R)) // height on mountain/valley centered around enemy with radius R
+		}
+	}
+	
+	return _cost
+	
 }
 
 // A* Grid layer
@@ -25,13 +45,16 @@ for (var i = 0; i < ds_grid_width(agrid_grid); i ++)
 		agrid_grid[# i, j] = undefined // use undefined as default value (cleaner in code with nullish operator)
 agrid_list = ds_list_create() // list of occupied cells
 agrid_list_open = ds_list_create() // list of open cells
+agrid_path = ds_list_create() // list of cells representing path to minimal cost node
 
 
 agrid_cell = function(_i, _j) constructor { // constructor for cell object
 	i = _i
 	j = _j
 	
-	cost = undefined // cost updated in step
+	s_cost = undefined // S cost, summed cost of H cost and G cost
+	h_cost = undefined // heuristic (H) cost defined by APF layer, updated in step
+	g_cost = undefined // G cost
 	
 	// Store in data structures
 	if (other.agrid_grid[# i, j] != undefined)
