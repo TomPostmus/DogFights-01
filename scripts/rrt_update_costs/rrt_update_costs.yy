@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"rrt_update_costs",
   "parent":{
-    "name":"player_ai_utils",
-    "path":"folders/Code/player/player_ai_utils.yy",
+    "name":"rrt_functions(mightdelete)",
+    "path":"folders/Code/player/player_ai_utils/rrt_functions(mightdelete).yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

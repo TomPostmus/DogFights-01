@@ -6,7 +6,7 @@ players_active = ds_list_create() // list that keeps track of active players, i.
 //var _p1 = instance_create_layer(0, 0, "Players", obj_player_p1) // first input player (WASD)
 //ds_list_add(players_active, _p1) // add to active players list
 //ds_list_add(players, _p1) // and general players list
-var _p2 = instance_create_layer(0, 0, "Players", obj_player_ai) // second input player (arrow keys)
+var _p2 = instance_create_layer(0, 0, "Players", obj_player_p1) // second input player (arrow keys)
 ds_list_add(players_active, _p2)
 ds_list_add(players, _p2)
 

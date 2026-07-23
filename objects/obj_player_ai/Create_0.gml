@@ -4,9 +4,9 @@ event_inherited();
 state = "explore"
 
 // APF layer (Artificial Potential Field, with Attraction and Repulsion sources)
+apf_cost_field_2d = undefined // 2D cost function, that maps position (x, y) to cost (manifold height), meant for A* Grid layer
 apf_explgrid_cell_size = 64
-apf_explgrid = ds_grid_create(room_width/apf_explgrid_cell_size, room_height/apf_explgrid_cell_size) // exploration grid
-apf_costf = undefined // cost function, that maps position (x, y) to cost (manifold height)
+apf_explgrid = undefined // exploration grid, initialized upon Room Start
 apf_explgrid_costf = function(_x, _y) { // cost function for exploration grid, mapping position to exploration cost
 	
 	var _cell_x = ceil(_x / apf_explgrid_cell_size) // indices of cells in ds grid
@@ -36,44 +36,6 @@ apf_social_costf = function(_x, _y) { // cost function for social bonds (teammat
 	
 }
 
-// A* Grid layer
-agrid_cell_size = 16
-agrid_curcell = undefined // the cell we are currently at
-agrid_grid = ds_grid_create(room_width/agrid_cell_size, room_height/agrid_cell_size) // grid of A* cells
-for (var i = 0; i < ds_grid_width(agrid_grid); i ++)
-	for (var j = 0; j < ds_grid_height(agrid_grid); j ++)
-		agrid_grid[# i, j] = undefined // use undefined as default value (cleaner in code with nullish operator)
-agrid_list = ds_list_create() // list of occupied cells
-agrid_list_open = ds_list_create() // list of open cells
-agrid_path = ds_list_create() // list of cells representing path to minimal cost node
-
-
-agrid_cell = function(_i, _j) constructor { // constructor for cell object
-	i = _i
-	j = _j
-	
-	s_cost = undefined // S cost, summed cost of H cost and G cost
-	h_cost = undefined // heuristic (H) cost defined by APF layer, updated in step
-	g_cost = undefined // G cost
-	
-	// Store in data structures
-	if (other.agrid_grid[# i, j] != undefined)
-		show_error("Not allowing A* Grid cells to be overwritten. Call destroy() first on this cell.", true)
-	other.agrid_grid[# i, j] = self // put self in grid and list
-	ds_list_add(other.agrid_list, self)
-	
-	open = true // whether is open node (not explored yet)
-	ds_list_add(other.agrid_list_open, self) // add to open list
-	
-	// Destroy A* Grid cell
-	static destroy = function() {
-		other.agrid_grid[# i, j] = undefined // remove self from grid and list
-		var _list_i = ds_list_find_index(other.agrid_list, self)
-		ds_list_delete(other.agrid_list, _list_i)
-		
-		if (open) { // remove from open list, if it is in there
-			_list_i = ds_list_find_index(other.agrid_list_open, self)
-			ds_list_delete(other.agrid_list_open, _list_i)
-		}
-	}
-}
+// Lower level layers are put in their own objects
+//layer_apf = create_controllers(obj_ai_layer_apf)
+layer_agrid = undefined // initialized upon Room Start

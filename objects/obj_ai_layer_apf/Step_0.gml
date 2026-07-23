@@ -1,12 +1,4 @@
-if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
-	var _body = character.body
-	var _weapon = character.weapon
-	
-	var _body_x = _body.get_x()
-	var _body_y = _body.get_y()
-	var _body_rot = _body.get_rotation()
-	
-	// Update APF layer
+// Update APF layer
 	{
 		
 		// update social layer with enemies
@@ -40,7 +32,7 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		
 		// (Dynamically) Define APF with cost function
 		// The Artificial Potential Field (APF) is simply a map from a position (x, y) to a cost, or a height (z) value if you consider it as a 2-manifold (3D object)
-		apf_cost_field_2d = function(_x, _y) {
+		apf_costf = function(_x, _y) {
 			var _cost = 0
 
 			_cost += apf_social_costf(_x, _y)
@@ -52,10 +44,3 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		} 
 		
 	}
-	
-	// Update lower level layers with their relevant inputs
-	layer_agrid.body_x = _body_x // send body position to A* Grid
-	layer_agrid.body_y = _body_y
-	layer_agrid.cost_field = apf_cost_field_2d // send 2D cost field from APF layer
-	
-}
