@@ -12,6 +12,7 @@ if (global.ingame()) {
 	}
 	
 	// Initialize lower level layers
-	layer_agrid = create_controllers(obj_ai_layer_agrid) // create A* Grid layer
+	layer_agrid = create_controllers(obj_ai_layer_agrid) // create A* Grid and RRT layers
+	layer_rrt = create_controllers(obj_ai_layer_rrt)
 	
 }

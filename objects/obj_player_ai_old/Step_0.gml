@@ -134,7 +134,7 @@ if (global.ingame()) {
 		
 	}
 	
-	// Send inputs
+	// Send inputs to character
 	if (instance_exists(character)) {
 	
 		// Send to character

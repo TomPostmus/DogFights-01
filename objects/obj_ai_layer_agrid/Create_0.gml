@@ -42,6 +42,13 @@ agrid_cell = function(_i, _j) constructor { // constructor for cell object
 			_list_i = ds_list_find_index(other.agrid_list_open, self)
 			ds_list_delete(other.agrid_list_open, _list_i)
 		}
+		
+		_list_i = ds_list_find_index(other.agrid_path, self) // remove self from path if in there
+		if (_list_i != -1)
+			ds_list_delete(other.agrid_path, _list_i)
+		
+		if (other.agrid_curcell = self) // reset current cell variable if equals to self
+			other.agrid_curcell = undefined
 	}
 }
 

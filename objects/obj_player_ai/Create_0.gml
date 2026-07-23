@@ -39,3 +39,4 @@ apf_social_costf = function(_x, _y) { // cost function for social bonds (teammat
 // Lower level layers are put in their own objects
 //layer_apf = create_controllers(obj_ai_layer_apf)
 layer_agrid = undefined // initialized upon Room Start
+layer_rrt = undefined

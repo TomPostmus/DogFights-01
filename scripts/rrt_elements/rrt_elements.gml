@@ -29,7 +29,7 @@ function rrt_grow(_branch, _amount) {
 }
 
 // Root element that is start of tree
-function rrt_root_element(_x, _y, _th) constructor {
+function _rrt_root_element(_x, _y, _th) constructor {
 	type = RRT_ROOT
 	parent = undefined
 	
@@ -73,7 +73,7 @@ function rrt_root_element(_x, _y, _th) constructor {
 }
 
 // Stationary turn in path (kink in path)
-function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
+function _rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 	type = RRT_TURN
 	parent = _parent // parent element
 	x = _x // starting position
@@ -154,7 +154,7 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) constructor {
 }
 
 // Straight line path element constructor in world frame
-function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
+function _rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 	type = RRT_STRAIGHT
 	parent = _parent
 	x = _x // starting position of line in world
@@ -278,7 +278,7 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) constructor {
 }
 
 // Arc path element constructor in world frame
-function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor {
+function _rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) constructor {
 	type = RRT_ARC
 	parent = _parent
 	x = _x // starting position of arc in world

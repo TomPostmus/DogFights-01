@@ -90,10 +90,12 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			//var _prune_chance = max(0, (_agrid_size / _agrid_max_size - 0.5) * 2) // random chance for pruning
 			var _prune = _agrid_size >= _agrid_max_size// || irandom(100 * _prune_chance) // whether to prune grid
 	
+			var _nr_open = ds_list_size(agrid_list_open) // number of open cells
+			
 			var _cost_min = infinity
 			var _cost_max = -infinity
-			for (var i = 0; i < _agrid_size; i ++) { // update costs and determine min and max costs
-				var _cell = agrid_list[|i]
+			for (var i = 0; i < _nr_open; i ++) { // update costs and determine min and max costs
+				var _cell = agrid_list_open[|i]
 		
 				var _s_cost = _cell.s_cost
 				
@@ -104,7 +106,6 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			}
 	
 			var _chosen = undefined // chosen cell for exploration
-			var _nr_open = ds_list_size(agrid_list_open) // number of open cells
 	
 			if (_nr_open == 1) { // if just one cell
 		
@@ -193,7 +194,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 		{
 		
 			// find destination cell
-			var _destination = undefined // destination cell
+			var _destination = agrid_curcell // destination cell
 			var _min_cost = infinity
 			for (var i = 0; i < ds_list_size(agrid_list); i ++) {
 				var _cell = agrid_list[|i]

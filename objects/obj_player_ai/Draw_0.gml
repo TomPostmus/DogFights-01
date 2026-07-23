@@ -5,6 +5,9 @@ if (!global.debug)
 for (var _pi = 0; _pi < ds_list_size(obj_lobby.players_active); _pi ++) { // only draw if AI is active player and we are currently drawing to its viewport
 if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
 	
+	// Draw RRT Grid layer
+	layer_rrt.draw()
+	
 	// Draw A* Grid layer
 	layer_agrid.draw()
 

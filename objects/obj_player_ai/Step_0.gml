@@ -53,9 +53,37 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		
 	}
 	
-	// Update lower level layers with their relevant inputs
-	layer_agrid.body_x = _body_x // send body position to A* Grid
+	// Send inputs to lower level layer and get outputs
+	layer_agrid.body_x = _body_x // send body 2D (x,y) position to A* Grid
 	layer_agrid.body_y = _body_y
-	layer_agrid.cost_field = apf_cost_field_2d // send 2D cost field from APF layer
+	layer_agrid.cost_field = apf_cost_field_2d // send 2D cost field from APF layer to A* Grid
+	
+	layer_rrt.body_x = _body_x // send body 3D (x,y,th) position to RRT
+	layer_rrt.body_y = _body_y
+	layer_rrt.body_th = _body_rot
+	layer_rrt.cost_field = function(_x, _y, _th) {return random(100)} // set cost field as random field for now
+	
+	move_input = layer_rrt.move_input // extract move outputs from RRT layer
+	turn_input = layer_rrt.turn_input
+	
+	// Send inputs to character
+	if (instance_exists(character)) {
+	
+		// Send to character
+		character.interact = input_interact
+	
+		// Send to weapon
+		if (instance_exists(character.weapon)) {
+			character.weapon.trigger = input_attack
+			character.weapon.aiming = input_attack2
+			character.weapon.input_reload = input_reload
+			character.weapon.input_firemode = input_firemode
+		}
+
+		// Send to movement controller
+		character.movement.move_input = move_input
+		character.movement.turn_input = turn_input
+
+	}
 	
 }
