@@ -1,13 +1,21 @@
 if (body_x != undefined && body_y != undefined && cost_field != undefined) { // check if received inputs from player
 
 	// Update A* Grid
-	var _body_cell_i = ceil(body_x / agrid_cell_size)
-	var _body_cell_j = ceil(body_y / agrid_cell_size)
+	var _body_cell_i = floor(body_x / agrid_cell_size)
+	var _body_cell_j = floor(body_y / agrid_cell_size)
 	
 	if (_body_cell_i >= 0 && _body_cell_i < ds_grid_width(agrid_grid)
 		&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(agrid_grid)) {
 			
-		agrid_curcell ??= new agrid_cell(_body_cell_i, _body_cell_j) // if current cell not initialized, create cell with zero cost
+		agrid_curcell ??= new agrid_cell(_body_cell_i, _body_cell_j) // if current cell not initialized, create cell
+		
+		// If location changed, move curcell to new location
+		if (_body_cell_i != agrid_curcell.i || _body_cell_j != agrid_curcell.j) { // if location different than that from current cell
+		
+			agrid_curcell = agrid_grid[# _body_cell_i, _body_cell_j] // set current cell as grid cell at new location
+			agrid_curcell ??= new agrid_cell(_body_cell_i, _body_cell_j) // if there is no grid cell there, create one
+		
+		}
 	
 		// Update G costs
 		{
@@ -36,22 +44,22 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 				// explore neighbors
 				if (_east != undefined && ds_list_find_index(_open_cells, _east) == -1
 					&& ds_list_find_index(_closed_cells, _east) == -1) { // if east exists in A* Grid and is not in open, nor closed set
-					_east.g_cost = _curcell.g_cost + 1
+					_east.g_cost = _curcell.g_cost + agrid_cell_size // increment by 1 cell distance
 					ds_list_add(_open_cells, _east)
 				}
 				if (_south != undefined && ds_list_find_index(_open_cells, _south) == -1
 					&& ds_list_find_index(_closed_cells, _south) == -1) {
-					_south.g_cost = _curcell.g_cost + 1
+					_south.g_cost = _curcell.g_cost + agrid_cell_size
 					ds_list_add(_open_cells, _south)
 				}
 				if (_west != undefined && ds_list_find_index(_open_cells, _west) == -1
 					&& ds_list_find_index(_closed_cells, _west) == -1) {
-					_west.g_cost = _curcell.g_cost + 1
+					_west.g_cost = _curcell.g_cost + agrid_cell_size
 					ds_list_add(_open_cells, _west)
 				}
 				if (_north != undefined && ds_list_find_index(_open_cells, _north) == -1
 					&& ds_list_find_index(_closed_cells, _north) == -1) {
-					_north.g_cost = _curcell.g_cost + 1
+					_north.g_cost = _curcell.g_cost + agrid_cell_size
 					ds_list_add(_open_cells, _north)
 				}
 			
@@ -86,9 +94,8 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			
 			// choose whether to grow or prune
 			var _agrid_size = ds_list_size(agrid_list)
-			var _agrid_max_size = 50
-			//var _prune_chance = max(0, (_agrid_size / _agrid_max_size - 0.5) * 2) // random chance for pruning
-			var _prune = _agrid_size >= _agrid_max_size// || irandom(100 * _prune_chance) // whether to prune grid
+			var _prune_chance = max(0, (_agrid_size / agrid_max_size - 0.75) * 4) // random chance for pruning
+			var _prune = _agrid_size >= agrid_max_size || irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune grid
 	
 			var _nr_open = ds_list_size(agrid_list_open) // number of open cells
 			
@@ -121,9 +128,9 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 		
 					var _cost_norm = 0.1 + 0.9 * (_cell.s_cost - _cost_min) / _cost_range // normalise in range of 0.1, 1
 					if (!_prune)		
-						_ws[i] = 1 / power(_cost_norm, 1) // power of cost (the higher the power, the stronger lower costs are favoured)
+						_ws[i] = 1 / power(_cost_norm, 2) // power of cost (the higher the power, the stronger lower costs are favoured)
 					else
-						_ws[i] = power(_cost_norm, 1) // otherwise weight is inverse (the higher costs are favoured for pruning)
+						_ws[i] = power(_cost_norm, 2) // otherwise weight is inverse (the higher costs are favoured for pruning)
 					_w_sum += _ws[i]
 				}
 	
@@ -202,7 +209,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 				if (_cell.h_cost == undefined) // if newly added cell, heuristic cost is not defined yet
 					continue // skip
 				
-				var _s_cost = _cell.g_cost + _cell.h_cost
+				var _s_cost = _cell.h_cost
 				
 				if (_s_cost < _min_cost) {
 					_destination = _cell
@@ -225,10 +232,12 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 				
 				// find neighbour with least G cost
 				var _min_cost = infinity
+				var _orientation = undefined // orientation (in degrees) of cell in path
 				_next_cell = undefined
 				if (_east != undefined && _east.g_cost != undefined && _east.g_cost < _min_cost && ds_list_find_index(agrid_path, _east) == -1) {
 					_min_cost = _east.g_cost
 					_next_cell = _east
+					//_orientation = 180 // orientation opposite of east (we're going backwards constructing path)
 				}
 				if (_south != undefined && _south.g_cost != undefined && _south.g_cost < _min_cost && ds_list_find_index(agrid_path, _south) == -1) {
 					_min_cost = _south.g_cost
@@ -248,7 +257,41 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 					//show_error("Path from destination cell to current cell could not be found.", true)
 					
 				ds_list_add(agrid_path, _next_cell) // add least cost neighbour to path and continue looping from there
+				//_next_cell.orientation = _orientation // set orientation
 				
+			}
+		
+		}
+		
+		// Define cost field for RRT layer
+		cost_field_rrt = undefined // reset
+		if (ds_list_size(agrid_path) > 0) {
+		
+			cost_field_rrt = function(_x, _y, _th) { // compute cost based on 3D position
+				
+				//var _cost = 0
+				
+				var _least_distance = infinity
+				var _nearest_cell
+				for (var i = 0; i < ds_list_size(agrid_path); i ++) {
+					var _cell = agrid_path[|i]
+					
+					var _cell_x = (_cell.i + 0.5) * agrid_cell_size // x, y coordinates of center of cell
+					var _cell_y = (_cell.j + 0.5) * agrid_cell_size
+					
+					var _dist = point_distance(_x, _y, _cell_x, _cell_y)
+					if (_dist < _least_distance) {
+						_least_distance = _dist
+						_nearest_cell = _cell
+					}
+				}
+				
+				//_cost += 
+				
+				// compute cost as distance to nearest path cell plus path cost of that cell, plus angle difference with orientation
+				var _p_cost = (ds_list_size(agrid_path) - _nearest_cell.g_cost) * agrid_cell_size // path cost of nearest cell is path length minus G cost
+				return _least_distance + _p_cost// + 50 * (1 - dcos(angle_difference(_th, _nearest_cell.orientation)))
+			
 			}
 		
 		}

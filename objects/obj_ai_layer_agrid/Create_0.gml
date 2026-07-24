@@ -3,8 +3,12 @@ body_x = undefined // the current x,y position of the player
 body_y = undefined
 cost_field = undefined // the cost field in which A* Grid should grow
 
+// Output to player
+cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path
+
 // A* Grid properties
 agrid_cell_size = 16
+agrid_max_size = 100 // size that the A* Grid can maximally grow to
 agrid_curcell = undefined // the cell we are currently at
 agrid_grid = ds_grid_create(room_width/agrid_cell_size, room_height/agrid_cell_size) // grid of A* cells
 for (var i = 0; i < ds_grid_width(agrid_grid); i ++)
@@ -53,16 +57,18 @@ agrid_cell = function(_i, _j) constructor { // constructor for cell object
 }
 
 // Draw A* Grid layer
-draw = function() {
+draw = function(_path_ghost=false) {
 	
-	for (var i = 0; i < ds_list_size(agrid_list); i ++) {
-		var _cell = agrid_list[|i]
+	var _list = _path_ghost ? agrid_path : agrid_list // if path ghost is set, draw only path, otherwise full grid
+	
+	for (var i = 0; i < ds_list_size(_list); i ++) {
+		var _cell = _list[|i]
 	
 		var _cell_x = _cell.i * agrid_cell_size
 		var _cell_y = _cell.j * agrid_cell_size
 	
 		draw_set_colour(
-			ds_list_find_index(agrid_path, _cell) != -1 ? c_lime 
+			(_path_ghost || ds_list_find_index(agrid_path, _cell) != -1) ? c_lime 
 			: (_cell.open ? c_red : c_blue))
 	
 		draw_set_alpha(0.2)
@@ -70,7 +76,8 @@ draw = function() {
 		draw_set_alpha(1)
 		
 		draw_set_halign(fa_center)
-		draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.g_cost)
+		if (_cell.g_cost != undefined)
+			draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.g_cost) //round(_cell.g_cost / agrid_cell_size))
 	
 	}
 

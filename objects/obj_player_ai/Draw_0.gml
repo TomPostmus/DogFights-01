@@ -1,15 +1,25 @@
-// Check if in debug draw mode
-if (!global.debug)
-	exit
-
 for (var _pi = 0; _pi < ds_list_size(obj_lobby.players_active); _pi ++) { // only draw if AI is active player and we are currently drawing to its viewport
 if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
+		
+	if (debug_draw_mode == 1) {
 	
-	// Draw RRT Grid layer
-	layer_rrt.draw()
+		// Draw RRT Grid layer
+		layer_agrid.draw(true)
+		layer_rrt.draw()
 	
-	// Draw A* Grid layer
-	layer_agrid.draw()
+	} else if (debug_draw_mode == 2) {
+		
+		// Draw A* Grid layer
+		layer_agrid.draw()
+	
+	} else if (debug_draw_mode == 3) {
+		
+		// Draw both
+		layer_agrid.draw()
+		layer_rrt.draw()
+	
+	}
+	
 
 	// Draw APF exploration grid
 	for (var i = 0; i < ds_grid_width(apf_explgrid); i ++) {

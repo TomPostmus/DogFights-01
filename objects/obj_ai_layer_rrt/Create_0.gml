@@ -24,6 +24,7 @@ rrt_branches_open = ds_list_create() // list of branches that are still open, no
 rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 rrt_steershift_pen = 0
 rrt_branch_completed = false // whether current branch we're walking has been completed
+rrt_max_size = 50 // maximum size tree can grow to
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_walk_timer = rrt_walk_maxtime // timer for keeping completion time of element in check
 
@@ -147,7 +148,7 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) : rrt_branch(_par
 	
 	// Draw this line segment
 	static draw = function() {			
-		draw_line(x, y, x_end, y_end)
+		draw_line_width(x, y, x_end, y_end, 1)
 	}
 	
 	// Check collision using collision slider and given obstruction objects types
@@ -203,11 +204,11 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) : rrt_branc
 				_last_iter = true
 			}
 		
-			draw_line( // draw line segment
+			draw_line_width( // draw line segment
 				center_x + lengthdir_x(RRT_R, th - steering * 90 + _d_start), // draw from center
 				center_y + lengthdir_y(RRT_R, th - steering * 90 + _d_start),
 				center_x + lengthdir_x(RRT_R, th - steering * 90 + _d_end),
-				center_y + lengthdir_y(RRT_R, th - steering * 90 + _d_end)
+				center_y + lengthdir_y(RRT_R, th - steering * 90 + _d_end), 1
 			)
 					
 			if (_last_iter)
@@ -246,9 +247,19 @@ draw = function() {
 		
 		draw_set_colour(
 			ds_list_find_index(rrt_path, _branch) != -1 ? c_lime 
-			: (_branch.open ? c_red : c_blue))
+			: c_blue) // (_branch.open ? c_red : c_blue))
 		
-		_branch.draw()	
+		_branch.draw()
+		
+		if (_branch.open) { // draw open endpoint in red
+			draw_set_colour(c_red)
+			draw_circle(_branch.x_end, _branch.y_end, 1, false)
+		}
 	}
+	
+	//// Draw end points of open branches in 
+	//for (var i = 0; i < ds_list_size(rrt_branches_open); i ++) {
+	
+	//}
 	
 }

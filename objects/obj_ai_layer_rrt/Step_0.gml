@@ -16,9 +16,8 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 	
 		// choose whether to grow or prune
 		var _rrt_size = ds_list_size(rrt_branches)
-		var _rrt_max_size = 50
-		//var _prune_chance = max(0, (_rrt_size / _rrt_max_size - 0.5) * 2) // random chance for pruning
-		var _prune = _rrt_size >= _rrt_max_size// || irandom(100 * _prune_chance) // whether to prune grid
+		var _prune_chance = max(0, (_rrt_size / rrt_max_size - 0.75) * 4) // random chance for pruning
+		var _prune = _rrt_size >= rrt_max_size || irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune tree
 	
 		var _nr_open = ds_list_size(rrt_branches_open) // number of open cells
 		
@@ -51,9 +50,9 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 		
 				var _cost_norm = 0.1 + 0.9 * (_cell.s_cost - _cost_min) / _cost_range // normalise in range of 0.1, 1
 				if (!_prune)		
-					_ws[i] = 1 / power(_cost_norm, 1) // power of cost (the higher the power, the stronger lower costs are favoured)
+					_ws[i] = 1 / power(_cost_norm, 2) // power of cost (the higher the power, the stronger lower costs are favoured)
 				else
-					_ws[i] = power(_cost_norm, 1) // otherwise weight is inverse (the higher costs are favoured for pruning)
+					_ws[i] = power(_cost_norm, 2) // otherwise weight is inverse (the higher costs are favoured for pruning)
 				_w_sum += _ws[i]
 			}
 	
@@ -157,7 +156,7 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 	}
 	
 	// Find minimal cost node, and compute path to that node
-	{
+	if (rrt_curbranch != undefined) {
 	
 		// find destination branch
 		var _destination = rrt_curbranch // destination branch
@@ -168,7 +167,7 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 			if (_branch.h_cost == undefined) // if newly added cell, heuristic cost is not defined yet
 				continue // skip
 				
-			var _s_cost = _branch.g_cost + _branch.h_cost
+			var _s_cost = _branch.s_cost
 				
 			if (_s_cost < _min_cost) {
 				_destination = _branch
@@ -188,10 +187,10 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 	}
 	
 	// Compute movement outputs based on current branch
-	{
+	if (rrt_curbranch != undefined) {
 	
 		var _abort = false // abort flag for aborting RRT, e.g. in case player has drifted too far from the tree
-		var _abortion_tolerance = 35 // deviation distance from current element, from which to abort path
+		var _abortion_tolerance = 20 // deviation distance from current element, from which to abort path
 		if (!rrt_branch_completed) {
 		
 			// check timer for completing element

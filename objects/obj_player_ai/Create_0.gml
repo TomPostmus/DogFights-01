@@ -2,6 +2,7 @@
 event_inherited();
 
 state = "explore"
+debug_draw_mode = 0
 
 // APF layer (Artificial Potential Field, with Attraction and Repulsion sources)
 apf_cost_field_2d = undefined // 2D cost function, that maps position (x, y) to cost (manifold height), meant for A* Grid layer
@@ -9,10 +10,14 @@ apf_explgrid_cell_size = 64
 apf_explgrid = undefined // exploration grid, initialized upon Room Start
 apf_explgrid_costf = function(_x, _y) { // cost function for exploration grid, mapping position to exploration cost
 	
-	var _cell_x = ceil(_x / apf_explgrid_cell_size) // indices of cells in ds grid
-	var _cell_y = ceil(_y / apf_explgrid_cell_size)
+	var _cost = 1
 	
-	var _cost = 1 - apf_explgrid[# _cell_x, _cell_y]
+	var _cell_i = floor(_x / apf_explgrid_cell_size) // indices of cells in ds grid
+	var _cell_j = floor(_y / apf_explgrid_cell_size)
+	
+	if (_cell_i >= 0 && _cell_i < ds_grid_width(apf_explgrid)
+		&& _cell_j >= 0 && _cell_j < ds_grid_height(apf_explgrid))
+		_cost = 1 - apf_explgrid[# _cell_i, _cell_j]
 	
 	return _cost
 	

@@ -28,8 +28,8 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		}
 		
 		// update exploration layer
-		var _body_cell_i = ceil(_body_x / apf_explgrid_cell_size)
-		var _body_cell_j = ceil(_body_y / apf_explgrid_cell_size)
+		var _body_cell_i = floor(_body_x / apf_explgrid_cell_size)
+		var _body_cell_j = floor(_body_y / apf_explgrid_cell_size)
 	
 		if (_body_cell_i >= 0 && _body_cell_i < ds_grid_width(apf_explgrid)
 			&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(apf_explgrid)) {
@@ -61,7 +61,7 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 	layer_rrt.body_x = _body_x // send body 3D (x,y,th) position to RRT
 	layer_rrt.body_y = _body_y
 	layer_rrt.body_th = _body_rot
-	layer_rrt.cost_field = function(_x, _y, _th) {return random(100)} // set cost field as random field for now
+	layer_rrt.cost_field = layer_agrid.cost_field_rrt // pass through cost field computed in A* Grid layer to RRT layer
 	
 	move_input = layer_rrt.move_input // extract move outputs from RRT layer
 	turn_input = layer_rrt.turn_input
