@@ -8,7 +8,7 @@ cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based
 
 // A* Grid properties
 agrid_cell_size = 16
-agrid_max_size = 100 // size that the A* Grid can maximally grow to
+agrid_max_size = 200 // size that the A* Grid can maximally grow to
 agrid_curcell = undefined // the cell we are currently at
 agrid_grid = ds_grid_create(room_width/agrid_cell_size, room_height/agrid_cell_size) // grid of A* cells
 for (var i = 0; i < ds_grid_width(agrid_grid); i ++)
@@ -18,7 +18,6 @@ agrid_list = ds_list_create() // list of occupied cells
 agrid_list_open = ds_list_create() // list of open cells
 agrid_path = ds_list_create() // list of cells representing path to minimal cost node
 
-
 agrid_cell = function(_i, _j) constructor { // constructor for cell object
 	i = _i
 	j = _j
@@ -26,6 +25,7 @@ agrid_cell = function(_i, _j) constructor { // constructor for cell object
 	s_cost = undefined // S cost, summed cost of H cost and G cost
 	h_cost = undefined // heuristic (H) cost defined by APF layer, updated in step
 	g_cost = undefined // G cost
+	orientation = undefined // orientation of cell if it is part of A* path
 	
 	// Store in data structures
 	if (other.agrid_grid[# i, j] != undefined)
@@ -75,9 +75,15 @@ draw = function(_path_ghost=false) {
 		draw_rectangle(_cell_x, _cell_y, _cell_x + agrid_cell_size, _cell_y + agrid_cell_size, false)
 		draw_set_alpha(1)
 		
-		draw_set_halign(fa_center)
-		if (_cell.g_cost != undefined)
-			draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.g_cost) //round(_cell.g_cost / agrid_cell_size))
+		//draw_set_halign(fa_center)
+		//if (_cell.g_cost != undefined)
+		//	draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.g_cost) //round(_cell.g_cost / agrid_cell_size))
+		
+		var _r = 5
+		if (_cell.orientation != undefined)
+			draw_arrow(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2,
+				_cell_x + agrid_cell_size/2 + lengthdir_x(_r, _cell.orientation), 
+				_cell_y + agrid_cell_size/2 + lengthdir_y(_r, _cell.orientation), 2)
 	
 	}
 

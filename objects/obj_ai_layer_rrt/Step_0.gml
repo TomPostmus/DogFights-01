@@ -8,7 +8,7 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 		var _branch = rrt_branches[|i]
 			
 		_branch.h_cost = cost_field(_branch.x_end, _branch.y_end, _branch.th_end) // update heuristic cost from cost field
-		_branch.s_cost = _branch.g_cost + _branch.h_cost // update S cost
+		_branch.s_cost = 2 * _branch.g_cost + _branch.h_cost // update S cost
 	}
 	
 	// Grow or prune RRT
@@ -17,7 +17,7 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 		// choose whether to grow or prune
 		var _rrt_size = ds_list_size(rrt_branches)
 		var _prune_chance = max(0, (_rrt_size / rrt_max_size - 0.75) * 4) // random chance for pruning
-		var _prune = _rrt_size >= rrt_max_size || irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune tree
+		var _prune = _rrt_size >= rrt_max_size || irandom(100 * (1 - _prune_chance)) == 0 // whether to prune tree
 	
 		var _nr_open = ds_list_size(rrt_branches_open) // number of open cells
 		
@@ -167,7 +167,7 @@ if (body_x != undefined && body_y != undefined && body_th != undefined && cost_f
 			if (_branch.h_cost == undefined) // if newly added cell, heuristic cost is not defined yet
 				continue // skip
 				
-			var _s_cost = _branch.s_cost
+			var _s_cost = _branch.h_cost
 				
 			if (_s_cost < _min_cost) {
 				_destination = _branch

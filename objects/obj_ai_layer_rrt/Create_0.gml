@@ -24,7 +24,7 @@ rrt_branches_open = ds_list_create() // list of branches that are still open, no
 rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 rrt_steershift_pen = 0
 rrt_branch_completed = false // whether current branch we're walking has been completed
-rrt_max_size = 50 // maximum size tree can grow to
+rrt_max_size = 30 // maximum size tree can grow to
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_walk_timer = rrt_walk_maxtime // timer for keeping completion time of element in check
 
@@ -72,6 +72,10 @@ function rrt_branch(_parent, _x, _y, _th) constructor { // parent constructor fo
 		if (_decouple && parent != undefined) { // if decouple flag is set and has parent
 			_list_i = ds_list_find_index(parent.links, self) // find self in parent links list
 			ds_list_delete(parent.links, _list_i) // remove self from list
+			if (!parent.open) { // add parent again to open list 
+				parent.open = true
+				ds_list_add(other.rrt_branches_open, parent)
+			}
 		}
 	}
 }
@@ -257,9 +261,12 @@ draw = function() {
 		}
 	}
 	
-	//// Draw end points of open branches in 
-	//for (var i = 0; i < ds_list_size(rrt_branches_open); i ++) {
-	
+	// Draw cost every N iterations
+	//draw_set_colour(c_lime)
+	//draw_set_font(ft_small)
+	//for (var i = 0; i < ds_list_size(rrt_branches); i += 20) {
+	//	var _branch = rrt_branches[|i]
+	//	draw_text(_branch.x, _branch.y, _branch.h_cost)
 	//}
 	
 }

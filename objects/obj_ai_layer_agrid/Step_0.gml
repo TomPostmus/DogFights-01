@@ -90,7 +90,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 		}
 	
 		// Grow or prune grid
-		{
+		repeat(3) {
 			
 			// choose whether to grow or prune
 			var _agrid_size = ds_list_size(agrid_list)
@@ -154,18 +154,28 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 				var _j = _chosen.j
 	
 				if (!_prune) { // if explore
-				
+					
 					// Explore neighbours
+					var _added = ds_list_create()
 					var _mp_grid = obj_ai_topology.grid
-					if (mp_grid_get_cell(_mp_grid, _i+1, _j) != -1) // explore open cells to north, east, south, west of chosen cell
-						agrid_grid[# _i+1, _j] ??= new agrid_cell(_i+1, _j)
-					if (mp_grid_get_cell(_mp_grid, _i, _j+1) != -1)
-						agrid_grid[# _i, _j+1] ??= new agrid_cell(_i, _j+1)
-					if (mp_grid_get_cell(_mp_grid, _i-1, _j) != -1)
-						agrid_grid[# _i-1, _j] ??= new agrid_cell(_i-1, _j)
-					if (mp_grid_get_cell(_mp_grid, _i, _j-1) != -1)
-						agrid_grid[# _i, _j-1] ??= new agrid_cell(_i, _j-1)
-			
+					if (_i+1 < ds_grid_width(agrid_grid) && mp_grid_get_cell(_mp_grid, _i+1, _j) != -1 && agrid_grid[# _i+1, _j] == undefined) // explore open cells to north, east, south, west of chosen cell
+						 ds_list_add(_added, new agrid_cell(_i+1, _j))
+					if (_j+1 < ds_grid_height(agrid_grid) && mp_grid_get_cell(_mp_grid, _i, _j+1) != -1 && agrid_grid[# _i, _j+1] == undefined)
+						 ds_list_add(_added, new agrid_cell(_i, _j+1))
+					if (_i-1 >= 0 && mp_grid_get_cell(_mp_grid, _i-1, _j) != -1 && agrid_grid[# _i-1, _j] == undefined)
+						ds_list_add(_added, new agrid_cell(_i-1, _j))
+					if (_j-1 >= 0 && mp_grid_get_cell(_mp_grid, _i, _j-1) != -1 && agrid_grid[# _i, _j-1] == undefined)
+						 ds_list_add(_added, new agrid_cell(_i, _j-1))
+						
+					for (var _k = 0; _k < ds_list_size(_added); _k ++) {
+						var _cell = _added[|_k]
+						
+						 _cell.g_cost = _chosen.g_cost + agrid_cell_size // update costs
+						 _cell.h_cost = cost_field(_cell.i * agrid_cell_size, _cell.j * agrid_cell_size)
+						 _cell.s_cost = _cell.g_cost + _cell.h_cost
+					}
+					ds_list_destroy(_added)
+					
 					_chosen.open = false
 					var _list_i = ds_list_find_index(agrid_list_open, _chosen)
 					ds_list_delete(agrid_list_open, _list_i) // remove from open list			
@@ -175,19 +185,19 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 					_chosen.destroy() // destroy cell
 
 					// If there are closed neighbours, add them to open list
-					if (agrid_grid[# _i+1, _j] != undefined && !agrid_grid[# _i+1, _j].open) {
+					if (_i+1 < ds_grid_width(agrid_grid) && agrid_grid[# _i+1, _j] != undefined && !agrid_grid[# _i+1, _j].open) {
 						ds_list_add(agrid_list_open, agrid_grid[# _i+1, _j])
 						agrid_grid[# _i+1, _j].open = true
 					}			
-					if (agrid_grid[# _i, _j+1] != undefined && !agrid_grid[# _i, _j+1].open) {
+					if (_j+1 < ds_grid_height(agrid_grid) && agrid_grid[# _i, _j+1] != undefined && !agrid_grid[# _i, _j+1].open) {
 						ds_list_add(agrid_list_open, agrid_grid[# _i, _j+1])
 						agrid_grid[# _i, _j+1].open = true
 					}
-					if (agrid_grid[# _i-1, _j] != undefined && !agrid_grid[# _i-1, _j].open) {
+					if (_i-1 >= 0 && agrid_grid[# _i-1, _j] != undefined && !agrid_grid[# _i-1, _j].open) {
 						ds_list_add(agrid_list_open, agrid_grid[# _i-1, _j])
 						agrid_grid[# _i-1, _j].open = true
 					}
-					if (agrid_grid[# _i, _j-1] != undefined && !agrid_grid[# _i, _j-1].open) {
+					if (_j-1 >= 0 && agrid_grid[# _i, _j-1] != undefined && !agrid_grid[# _i, _j-1].open) {
 						ds_list_add(agrid_list_open, agrid_grid[# _i, _j-1])
 						agrid_grid[# _i, _j-1].open = true
 					}
@@ -219,47 +229,55 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			
 			// compute path
 			ds_list_clear(agrid_path) // clear path
-			var _next_cell = _destination // start backtracking from destination
-			ds_list_add(agrid_path, _next_cell) // add destination to path
-			while (_next_cell != agrid_curcell) {
-				var _i = _next_cell.i
-				var _j = _next_cell.j
+			var _cur_cell = _destination // start backtracking from destination
+			ds_list_add(agrid_path, _cur_cell) // add destination to path
+			var _prev_orientation = undefined // orientation from previous cell to current cell
+			while (_cur_cell != agrid_curcell) {
+				var _i = _cur_cell.i
+				var _j = _cur_cell.j
 				
-				var _east = _i < ds_grid_width(agrid_grid) ? agrid_grid[# _i+1, _j] : undefined
-				var _south = _j < ds_grid_height(agrid_grid) ? agrid_grid[# _i, _j+1] : undefined
-				var _west = _i >= 0 ? agrid_grid[# _i-1, _j] : undefined
-				var _north = _j >= 0 ? agrid_grid[# _i, _j-1] : undefined
+				var _east = _i+1 < ds_grid_width(agrid_grid) ? agrid_grid[# _i+1, _j] : undefined
+				var _south = _j+1 < ds_grid_height(agrid_grid) ? agrid_grid[# _i, _j+1] : undefined
+				var _west = _i-1 >= 0 ? agrid_grid[# _i-1, _j] : undefined
+				var _north = _j-1 >= 0 ? agrid_grid[# _i, _j-1] : undefined
 				
 				// find neighbour with least G cost
 				var _min_cost = infinity
-				var _orientation = undefined // orientation (in degrees) of cell in path
-				_next_cell = undefined
+				var _next_cell = undefined // next cell in path
+				var _next_orientation = undefined // orientation (in degrees) of cell in path
 				if (_east != undefined && _east.g_cost != undefined && _east.g_cost < _min_cost && ds_list_find_index(agrid_path, _east) == -1) {
 					_min_cost = _east.g_cost
 					_next_cell = _east
-					//_orientation = 180 // orientation opposite of east (we're going backwards constructing path)
+					_next_orientation = 180 // orientation to next cell opposite of east (we're going backwards constructing path)
 				}
 				if (_south != undefined && _south.g_cost != undefined && _south.g_cost < _min_cost && ds_list_find_index(agrid_path, _south) == -1) {
 					_min_cost = _south.g_cost
 					_next_cell = _south
+					_next_orientation = 90
 				}
 				if (_west != undefined && _west.g_cost != undefined && _west.g_cost < _min_cost && ds_list_find_index(agrid_path, _west) == -1) {
 					_min_cost = _west.g_cost
 					_next_cell = _west
+					_next_orientation = 0
 				}
 				if (_north != undefined && _north.g_cost != undefined && _north.g_cost < _min_cost && ds_list_find_index(agrid_path, _north) == -1) {
 					_min_cost = _north.g_cost
 					_next_cell = _north
+					_next_orientation = 270
 				}
 				
-				if (_next_cell == undefined) 
+				if (_next_cell == undefined)
+					//show_error("Path from destination cell to current cell could not be found.", true
 					break
-					//show_error("Path from destination cell to current cell could not be found.", true)
-					
+				
 				ds_list_add(agrid_path, _next_cell) // add least cost neighbour to path and continue looping from there
-				//_next_cell.orientation = _orientation // set orientation
+				_cur_cell.orientation = _next_orientation + angle_difference(_prev_orientation ?? _next_orientation, _next_orientation) / 2 // cell's orientation is angle between next and previous orientation
+				_cur_cell = _next_cell // move to next cell
+				_prev_orientation = _next_orientation // update previous orientation variable
 				
 			}
+			
+			_cur_cell.orientation = _prev_orientation ?? 0 // set orientation of last cell (should be agrid_curcell)
 		
 		}
 		
@@ -289,8 +307,9 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 				//_cost += 
 				
 				// compute cost as distance to nearest path cell plus path cost of that cell, plus angle difference with orientation
-				var _p_cost = (ds_list_size(agrid_path) - _nearest_cell.g_cost) * agrid_cell_size // path cost of nearest cell is path length minus G cost
-				return _least_distance + _p_cost// + 50 * (1 - dcos(angle_difference(_th, _nearest_cell.orientation)))
+				var _p_cost = ds_list_size(agrid_path) * agrid_cell_size - _nearest_cell.g_cost // path cost of nearest cell is path length minus G cost
+				var _orientation_cost = _nearest_cell.orientation == undefined ? 0 : (50 * (1 - dcos(angle_difference(_th, _nearest_cell.orientation))))
+				return 0.3 *_least_distance + 1.0 * _p_cost + _orientation_cost
 			
 			}
 		

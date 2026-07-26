@@ -27,6 +27,9 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 			}
 		}
 		
+		// set state based on enemy contact
+		state = ds_list_size(apf_enemies) > 0 ? "conflict" : "explore"
+		
 		// update exploration layer
 		var _body_cell_i = floor(_body_x / apf_explgrid_cell_size)
 		var _body_cell_j = floor(_body_y / apf_explgrid_cell_size)
@@ -34,7 +37,8 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		if (_body_cell_i >= 0 && _body_cell_i < ds_grid_width(apf_explgrid)
 			&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(apf_explgrid)) {
 	
-			apf_explgrid[# _body_cell_i, _body_cell_j] = 0 // eat candy, set to zero
+			apf_explgrid[# _body_cell_i, _body_cell_j] -= 0.02 // slowly eat candy, reduce to zero
+			apf_explgrid[# _body_cell_i, _body_cell_j] = max(0, apf_explgrid[# _body_cell_i, _body_cell_j])
 	
 		}
 		
@@ -42,11 +46,11 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		// The Artificial Potential Field (APF) is simply a map from a position (x, y) to a cost, or a height (z) value if you consider it as a 2-manifold (3D object)
 		apf_cost_field_2d = function(_x, _y) {
 			var _cost = 0
-
-			_cost += apf_social_costf(_x, _y)
 	
 			if (state == "explore")
 				_cost += apf_explgrid_costf(_x, _y)
+			else if (state == "conflict")
+				_cost += apf_social_costf(_x, _y)
 
 			return _cost
 		} 

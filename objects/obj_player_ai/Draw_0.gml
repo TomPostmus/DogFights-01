@@ -26,11 +26,11 @@ if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
 		for (var j = 0; j < ds_grid_height(apf_explgrid); j ++) {
 			var _candy = apf_explgrid[# i, j]
 		
-			if (_candy) {
-				var _cell_x = i * apf_explgrid_cell_size
-				var _cell_y = j * apf_explgrid_cell_size
+			if (_candy > 0) {
+				var _cell_x = (i + 0.5) * apf_explgrid_cell_size
+				var _cell_y = (j + 0.5) * apf_explgrid_cell_size
 			
-				draw_set_alpha(0.2)
+				draw_set_alpha(_candy)
 				draw_set_colour(c_fuchsia)
 				draw_circle(_cell_x, _cell_y, 3, false)
 	
