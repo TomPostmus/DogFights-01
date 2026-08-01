@@ -6,16 +6,18 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 	var _body_y = _body.get_y()
 	var _body_rot = _body.get_rotation()
 	
-	// Update APF layer
+	// Vision
 	{
 		
-		// update social layer with enemies
 		var _camera_x = camera.x
 		var _camera_y = camera.y
 		var _camera_w = camera.get_width()
 		var _camera_h = camera.get_height()
+	
+		// Spot enemies
 		ds_list_clear(apf_enemies) // reset/clear list
 		with (obj_character) {
+			
 			if (self != other.character && instance_exists(body) && instance_exists(body.trunk)
 				&& (other.character.team_id == undefined || other.character.team_id != team_id)
 				&& !hp_protection) {						
@@ -25,35 +27,54 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 					ds_list_add(other.apf_enemies, body.trunk) // add trunk (being the target object) to enemy list
 				}
 			}
+			
 		}
 		
-		// set state based on enemy contact
-		state = ds_list_size(apf_enemies) > 0 ? "conflict" : "explore"
+		// Spot landmarks
+		ds_list_clear(expl_landmarks_insight)
+		with (obj_ai_exploration_landmark) {
 		
-		// update exploration layer
-		var _body_cell_i = floor(_body_x / apf_explgrid_cell_size)
-		var _body_cell_j = floor(_body_y / apf_explgrid_cell_size)
-	
-		if (_body_cell_i >= 0 && _body_cell_i < ds_grid_width(apf_explgrid)
-			&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(apf_explgrid)) {
-	
-			apf_explgrid[# _body_cell_i, _body_cell_j] -= 0.02 // slowly eat candy, reduce to zero
-			apf_explgrid[# _body_cell_i, _body_cell_j] = max(0, apf_explgrid[# _body_cell_i, _body_cell_j])
-	
+			if (point_in_rectangle(x, y, 
+				_camera_x - _camera_w/2, _camera_y - _camera_h/2,
+				_camera_x + _camera_w/2, _camera_y + _camera_h/2)) {
+				
+				ds_list_add(other.expl_landmarks_insight, self) // add to in-sight landmarks
+				
+				if (ds_list_find_index(other.expl_landmarks, self) == -1) { // add to list of all spotted landmarks
+					ds_list_add(other.expl_landmarks, self)
+					other.expl_landmarks_novelty[? self] = 1 // set novelty to 1 by default
+				}
+			
+			
+			}
+		
 		}
 		
-		// (Dynamically) Define APF with cost function
-		// The Artificial Potential Field (APF) is simply a map from a position (x, y) to a cost, or a height (z) value if you consider it as a 2-manifold (3D object)
-		apf_cost_field_2d = function(_x, _y) {
-			var _cost = 0
+		// TODO: Spot packages/pickups
+		
+	}
 	
-			if (state == "explore")
-				_cost += apf_explgrid_costf(_x, _y)
-			else if (state == "conflict")
-				_cost += apf_social_costf(_x, _y)
-
-			return _cost
-		} 
+	// Set state based on whether enenmies have been seen
+	state = ds_list_size(apf_enemies) > 0 ? "conflict" : "explore"
+	
+	// Update exploration layer
+	if (state == "explore") {
+		
+		for (var i = 0; i < ds_list_size(expl_landmarks); i ++) {
+			
+			var _landmark = expl_landmarks[|i]
+			
+			var _insight = ds_list_find_index(expl_landmarks_insight, _landmark) != -1 // whether landmark is in sight
+			if (_insight) {
+				var _dist = point_distance(_body_x, _body_y, _landmark.x, _landmark.y)
+				expl_landmarks_novelty[? _landmark] -= (max(0, 300 - _dist) / 300) * 0.01
+			} else {
+				expl_landmarks_novelty[? _landmark] += 0.001 // out of sight, slowly becomes interesting again
+			}
+			
+			expl_landmarks_novelty[? _landmark] = clamp(expl_landmarks_novelty[? _landmark], 0, 1) // keep in range
+		
+		}
 		
 	}
 	

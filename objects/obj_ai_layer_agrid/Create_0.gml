@@ -33,7 +33,7 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 	
 	h_cost = lyer.cost_field(i * lyer.agrid_cell_size, j * lyer.agrid_cell_size) // heuristic (H) cost defined by APF layer, updated in step
 	parent_count = parent != undefined ? (parent.parent_count + 1) : 0 // how many parents it has
-	//s_est_cost = h_cost + 0.0 * (parent_count * lyer.agrid_cell_size) // estimated S cost based on parent count as estimated G cost
+	s_est_cost = h_cost + 0.5 * (parent_count * lyer.agrid_cell_size) // estimated S cost based on parent count as estimated G cost
 	
 	children = ds_list_create() // list of children cells
 	orientation = undefined // orientation of cell if it is part of A* path
@@ -154,8 +154,8 @@ draw = function(_path_ghost=false) {
 		draw_set_alpha(1)
 		
 		draw_set_halign(fa_center)
-		if (_cell.p_cost != undefined)
-			draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.p_cost)
+		if (_cell.parent_count != undefined)
+			draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.parent_count)
 		
 		//var _r = 5
 		//if (_cell.orientation != undefined)

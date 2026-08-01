@@ -24,7 +24,7 @@ rrt_branches_open = ds_list_create() // list of branches that are still open, no
 rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 rrt_steershift_pen = 0
 rrt_branch_completed = false // whether current branch we're walking has been completed
-rrt_max_size = 30 // maximum size tree can grow to
+rrt_max_size = 50 // maximum size tree can grow to
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_walk_timer = rrt_walk_maxtime // timer for keeping completion time of element in check
 
@@ -45,8 +45,6 @@ function rrt_branch(_parent, _x, _y, _th) constructor { // parent constructor fo
 		ds_list_add(_parent.links, self) // put self in parent links
 	
 	links = ds_list_create()
-	s_cost = undefined // S cost, summed cost of H cost and G cost
-	h_cost = undefined // heuristic (H) cost defined by APF layer, updated in step
 	
 	// Destroy RRT branch
 	static destroy = function(_decouple=true) {
@@ -80,7 +78,7 @@ function rrt_branch(_parent, _x, _y, _th) constructor { // parent constructor fo
 	}
 }
 
-function rrt_turn_element(_parent, _x, _y, _th, _th_end) : rrt_branch(_parent, _x, _y, _th) constructor { // constructor for turn element	
+function rrt_turn_element(_parent, _x, _y, _th, _th_end) : rrt_branch(_parent, _x, _y, _th) constructor { // constructor for turn element (inherits from parent)
 	// Set turn element properties
 	type = RRT_TURN
 	l = abs(angle_difference(_th_end, _th)) // length of turn in degrees
@@ -90,12 +88,15 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) : rrt_branch(_parent, _
 	gear = 0
 	steering = sign(l)
 	
-	// Compute G cost
+	// Compute costs
 	if (parent != undefined) {
 		var _time = abs(l) / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
 		var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
 		g_cost = _parent.g_cost + _analogous_dist * 0.5 + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
 	} else g_cost = 0
+	
+	h_cost = other.cost_field(x_end, y_end, th_end) // heuristic (H) cost defined by upper layer
+	s_cost = 2 * g_cost + h_cost // update S cost // S cost, summed cost of H cost and G cost
 	
 	// Draw turn element (circle with arrow)
 	static draw = function() {
@@ -133,7 +134,7 @@ function rrt_turn_element(_parent, _x, _y, _th, _th_end) : rrt_branch(_parent, _
 	}
 }
 
-function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) : rrt_branch(_parent, _x, _y, _th) constructor { // constructor for straight element	
+function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) : rrt_branch(_parent, _x, _y, _th) constructor { // constructor for straight element	 (inherits from parent)
 	// Set straight element properties
 	type = RRT_STRAIGHT
 	l = _l // length of turn in pixels, positive length for left turn, negative for righ turn
@@ -143,12 +144,15 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) : rrt_branch(_par
 	gear = _gear
 	steering = 0
 	
-	// Compute G cost
+	// Compute costs
 	if (parent != undefined) {
 		var _time = l / RRT_V // est. time (in steps) to complete element
 		var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
 		g_cost = _parent.g_cost + _analogous_dist + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) + RRT_REVERSE_PEN * (gear < 0) // compute G cost (in A* terms) for this element based on base G cost from parent
-	} else g_cost = 0	
+	} else g_cost = 0
+	
+	h_cost = other.cost_field(x_end, y_end, th_end) // heuristic (H) cost defined by upper layer
+	s_cost = 2 * g_cost + h_cost // update S cost // S cost, summed cost of H cost and G cost
 	
 	// Draw this line segment
 	static draw = function() {			
@@ -174,10 +178,10 @@ function rrt_straight_element(_parent, _x, _y, _th, _l, _gear) : rrt_branch(_par
 	}
 }
 
-function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) : rrt_branch(_parent, _x, _y, _th) constructor { // constructor for arc element	
+function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) : rrt_branch(_parent, _x, _y, _th) constructor { // constructor for arc element (inherits from parent)	
 	// Set arc element properties
 	type = RRT_ARC
-	l = _l // length of turn in degrees, positive length for left turn, negative for righ turn
+	l = _l // length of arc in degrees
 	gear = _gear
 	steering = _steering
 
@@ -188,12 +192,15 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) : rrt_branc
 	y_end = center_y + lengthdir_y(RRT_R, _th - _steering * 90 + _gear * _steering * _l)
 	th_end = th + gear * steering * l
 	
-	// Compute G cost
+	// Compute costs
 	if (parent != undefined) {
 		var _time = abs(l) / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
 		var _analogous_dist = _time * RRT_V // distance analogous to time if player were to walk in a straight line in _time time. This is to keep G cost distance-based and consistent between all element types, and comparable to distance-based H cost
 		g_cost = _parent.g_cost + _analogous_dist * 0.5 + RRT_GEARSHIFT_PEN * abs(_parent.gear - gear) + RRT_STEERSHIFT_PEN * abs(_parent.steering - steering) // compute G cost (in A* terms) for this element based on base G cost from parent
-	} else g_cost = 0	
+	} else g_cost = 0
+	
+	h_cost = other.cost_field(x_end, y_end, th_end) // heuristic (H) cost defined by upper layer
+	s_cost = 2 * g_cost + h_cost // update S cost // S cost, summed cost of H cost and G cost
 		
 	// Draw this arc
 	static draw = function() {
@@ -250,8 +257,9 @@ draw = function() {
 		var _branch = rrt_branches[|i]
 		
 		draw_set_colour(
-			ds_list_find_index(rrt_path, _branch) != -1 ? c_lime 
-			: c_blue) // (_branch.open ? c_red : c_blue))
+			_branch == rrt_curbranch ? c_yellow 
+			: (ds_list_find_index(rrt_path, _branch) != -1 ? c_lime 
+			: c_blue))
 		
 		_branch.draw()
 		
@@ -261,12 +269,17 @@ draw = function() {
 		}
 	}
 	
+	if (rrt_curbranch != undefined) {
+		draw_set_colour(c_yellow)
+		rrt_curbranch.draw()
+	}
+	
 	// Draw cost every N iterations
-	//draw_set_colour(c_lime)
-	//draw_set_font(ft_small)
-	//for (var i = 0; i < ds_list_size(rrt_branches); i += 20) {
-	//	var _branch = rrt_branches[|i]
-	//	draw_text(_branch.x, _branch.y, _branch.h_cost)
-	//}
+	draw_set_colour(c_lime)
+	draw_set_font(ft_small)
+	for (var i = 0; i < ds_list_size(rrt_branches); i += 20) {
+		var _branch = rrt_branches[|i]
+		draw_text(_branch.x, _branch.y, _branch.g_cost)
+	}
 	
 }

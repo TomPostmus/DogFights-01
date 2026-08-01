@@ -1,0 +1,1 @@
+interest = 1 // how interesting the landmark is (1 is normally interesting, 2 super interesting, etc)

@@ -31,6 +31,9 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			if (_is_neighbour) {
 				agrid_curcell.parent = _new_cell // new cell becomes parent of old cell
 				ds_list_add(_new_cell.children, agrid_curcell) // old cell becomes new cell's child
+				//var _parent_count_before = agrid_curcell.parent_count
+				//for (var i = 0; i < ds_list_size(agrid_list); i ++)
+				//	agrid_list[|i].parent_count -= _parent_count_before // reset parent counts
 			} else { // if not neighbours, just destroy old cell
 				agrid_curcell.destroy()
 			}
@@ -51,10 +54,10 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			
 			var _cost_min = infinity
 			var _cost_max = -infinity
-			for (var i = 0; i < _nr_open; i ++) { // update costs and determine min and max costs
+			for (var i = 0; i < _nr_open; i ++) { // determine min and max costs
 				var _cell = agrid_list_open[|i]
 		
-				var _cost = _cell.h_cost
+				var _cost = _cell.s_est_cost
 				
 				if (_cost < _cost_min) // define min and max S costs
 					_cost_min = _cost
@@ -76,11 +79,11 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 				for (var i = 0; i < _nr_open; i ++) {
 					var _cell = agrid_list_open[|i]
 		
-					var _cost_norm = 0.1 + 0.9 * (_cell.h_cost - _cost_min) / _cost_range // normalise in range of 0.1, 1
+					var _cost_norm = _cost_range == 0 ? 1 : (0.1 + 0.9 * (_cell.s_est_cost - _cost_min) / _cost_range) // normalise in range of 0.1, 1
 					if (!_prune) // if grow
-						_ws[i] = 1 / power(_cost_norm, 2) // power of cost (the higher the power, the stronger lower costs are favoured)
+						_ws[i] = 1 / power(_cost_norm, 3) // power of cost (the higher the power, the stronger lower costs are favoured)
 					else
-						_ws[i] = power(_cost_norm, 2) // otherwise weight is inverse (the higher costs are favoured for pruning)
+						_ws[i] = power(_cost_norm, 3) // otherwise weight is inverse (the higher costs are favoured for pruning)
 					_w_sum += _ws[i]
 				}
 	
@@ -107,7 +110,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 					
 					_chosen.explore()		
 				
-				} else if (ds_list_find_index(agrid_path, _chosen) == -1) { // if prune and chosen is not in the path that the player is supposed to walk
+				} else if (ds_list_find_index(agrid_path, _chosen) == -1 && _chosen != agrid_curcell) { // if prune and chosen is not in the path that the player is supposed to walk
 	
 					_chosen.destroy() // destroy cell
 			
@@ -185,12 +188,12 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 		
 			//}
 		
-			// Update H cost and S cost
+			// Update H cost and estimated S cost
 			for (var i = 0; i < ds_list_size(agrid_list); i ++) {
 				var _cell = agrid_list[|i]
 			
 				_cell.h_cost = cost_field(_cell.i * agrid_cell_size, _cell.j * agrid_cell_size) // update heuristic cost from cost field
-				//_cell.s_cost = _cell.g_cost + _cell.h_cost // update S cost
+				_cell.s_est_cost = _cell.h_cost + 0.5 * (_cell.parent_count * agrid_cell_size)
 			}
 		
 			// Find minimal cost node, and compute path to that node
