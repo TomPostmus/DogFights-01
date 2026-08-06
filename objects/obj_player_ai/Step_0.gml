@@ -31,24 +31,24 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		}
 		
 		// Spot landmarks
-		ds_list_clear(expl_landmarks_insight)
-		with (obj_ai_exploration_landmark) {
+		//ds_list_clear(expl_landmarks_insight)
+		//with (obj_ai_exploration_landmark) {
 		
-			if (point_in_rectangle(x, y, 
-				_camera_x - _camera_w/2, _camera_y - _camera_h/2,
-				_camera_x + _camera_w/2, _camera_y + _camera_h/2)) {
+		//	if (point_in_rectangle(x, y, 
+		//		_camera_x - _camera_w/2, _camera_y - _camera_h/2,
+		//		_camera_x + _camera_w/2, _camera_y + _camera_h/2)) {
 				
-				ds_list_add(other.expl_landmarks_insight, self) // add to in-sight landmarks
+		//		ds_list_add(other.expl_landmarks_insight, self) // add to in-sight landmarks
 				
-				if (ds_list_find_index(other.expl_landmarks, self) == -1) { // add to list of all spotted landmarks
-					ds_list_add(other.expl_landmarks, self)
-					other.expl_landmarks_novelty[? self] = 1 // set novelty to 1 by default
-				}
+		//		if (ds_list_find_index(other.expl_landmarks, self) == -1) { // add to list of all spotted landmarks
+		//			ds_list_add(other.expl_landmarks, self)
+		//			other.expl_landmarks_novelty[? self] = 1 // set novelty to 1 by default
+		//		}
 			
 			
-			}
+		//	}
 		
-		}
+		//}
 		
 		// TODO: Spot packages/pickups
 		
@@ -60,20 +60,47 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 	// Update exploration layer
 	if (state == "explore") {
 		
-		for (var i = 0; i < ds_list_size(expl_landmarks); i ++) {
+		//for (var i = 0; i < ds_list_size(expl_landmarks); i ++) {
 			
-			var _landmark = expl_landmarks[|i]
+		//	var _landmark = expl_landmarks[|i]
 			
-			var _insight = ds_list_find_index(expl_landmarks_insight, _landmark) != -1 // whether landmark is in sight
-			if (_insight) {
-				var _dist = point_distance(_body_x, _body_y, _landmark.x, _landmark.y)
-				expl_landmarks_novelty[? _landmark] -= (max(0, 300 - _dist) / 300) * 0.01
-			} else {
-				expl_landmarks_novelty[? _landmark] += 0.001 // out of sight, slowly becomes interesting again
-			}
+		//	var _insight = ds_list_find_index(expl_landmarks_insight, _landmark) != -1 // whether landmark is in sight
+		//	if (_insight) {
+		//		var _dist = point_distance(_body_x, _body_y, _landmark.x, _landmark.y)
+		//		expl_landmarks_novelty[? _landmark] -= (max(0, 300 - _dist) / 300) * 0.01
+		//	} else {
+		//		expl_landmarks_novelty[? _landmark] += 0.001 // out of sight, slowly becomes interesting again
+		//	}
 			
-			expl_landmarks_novelty[? _landmark] = clamp(expl_landmarks_novelty[? _landmark], 0, 1) // keep in range
+		//	expl_landmarks_novelty[? _landmark] = clamp(expl_landmarks_novelty[? _landmark], 0, 1) // keep in range
 		
+		//}
+		
+		// update exploration grid based on A* grid discovery
+		var _acell_size = layer_agrid.agrid_cell_size
+		for (var i = 0; i < ds_list_size(layer_agrid.agrid_list); i ++) {
+		
+			var _acell = layer_agrid.agrid_list[|i]
+			var _expl_cell_i = floor(_acell.i * _acell_size / expl_grid_cell_size)
+			var _expl_cell_j = floor(_acell.j * _acell_size / expl_grid_cell_size)
+			
+			if (_expl_cell_i >= 0 && _expl_cell_i < ds_grid_width(expl_grid)
+				&& _expl_cell_j >= 0 && _expl_cell_j < ds_grid_height(expl_grid)) {
+					
+				if (expl_grid[# _expl_cell_i, _expl_cell_j] != -1) // if plays part in exploration
+					expl_grid[# _expl_cell_i, _expl_cell_j] -= 0.001 // lower cell
+					
+			}
+		
+		}
+		
+		for (var i = 0; i < ds_grid_width(expl_grid); i ++) {
+			for (var j = 0; j < ds_grid_height(expl_grid); j ++) { // for each cell
+				if (expl_grid[# i, j] != -1) {
+					expl_grid[# i, j] += 0.0001 // heighten cell
+					expl_grid[# i, j] = clamp(expl_grid[# i, j], 0, 1)
+				}
+			}
 		}
 		
 	}

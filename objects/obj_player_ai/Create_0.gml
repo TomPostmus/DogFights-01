@@ -28,6 +28,26 @@ expl_landmarks_costf = function(_x, _y) {
 
 }
 
+expl_grid_cell_size = 64
+expl_grid = undefined // exploration grid, initialized upon Room Start
+expl_grid_costf = function(_x, _y) {
+
+	var _cost = 0
+	
+	var _cell_i = floor(_x / expl_grid_cell_size) // indices of cells in ds grid
+	var _cell_j = floor(_y / expl_grid_cell_size)
+	
+	if (_cell_i >= 0 && _cell_i < ds_grid_width(expl_grid)
+		&& _cell_j >= 0 && _cell_j < ds_grid_height(expl_grid)) {
+		
+		_cost = -500 * max(0, expl_grid[# _cell_i, _cell_j])
+		
+	}
+	
+	return _cost
+
+}
+
 // APF layer (Artificial Potential Field, with Attraction and Repulsion sources)
 //apf_explgrid_cell_size = 96
 //apf_explgrid = undefined // exploration grid, initialized upon Room Start
@@ -81,7 +101,7 @@ apf_cost_field_2d = function(_x, _y) {
 	var _cost = 0
 	
 	if (state == "explore")
-		_cost += expl_landmarks_costf(_x, _y)
+		_cost += expl_grid_costf(_x, _y)
 	else if (state == "conflict")
 		_cost += apf_social_costf(_x, _y)
 

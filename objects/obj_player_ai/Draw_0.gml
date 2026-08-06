@@ -49,23 +49,23 @@ if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
 		
 		}
 		
-		// Draw APF exploration grid
-		//for (var i = 0; i < ds_grid_width(apf_explgrid); i ++) {
-		//	for (var j = 0; j < ds_grid_height(apf_explgrid); j ++) {
-		//		var _candy = apf_explgrid[# i, j]
+		// Draw exploration grid
+		for (var i = 0; i < ds_grid_width(expl_grid); i ++) {
+			for (var j = 0; j < ds_grid_height(expl_grid); j ++) {
+				var _value = expl_grid[# i, j]
 		
-		//		if (_candy > 0) {
-		//			var _cell_x = (i + 0.5) * apf_explgrid_cell_size
-		//			var _cell_y = (j + 0.5) * apf_explgrid_cell_size
+				if (_value > 0) {
+					var _cell_x = i* expl_grid_cell_size
+					var _cell_y = j * expl_grid_cell_size
 			
-		//			draw_set_alpha(_candy)
-		//			draw_set_colour(c_fuchsia)
-		//			draw_circle(_cell_x, _cell_y, 3, false)
+					draw_set_alpha(_value * 0.5)
+					draw_set_colour(c_fuchsia)
+					draw_rectangle(_cell_x, _cell_y, _cell_x + expl_grid_cell_size, _cell_y + expl_grid_cell_size, false)
 	
-		//			draw_set_alpha(1)
-		//		}
-		//	}
-		//}
+					draw_set_alpha(1)
+				}
+			}
+		}
 	
 	}
 	

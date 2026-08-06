@@ -1,7 +1,13 @@
+enum AI_PATH_MODE {
+	FLOW, // path flow mode, path is computed based on largest child count
+	FIND // path find mode, path is computed based on lowest H cost
+}
+
 // Inputs from player
 body_x = undefined // the current x,y position of the player
 body_y = undefined
 cost_field = undefined // the cost field in which A* Grid should grow
+path_mode = AI_PATH_MODE.FLOW // set to path flow mode
 
 // Output to player
 cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path
@@ -32,14 +38,13 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 	j = _j
 	
 	h_cost = lyer.cost_field(i * lyer.agrid_cell_size, j * lyer.agrid_cell_size) // heuristic (H) cost defined by APF layer, updated in step
-	parent_count = parent != undefined ? (parent.parent_count + 1) : 0 // how many parents it has
-	s_est_cost = h_cost + 0.5 * (parent_count * lyer.agrid_cell_size) // estimated S cost based on parent count as estimated G cost
+	g_cost = parent == undefined ? 0 : (parent.g_cost + lyer.agrid_cell_size) // G cost, based on parent G cost plus one cell dimension
+	s_cost = h_cost + g_cost // S cost, sum of G and H costs
 	
 	children = ds_list_create() // list of children cells
+	child_count = 0 // how many n-grand-children it has
 	orientation = undefined // orientation of cell if it is part of A* path
 	p_cost = undefined // path cost of cell if it is part of A* path
-	
-	//g_cost_est = undefined // estimated G cost based on 
 	
 	// Store in data structures
 	if (lyer.agrid_grid[# i, j] != undefined)
@@ -58,6 +63,7 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 		var _obst_grid = obj_ai_topology.grid // MP grid of obstacles from topology manager
 		var _agrid_grid = lyer.agrid_grid
 		var _agrid_cell = lyer.agrid_cell // constructor method for creating cell
+		var _n_children_before = ds_list_size(children) // amount of children before
 		if (i+1 < ds_grid_width(_agrid_grid) && mp_grid_get_cell(_obst_grid, i+1, j) != -1 && _agrid_grid[# i+1, j] == undefined) // if east is in grid range, not occupied by obstacle, and not part of the A* grid graph yet
 			ds_list_add(children, new _agrid_cell(lyer, self, i+1, j)) // add to children
 		if (j+1 < ds_grid_height(_agrid_grid) && mp_grid_get_cell(_obst_grid, i, j+1) != -1 && _agrid_grid[# i, j+1] == undefined)
@@ -70,6 +76,13 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 		open = false // no longer open
 		var _list_i = ds_list_find_index(lyer.agrid_list_open, self)
 		ds_list_delete(lyer.agrid_list_open, _list_i) // remove from open list	
+		
+		var _n_added = ds_list_size(children) - _n_children_before // how many children were added
+		var _cell = self
+		while(_cell != undefined) {
+			_cell.child_count += _n_added // add number of added children to child count of _cell
+			_cell = _cell.parent // propagate upwards through parents
+		}
 	}
 	
 	// Destroy A* Grid cell
@@ -90,9 +103,9 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 		
 		if (lyer.agrid_curcell = self) // reset current cell variable if equals to self
 			lyer.agrid_curcell = undefined
-			
+		
 		for (var _i = 0; _i < ds_list_size(children); _i ++)
-			children[|_i].destroy(false) // also destroy children
+			children[|_i].destroy(false) // destroy children withouth decoupling them from their parents (parents are also destroyed)
 		ds_list_destroy(children) // finally destroy children list
 			
 		if (_decouple && parent != undefined) { // if decouple flag is set and has parent
@@ -101,6 +114,13 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 			if (!parent.open) { // add parent again to open list 
 				parent.open = true
 				ds_list_add(lyer.agrid_list_open, parent)
+			}
+			
+			var _n_destroyed = child_count + 1 // how many n-grand-children are being removed
+			var _cell = parent
+			while(_cell != undefined) {
+				_cell.child_count -= _n_destroyed // subtract number of destroyed n-grand-children from n-grand-parent
+				_cell = _cell.parent // propagate upwards through parents
 			}
 		}
 	}
@@ -144,18 +164,28 @@ draw = function(_path_ghost=false) {
 	
 		var _cell_x = _cell.i * agrid_cell_size
 		var _cell_y = _cell.j * agrid_cell_size
+		var _cell_cx = _cell_x + agrid_cell_size / 2
+		var _cell_cy = _cell_y + agrid_cell_size / 2
 	
 		draw_set_colour(
-			(_path_ghost || ds_list_find_index(agrid_path, _cell) != -1) ? c_lime 
-			: (_cell.open ? c_red : c_blue))
+			_cell == agrid_curcell ? c_yellow :
+			((_path_ghost || ds_list_find_index(agrid_path, _cell) != -1) ? c_lime 
+			: (_cell.open ? c_red : c_blue)))
 	
 		draw_set_alpha(0.2)
 		draw_rectangle(_cell_x, _cell_y, _cell_x + agrid_cell_size, _cell_y + agrid_cell_size, false)
 		draw_set_alpha(1)
 		
 		draw_set_halign(fa_center)
-		if (_cell.parent_count != undefined)
-			draw_text(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2, _cell.parent_count)
+		if (_cell.child_count != undefined)
+			draw_text(_cell_cx, _cell_cy, _cell.child_count)
+		
+		for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
+			var _child = _cell.children[|j]
+			
+			var _thickness = 0.5 + 0.5 * ceil(_child.child_count / 6.25) // visualising thickness of edge based on childcount of node
+			draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * agrid_cell_size, (_child.j + 0.5) * agrid_cell_size, _thickness) // draw line from cell to child
+		}
 		
 		//var _r = 5
 		//if (_cell.orientation != undefined)
