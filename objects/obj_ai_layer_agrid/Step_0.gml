@@ -19,12 +19,12 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 		var _prune_chance = max(0, (_agrid_size / agrid_max_size - 0.75) * 4) // random chance for pruning
 		var _prune = _agrid_size >= agrid_max_size || irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune grid
 	
-		var _nr_open = ds_list_size(agrid_list_open) // number of open cells
+		//var _nr_open = ds_list_size(agrid_list_open) // number of open cells
 			
 		var _cost_min = infinity
 		var _cost_max = -infinity
-		for (var i = 0; i < _nr_open; i ++) { // determine min and max costs
-			var _cell = agrid_list_open[|i]
+		for (var i = 0; i < _agrid_size; i ++) { // determine min and max costs
+			var _cell = agrid_list[|i]
 		
 			var _cost = _cell.s_cost
 				
@@ -36,33 +36,33 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 	
 		var _chosen = undefined // chosen cell for exploration
 	
-		if (_nr_open == 1) { // if just one cell
+		if (_agrid_size == 1) { // if just one cell
 		
-			_chosen = agrid_list_open[|0] // choose that one
+			_chosen = agrid_list[|0] // choose that one
 		
-		} else if (_nr_open > 1) { // do power law weighting for choosing cell
+		} else if (_agrid_size > 1) { // do power law weighting for choosing cell
 	
-			var _ws = array_create(_nr_open) // weights
+			var _ws = array_create(_agrid_size) // weights
 			var _w_sum = 0 // sum of weights
 			var _cost_range = _cost_max - _cost_min // range of cost (same for each cell)
-			for (var i = 0; i < _nr_open; i ++) {
-				var _cell = agrid_list_open[|i]
+			for (var i = 0; i < _agrid_size; i ++) {
+				var _cell = agrid_list[|i]
 		
 				var _cost_norm = _cost_range == 0 ? 1 : (0.1 + 0.9 * (_cell.s_cost - _cost_min) / _cost_range) // normalise in range of 0.1, 1
 				if (!_prune) // if grow
-					_ws[i] = 1 / power(_cost_norm, 3) // power of cost (the higher the power, the stronger lower costs are favoured)
+					_ws[i] = 1 / power(_cost_norm, 1) // power of cost (the higher the power, the stronger lower costs are favoured)
 				else
-					_ws[i] = power(_cost_norm, 3) // otherwise weight is inverse (the higher costs are favoured for pruning)
+					_ws[i] = power(_cost_norm, 1) // otherwise weight is inverse (the higher costs are favoured for pruning)
 				_w_sum += _ws[i]
 			}
 	
 			// choose cell randomly, weighted with cost
 			var _rn = random(1) // draw random number within 0, 1
 			var _acc = 0 // var that accumulates probabilities
-			for (var i = 0; i < _nr_open; i ++) {
+			for (var i = 0; i < _agrid_size; i ++) {
 				var _p_i = _ws[i] / _w_sum // probability of branch i
 				if (_rn >= _acc && _rn < _acc + _p_i) { // if _rn falls between weighted portion
-					_chosen = agrid_list_open[|i] // choose this cell
+					_chosen = agrid_list[|i] // choose this cell
 					break
 				}
 				_acc += _p_i
@@ -79,7 +79,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 					
 				_chosen.explore()		
 				
-			} else if (ds_list_find_index(agrid_path, _chosen) == -1 && _chosen != agrid_curcell) { // if prune and chosen is not in the path that the player is supposed to walk
+			} else /*if (ds_list_find_index(agrid_path, _chosen) == -1 && _chosen != agrid_curcell)*/ { // if prune and chosen is not in the path that the player is supposed to walk
 	
 				_chosen.destroy() // destroy cell
 			
@@ -285,23 +285,43 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 	}
 		
 	// Move through path nodes
+	var _cur_cell_x = (agrid_curcell.i + 0.5) * agrid_cell_size // x, y of current node
+	var _cur_cell_y = (agrid_curcell.j + 0.5) * agrid_cell_size
+	
+	for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // check line collision with current node
+		if (instance_exists(collision_line(_cur_cell_x, _cur_cell_y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
+			agrid_curcell.destroy() // if no line collision, destroy root cell, rebuild A* grid
+	
 	if (ds_list_size(agrid_path) > 1) { // if path is set, and at least 2 long
 		
-		var _next_cell = agrid_path[|1] // next cell in path
-		var _next_cell_x = (_next_cell.i + 0.5) * agrid_cell_size
-		var _next_cell_y = (_next_cell.j + 0.5) * agrid_cell_size
+		var _cur_dist = point_distance(_cur_cell_x, _cur_cell_y, body_x, body_y) // distance from player to current cell
 		
-		var _dist = point_distance(_next_cell_x, _next_cell_y, body_x, body_y) // length and direction of vector from next cell to player
-		var _dir = point_direction(_next_cell_x, _next_cell_y, body_x, body_y)
-		var _diff = angle_difference(_dir , _next_cell.orientation) // difference between cell orientation and vector from next cell to player
-		//var _progression = lengthdir_x(_dist, _diff)
+		var _next_cell = undefined
+		for (var i = 1; i < ds_list_size(agrid_path); i ++) { // loop through cells in path that are not current cell
+			var _cell = agrid_path[|i]
+			
+			var _cell_x = (_cell.i + 0.5) * agrid_cell_size
+			var _cell_y = (_cell.j + 0.5) * agrid_cell_size
+			var _dist = point_distance(_cell_x, _cell_y, body_x, body_y)
+			
+			var _line_collision = true
+			for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // check line collision with cell
+				if (instance_exists(collision_line(_cell_x, _cell_y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
+					_line_collision = false
+			
+			if (_line_collision && _dist < _cur_dist) { // if found cell in path that has line collsion with body and that is closer to player than current cell
+				_next_cell = _cell // set as next and break
+				break
+			}
+		}
 		
-		// move to next cell
-		if (abs(_diff) < 90) { // if difference is in range of -90, 90, we are at the 'height' of the next cell
+		if (_next_cell != undefined) { // if found closer cell
+			
 			ds_list_delete(agrid_path, 0) // delete 1st element
-				
-			_list_i = ds_list_find_index(agrid_curcell.children, _next_cell)
-			ds_list_delete(agrid_curcell.children, _list_i) // decouple next cell from old cell, to avoid deleting the next cell along with deleting old cell
+			
+			var _parent = _next_cell.parent
+			var _list_i = ds_list_find_index(_parent.children, _next_cell)
+			ds_list_delete(_parent.children, _list_i) // decouple next cell from its parent cell, to avoid deleting the next cell along with deleting old cell
 			agrid_curcell.destroy() // destroy old cell
 			agrid_curcell = _next_cell
 			agrid_curcell.parent = undefined // new root, so no parent
@@ -309,6 +329,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			var _g_cost_before = agrid_curcell.g_cost // remember G cost before reset
 			for (var i = 0; i < ds_list_size(agrid_list); i ++)			
 				agrid_list[|i].g_cost -= _g_cost_before // subtract G cost for every cell	
+				
 		}
 	}
 	

@@ -88,7 +88,7 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 				&& _expl_cell_j >= 0 && _expl_cell_j < ds_grid_height(expl_grid)) {
 					
 				if (expl_grid[# _expl_cell_i, _expl_cell_j] != -1) // if plays part in exploration
-					expl_grid[# _expl_cell_i, _expl_cell_j] -= 0.001 // lower cell
+					expl_grid[# _expl_cell_i, _expl_cell_j] -= 0.01 // lower cell
 					
 			}
 		
@@ -97,7 +97,7 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 		for (var i = 0; i < ds_grid_width(expl_grid); i ++) {
 			for (var j = 0; j < ds_grid_height(expl_grid); j ++) { // for each cell
 				if (expl_grid[# i, j] != -1) {
-					expl_grid[# i, j] += 0.0001 // heighten cell
+					expl_grid[# i, j] += 0.0005 // heighten cell
 					expl_grid[# i, j] = clamp(expl_grid[# i, j], 0, 1)
 				}
 			}

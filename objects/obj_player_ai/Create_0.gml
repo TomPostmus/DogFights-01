@@ -28,20 +28,26 @@ expl_landmarks_costf = function(_x, _y) {
 
 }
 
-expl_grid_cell_size = 64
+expl_grid_cell_size = 32
 expl_grid = undefined // exploration grid, initialized upon Room Start
 expl_grid_costf = function(_x, _y) {
 
 	var _cost = 0
 	
-	var _cell_i = floor(_x / expl_grid_cell_size) // indices of cells in ds grid
-	var _cell_j = floor(_y / expl_grid_cell_size)
+	if (point_in_rectangle(_x, _y, 
+					camera.x - camera.get_width()/2, camera.y - camera.get_height()/2,
+					camera.x + camera.get_width()/2, camera.y + camera.get_height()/2)) { // check if in vision of player
 	
-	if (_cell_i >= 0 && _cell_i < ds_grid_width(expl_grid)
-		&& _cell_j >= 0 && _cell_j < ds_grid_height(expl_grid)) {
+		var _cell_i = floor(_x / expl_grid_cell_size) // indices of cells in ds grid
+		var _cell_j = floor(_y / expl_grid_cell_size)
+	
+		if (_cell_i >= 0 && _cell_i < ds_grid_width(expl_grid)
+			&& _cell_j >= 0 && _cell_j < ds_grid_height(expl_grid)) {
 		
-		_cost = -500 * max(0, expl_grid[# _cell_i, _cell_j])
+			_cost = -500 * max(0, expl_grid[# _cell_i, _cell_j])
 		
+		}
+	
 	}
 	
 	return _cost
