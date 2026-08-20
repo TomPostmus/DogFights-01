@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"rrt_functions(mightdelete)",
-    "path":"folders/Code/player/player_ai_utils/rrt_functions(mightdelete).yy",
+    "path":"folders/Code/player/player_ai/rrt_functions(mightdelete).yy",
   },
   "parentObjectId":null,
   "persistent":false,

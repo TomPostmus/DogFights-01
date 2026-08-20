@@ -10,8 +10,8 @@
   "name":"obj_ai_layer_rrt",
   "overriddenProperties":[],
   "parent":{
-    "name":"player_ai_utils",
-    "path":"folders/Code/player/player_ai_utils.yy",
+    "name":"player_ai",
+    "path":"folders/Code/player/player_ai.yy",
   },
   "parentObjectId":null,
   "persistent":false,

@@ -6,7 +6,7 @@
   "name":"rrt_choose_next_branch",
   "parent":{
     "name":"rrt_functions(mightdelete)",
-    "path":"folders/Code/player/player_ai_utils/rrt_functions(mightdelete).yy",
+    "path":"folders/Code/player/player_ai/rrt_functions(mightdelete).yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
