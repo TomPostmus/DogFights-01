@@ -10,8 +10,8 @@
   "name":"obj_ai_scheduler",
   "overriddenProperties":[],
   "parent":{
-    "name":"player_ai",
-    "path":"folders/Code/player/player_ai.yy",
+    "name":"general_managers",
+    "path":"folders/Code/player/player_ai/general_managers.yy",
   },
   "parentObjectId":null,
   "persistent":false,

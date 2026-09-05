@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="Page-1" id="Ic5ls-Ev_cKFg-gq0zkn">
-    <mxGraphModel dx="1178" dy="701" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1488" dy="885" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -65,7 +65,7 @@
           <mxGeometry height="30" width="430" y="210" as="geometry" />
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-22" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action (Struct)" vertex="1">
-          <mxGeometry height="298" width="350" x="630" y="250" as="geometry" />
+          <mxGeometry height="500" width="350" x="630" y="250" as="geometry" />
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-44" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- planner //reference to obj_ai_action_planner inst" vertex="1">
           <mxGeometry height="26" width="350" y="26" as="geometry" />
@@ -85,16 +85,31 @@
         <mxCell id="lanVcOOqTe4FSBf7LHTD-24" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Poi poi //reference to Poi struct from Vision" vertex="1">
           <mxGeometry height="26" width="350" y="156" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-48" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual float h_cost = 0 // current computed H cost for Action, defined in implementations, this can be recomputed" vertex="1">
+        <mxCell id="f760-KquORobTEOnf6ej-1" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual&amp;nbsp;int expected_hp = 0 //expected HP at end of completing action, defined in implementations (virtual and = 0)" vertex="1">
           <mxGeometry height="43" width="350" y="182" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-58" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual float g_cost = 0 // computed G cost for Action, defined in implementations" vertex="1">
+        <mxCell id="f760-KquORobTEOnf6ej-2" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual int expected_defense_power = 0 //metric of ammo and defense strength, dependent on weapon and weapon state" vertex="1">
           <mxGeometry height="43" width="350" y="225" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-59" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float s_cost // sum of H and G cost" vertex="1">
-          <mxGeometry height="30" width="350" y="268" as="geometry" />
+        <mxCell id="f760-KquORobTEOnf6ej-4" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual int expected_safety = 0 //metric of closeness to Teammates and proximity from Enemies" vertex="1">
+          <mxGeometry height="43" width="350" y="268" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-26" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;exitX=0.162;exitY=-0.013;exitDx=0;exitDy=0;exitPerimeter=0;" value="name">
+        <mxCell id="f760-KquORobTEOnf6ej-3" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual int expected_knowledge = 0 //metric of &#39;knowledge&#39; gained from inspecting landmarks or terrain" vertex="1">
+          <mxGeometry height="43" width="350" y="311" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-6" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual int expected_mission_success = 0 //metric of success within mission, e.g. by eliminating Enemies" vertex="1">
+          <mxGeometry height="43" width="350" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-48" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual float h_cost = 0 // above expected metrics summarized into H cost, or overall &#39;success&#39; metric" vertex="1">
+          <mxGeometry height="43" width="350" y="397" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-58" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual float g_cost = 0 // computed G cost for Action" vertex="1">
+          <mxGeometry height="30" width="350" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-59" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float s_cost // sum of H and G cost" vertex="1">
+          <mxGeometry height="30" width="350" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-26" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;exitX=0.162;exitY=-0.013;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
           <mxGeometry relative="1" x="-1" as="geometry">
             <mxPoint x="109.58000000000008" y="247.26999999999998" as="sourcePoint" />
             <mxPoint x="109.92" y="180" as="targetPoint" />
@@ -162,15 +177,6 @@
             <mxPoint x="140" y="-13" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-49" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action_inspect_landmark (Struct)" vertex="1">
-          <mxGeometry height="95" width="350" x="1140" y="250" as="geometry" />
-        </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-55" parent="lanVcOOqTe4FSBf7LHTD-49" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float h_cost // H cost computed&amp;nbsp;" vertex="1">
-          <mxGeometry height="26" width="350" y="26" as="geometry" />
-        </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-67" parent="lanVcOOqTe4FSBf7LHTD-49" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float g_cost // G cost computed based on path distance to parent&amp;nbsp;" vertex="1">
-          <mxGeometry height="43" width="350" y="52" as="geometry" />
-        </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-62" edge="1" parent="1" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;" value="">
           <mxGeometry relative="1" width="160" as="geometry">
             <mxPoint x="980" y="360" as="sourcePoint" />
@@ -178,10 +184,34 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="example implementation" vertex="1">
-          <mxGeometry height="30" width="60" x="1030" y="280" as="geometry" />
+          <mxGeometry height="30" width="60" x="1040" y="310" as="geometry" />
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="implements" vertex="1">
           <mxGeometry height="30" width="60" x="1070" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-7" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action_inspect_landmark (Struct)" vertex="1">
+          <mxGeometry height="263" width="350" x="1140" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-14" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int expected_hp //this would be same as parent" vertex="1">
+          <mxGeometry height="26" width="350" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-15" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int expected_defense_power //same as parent" vertex="1">
+          <mxGeometry height="30" width="350" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-16" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int expected_safety //this would be computed based on distance from POI to teammates" vertex="1">
+          <mxGeometry height="43" width="350" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-17" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int expected_knowledge // this would be higher than parent" vertex="1">
+          <mxGeometry height="36" width="350" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-18" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int expected_mission_success //same as parent" vertex="1">
+          <mxGeometry height="36" width="350" y="161" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-19" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float h_cost = 0" vertex="1">
+          <mxGeometry height="30" width="350" y="197" as="geometry" />
+        </mxCell>
+        <mxCell id="f760-KquORobTEOnf6ej-20" parent="f760-KquORobTEOnf6ej-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float g_cost // computed as path distance from parent Action POI to current POI" vertex="1">
+          <mxGeometry height="36" width="350" y="227" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

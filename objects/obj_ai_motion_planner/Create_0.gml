@@ -2,6 +2,16 @@
 #macro RRT_RIGHT -1
 #macro RRT_FORWARD 1
 #macro RRT_BACKWARD -1
+#macro RRT_TURN 0 // RRT element type macros
+#macro RRT_STRAIGHT 1
+#macro RRT_ARC 2
+#macro RRT_R 50 // turning radius for arcs (in pixels)
+#macro RRT_V 2 // assumed speed of player (pixels/step)
+#macro RRT_TURN_TIME 141 // assumed number of frames for making full turn
+#macro RRT_GEARSHIFT_PEN 0 // constants for how much to penalise gear shifts and steering shifts in G cost
+#macro RRT_STEERSHIFT_PEN 0
+#macro RRT_REVERSE_PEN 0 // how much to penalise reverse gear elements
+
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned RRT paths (it 'slides' over the RRT paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning

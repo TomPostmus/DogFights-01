@@ -1,13 +1,12 @@
 {
   "$GMObject":"",
-  "%Name":"obj_ai_layer_rrt",
+  "%Name":"obj_ai_action_planner",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":12,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_ai_layer_rrt",
+  "name":"obj_ai_action_planner",
   "overriddenProperties":[],
   "parent":{
     "name":"player_ai",
