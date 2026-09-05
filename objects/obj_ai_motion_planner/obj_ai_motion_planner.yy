@@ -10,8 +10,8 @@
   "name":"obj_ai_motion_planner",
   "overriddenProperties":[],
   "parent":{
-    "name":"player_ai",
-    "path":"folders/Code/player/player_ai.yy",
+    "name":"planning_layers",
+    "path":"folders/Code/player/player_ai/planning_layers.yy",
   },
   "parentObjectId":null,
   "persistent":false,
