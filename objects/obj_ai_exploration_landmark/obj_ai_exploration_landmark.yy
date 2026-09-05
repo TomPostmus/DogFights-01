@@ -8,8 +8,8 @@
   "name":"obj_ai_exploration_landmark",
   "overriddenProperties":[],
   "parent":{
-    "name":"player_ai",
-    "path":"folders/Code/player/player_ai.yy",
+    "name":"markers",
+    "path":"folders/Code/player/player_ai/markers.yy",
   },
   "parentObjectId":null,
   "persistent":false,

@@ -22,24 +22,24 @@
           <mxGeometry height="30" width="140" y="120" as="geometry" />
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-6" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Vision (obj_ai_vision)" vertex="1">
-          <mxGeometry height="150" width="140" x="270" y="30" as="geometry">
+          <mxGeometry height="150" width="340" x="240" y="30" as="geometry">
             <mxRectangle height="30" width="60" x="120" y="490" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-7" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="teamates in sight" vertex="1">
-          <mxGeometry height="30" width="140" y="30" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-7" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ list&amp;lt;Poi&amp;gt; pois_in_sight //list of POIs currently in sight" vertex="1">
+          <mxGeometry height="30" width="340" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-8" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="enemies in sight" vertex="1">
-          <mxGeometry height="30" width="140" y="60" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-8" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ list&amp;lt;Poi&amp;gt; pois //list of POIs that it has seen" vertex="1">
+          <mxGeometry height="30" width="340" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-9" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="packages in sight" vertex="1">
-          <mxGeometry height="30" width="140" y="90" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-34" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ constructor Poi //constructs POI object which contains up to date position info, or last-seen position, of POI object" vertex="1">
+          <mxGeometry height="30" width="340" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-10" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="landmarks in sight" vertex="1">
-          <mxGeometry height="30" width="140" y="120" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-39" parent="lanVcOOqTe4FSBf7LHTD-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ enum POI_TYPE //POI types; enemies, teammates, landmarks, packages" vertex="1">
+          <mxGeometry height="30" width="340" y="120" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-11" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action planning (obj_ai_action_planning)" vertex="1">
-          <mxGeometry height="210" width="430" x="40" y="250" as="geometry">
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-11" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action planner (obj_ai_action_planner)" vertex="1">
+          <mxGeometry height="240" width="430" x="40" y="250" as="geometry">
             <mxRectangle height="30" width="60" x="120" y="490" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -52,26 +52,47 @@
         <mxCell id="lanVcOOqTe4FSBf7LHTD-14" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="atree_max_depth //maximum depth Action tree can have (how many Actions to look in advance, e.g. 3)" vertex="1">
           <mxGeometry height="30" width="430" y="90" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-18" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="atree_list //list of nodes in Action tree" vertex="1">
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-18" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ list&amp;lt;Action&amp;gt; atree_list //list of nodes in Action tree" vertex="1">
           <mxGeometry height="30" width="430" y="120" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-15" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="atree_curnode //current Action node we are&amp;nbsp; at" vertex="1">
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-15" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ Action atree_curaction //current Action node we are at" vertex="1">
           <mxGeometry height="30" width="430" y="150" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-17" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="atree_node //constructor for Action node object" vertex="1">
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-17" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ constructor atree_node //constructor for Action node object" vertex="1">
           <mxGeometry height="30" width="430" y="180" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-22" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="atree_node (Struct)" vertex="1">
-          <mxGeometry height="104" width="290" x="540" y="310" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-43" parent="lanVcOOqTe4FSBf7LHTD-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="+ enum ACTION_TYPE //enum of Action types; inspect landmark, engage enemy, flee enemy, random roaming, approach package" vertex="1">
+          <mxGeometry height="30" width="430" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-22" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action (Struct)" vertex="1">
+          <mxGeometry height="298" width="350" x="630" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-44" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- planner //reference to obj_ai_action_planner inst" vertex="1">
+          <mxGeometry height="26" width="350" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-56" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ACTION_TYPE type" vertex="1">
+          <mxGeometry height="26" width="350" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-46" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ parent //parent Action" vertex="1">
+          <mxGeometry height="26" width="350" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-47" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ list&amp;lt;Action&amp;gt; children //list of child Action nodes" vertex="1">
+          <mxGeometry height="26" width="350" y="104" as="geometry" />
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-23" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ bool has_poi //whether has POI associated" vertex="1">
-          <mxGeometry height="26" width="290" y="26" as="geometry" />
+          <mxGeometry height="26" width="350" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-24" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int poi_x" vertex="1">
-          <mxGeometry height="26" width="290" y="52" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-24" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Poi poi //reference to Poi struct from Vision" vertex="1">
+          <mxGeometry height="26" width="350" y="156" as="geometry" />
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-25" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int poi_y" vertex="1">
-          <mxGeometry height="26" width="290" y="78" as="geometry" />
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-48" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual float h_cost = 0 // current computed H cost for Action, defined in implementations, this can be recomputed" vertex="1">
+          <mxGeometry height="43" width="350" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-58" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ virtual float g_cost = 0 // computed G cost for Action, defined in implementations" vertex="1">
+          <mxGeometry height="43" width="350" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-59" parent="lanVcOOqTe4FSBf7LHTD-22" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float s_cost // sum of H and G cost" vertex="1">
+          <mxGeometry height="30" width="350" y="268" as="geometry" />
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-26" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;exitX=0.162;exitY=-0.013;exitDx=0;exitDy=0;exitPerimeter=0;" value="name">
           <mxGeometry relative="1" x="-1" as="geometry">
@@ -84,8 +105,9 @@
             <mxPoint x="10" y="-47" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="lanVcOOqTe4FSBf7LHTD-28" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;exitX=0.162;exitY=-0.013;exitDx=0;exitDy=0;exitPerimeter=0;" value="name">
-          <mxGeometry relative="1" x="-1" as="geometry">
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-28" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;exitX=0.162;exitY=-0.013;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry relative="1" x="-1" y="-77" as="geometry">
+            <mxPoint x="-8" y="30" as="offset" />
             <mxPoint x="339.58000000000004" y="249.99999999999997" as="sourcePoint" />
             <mxPoint x="339.91999999999996" y="182.73" as="targetPoint" />
           </mxGeometry>
@@ -100,6 +122,66 @@
         </mxCell>
         <mxCell id="lanVcOOqTe4FSBf7LHTD-31" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="has" vertex="1">
           <mxGeometry height="30" width="60" x="340" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-32" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;" value="has many">
+          <mxGeometry relative="1" x="-0.75" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="470" y="355.17" as="sourcePoint" />
+            <mxPoint x="630" y="355.17" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-33" connectable="0" parent="lanVcOOqTe4FSBf7LHTD-32" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" value="*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="140" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-35" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Poi (Struct)" vertex="1">
+          <mxGeometry height="130" width="320" x="740" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-36" parent="lanVcOOqTe4FSBf7LHTD-35" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ POI_TYPE type" vertex="1">
+          <mxGeometry height="26" width="320" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-40" parent="lanVcOOqTe4FSBf7LHTD-35" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int seen_ago //how many steps ago it has been seen" vertex="1">
+          <mxGeometry height="26" width="320" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-37" parent="lanVcOOqTe4FSBf7LHTD-35" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int x" vertex="1">
+          <mxGeometry height="26" width="320" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-38" parent="lanVcOOqTe4FSBf7LHTD-35" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int y" vertex="1">
+          <mxGeometry height="26" width="320" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-41" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;" value="has many">
+          <mxGeometry relative="1" x="-0.75" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="580" y="94.57999999999998" as="sourcePoint" />
+            <mxPoint x="740" y="94.57999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-42" connectable="0" parent="lanVcOOqTe4FSBf7LHTD-41" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" value="*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="140" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-49" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Action_inspect_landmark (Struct)" vertex="1">
+          <mxGeometry height="95" width="350" x="1140" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-55" parent="lanVcOOqTe4FSBf7LHTD-49" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float h_cost // H cost computed&amp;nbsp;" vertex="1">
+          <mxGeometry height="26" width="350" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-67" parent="lanVcOOqTe4FSBf7LHTD-49" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ float g_cost // G cost computed based on path distance to parent&amp;nbsp;" vertex="1">
+          <mxGeometry height="43" width="350" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-62" edge="1" parent="1" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="980" y="360" as="sourcePoint" />
+            <mxPoint x="1140" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="example implementation" vertex="1">
+          <mxGeometry height="30" width="60" x="1030" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="lanVcOOqTe4FSBf7LHTD-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="implements" vertex="1">
+          <mxGeometry height="30" width="60" x="1070" y="370" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
