@@ -2,6 +2,11 @@
 event_inherited();
 
 if (global.ingame()) {
+	
+	// Initialize components
+	vision = create_controllers(obj_ai_vision) // initialize vision
+	layer_agrid = create_controllers(obj_ai_grid_planner) // initialize planning layers
+	layer_rrt = create_controllers(obj_ai_motion_planner)
 
 	// Initialize exploration grid
 	expl_grid = ds_grid_create(room_width/expl_grid_cell_size, room_height/expl_grid_cell_size)
@@ -44,8 +49,5 @@ if (global.ingame()) {
 	//	}
 	//}
 	
-	// Initialize lower level layers
-	layer_agrid = create_controllers(obj_ai_grid_planner) // create A* Grid and RRT layers
-	layer_rrt = create_controllers(obj_ai_motion_planner)
 	
 }

@@ -1,0 +1,2 @@
+ds_list_destroy(pois)
+ds_list_destroy(pois_in_sight)

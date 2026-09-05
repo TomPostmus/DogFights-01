@@ -1,8 +1,13 @@
 // Inherit the parent event
 event_inherited();
 
-state = "explore"
 debug_draw_mode = 0
+
+// AI component references
+vision = noone // reference to vision object, initialized upon Room Start
+//layer_apf = create_controllers(obj_ai_layer_apf)
+layer_agrid = noone // 
+layer_rrt = noone
 
 // Exploration layer
 expl_landmarks = ds_list_create() // list of landmarks that player knows
@@ -112,9 +117,4 @@ apf_cost_field_2d = function(_x, _y) {
 		_cost += apf_social_costf(_x, _y)
 
 	return _cost
-} 
-
-// Lower level layers are put in their own objects
-//layer_apf = create_controllers(obj_ai_layer_apf)
-layer_agrid = undefined // initialized upon Room Start
-layer_rrt = undefined
+}
