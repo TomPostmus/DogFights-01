@@ -8,8 +8,8 @@
   "name":"obj_ai_collision_slider",
   "overriddenProperties":[],
   "parent":{
-    "name":"ai_player_functions",
-    "path":"folders/Code/player/ai_player_functions.yy",
+    "name":"player_ai",
+    "path":"folders/Code/player/player_ai.yy",
   },
   "parentObjectId":null,
   "persistent":true,

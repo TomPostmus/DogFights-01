@@ -1,204 +1,124 @@
-event_inherited()
-
-turn_input = 0 // reset controls
-move_input = 0
-input_attack = false
-
-if (global.ingame()) {
-		
-	// Delete RTT branch if it is marked for deletion
-	for (var i = 0; i < ds_list_size(rrt_branches); i ++) { // loop through all branches
-		var _branch = rrt_branches[|i]
-		
-		if (_branch.del) {
-			var j = ds_list_find_index(rrt_open_branches, _branch) // also find in open branches list
-			if (j != -1)
-				ds_list_delete(rrt_open_branches, j) // remove from open branches
-		
-			ds_list_destroy(_branch.links) // destroy its links data structure
-			delete _branch // delete struct
-			ds_list_delete(rrt_branches, i) // remove from list
-			i --
-		}
-	}
-
-	// Basic behaviour
-	if (instance_exists(character) && instance_exists(character.body)) {
-		var body = character.body
-		var weapon = character.weapon
+if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
+	var _body = character.body
+	var _weapon = character.weapon
 	
-		var _body_x = body.get_x()
-		var _body_y = body.get_y()
-		var _body_rot = body.get_rotation()
+	var _body_x = _body.get_x()
+	var _body_y = _body.get_y()
+	var _body_rot = _body.get_rotation()
 	
-		//Find targets
-		if (instance_exists(camera)) {
-			ds_list_clear(targets)
-			for (var i = 0; i < instance_number(obj_character); i ++) {
-				var target_character = instance_find(obj_character, i);
-				if (target_character != character && instance_exists(target_character.body)
-					&& (character.team_id == undefined || character.team_id != target_character.team_id)
-					&& !target_character.hp_protection) {
-					if (point_in_rectangle(target_character.body.get_x(), target_character.body.get_y(), camera.x - camera.get_width()/2, camera.y - camera.get_height()/2, camera.x + camera.get_width()/2, camera.y + camera.get_height()/2))
-						ds_list_add(targets, target_character.body)
+	// Vision
+	{
+		
+		var _camera_x = camera.x
+		var _camera_y = camera.y
+		var _camera_w = camera.get_width()
+		var _camera_h = camera.get_height()
+	
+		// Spot enemies
+		ds_list_clear(apf_enemies) // reset/clear list
+		with (obj_character) {
+			
+			if (self != other.character && instance_exists(body) && instance_exists(body.trunk)
+				&& (other.character.team_id == undefined || other.character.team_id != team_id)
+				&& !hp_protection) {						
+				if (point_in_rectangle(body.trunk.x, body.trunk.y, 
+					_camera_x - _camera_w/2, _camera_y - _camera_h/2,
+					_camera_x + _camera_w/2, _camera_y + _camera_h/2)) {
+					ds_list_add(other.apf_enemies, body.trunk) // add trunk (being the target object) to enemy list
 				}
 			}
+			
 		}
-	
-		//Find closest target
-		target = noone
-		var dist = infinity;
-		for (var i = 0; i < ds_list_size(targets); i ++) {
-			if (point_distance(body.get_x(), body.get_y(), targets[|i].get_x(), targets[|i].get_y()) < dist) {
-				target = targets[|i];
-				dist = point_distance(body.get_x(), body.get_y(), targets[|i].get_x(), targets[|i].get_y())
-			}
-		}	
-	
-		// Update decision tree
-		dtree_timer --
-		if (dtree_timer <= 0) {
-			update_decision_tree()
-			dtree_timer = dtree_update_time
-		}
-	
-		// Execute decision tree state
-		if (!conflict) { // explore state
-			if (astpath == undefined && irandom(100) == 0) {
-				if (instance_number(obj_ai_path_point) > 0) {
-					var path_point_marker = instance_find(obj_ai_path_point, irandom(instance_number(obj_ai_path_point)-1));
-					astpath_targ_x = path_point_marker.x
-					astpath_targ_y = path_point_marker.y
-					astpath_compute()
-				} else {
-					astpath_targ_x = random(room_width)
-					astpath_targ_y = random(room_height)
-					astpath_compute()
-				}
-			}
-		} else if (conflict && instance_exists(target)) { // conflict state
-			var target_x = target.get_x()
-			var target_y = target.get_y()
-			var target_distance = point_distance(body.get_x(), body.get_y(), target_x, target_y)
-			var line_of_fire = line_shootable(target_x, target_y)
-			var shoot = false
 		
-			if (fight_or_flight == "fight") {
-				if (line_of_fire) {
-					shoot = true
-					
-					if (astpath != undefined)
-						path_delete(astpath)
-					astpath = undefined
+		// Spot landmarks
+		//ds_list_clear(expl_landmarks_insight)
+		//with (obj_ai_exploration_landmark) {
+		
+		//	if (point_in_rectangle(x, y, 
+		//		_camera_x - _camera_w/2, _camera_y - _camera_h/2,
+		//		_camera_x + _camera_w/2, _camera_y + _camera_h/2)) {
 				
-					// Get closer
-					if (target_distance > 100) {
-						move_input = 1
-					}
-				} else {
-					path_recompute_timer --
-					if (path_recompute_timer <= 0) {
-						shoot_path(target_x, target_y)
-						path_recompute_timer = path_recompute_time
-					}
-				}
-			} else if (fight_or_flight == "flight") {
-			
-			} else if (fight_or_flight == "await") {
+		//		ds_list_add(other.expl_landmarks_insight, self) // add to in-sight landmarks
 				
-				if (astpath != undefined)
-					path_delete(astpath)
-				astpath = undefined
-					
-				if (line_of_fire) {
-					shoot = true
-				}
-			}
+		//		if (ds_list_find_index(other.expl_landmarks, self) == -1) { // add to list of all spotted landmarks
+		//			ds_list_add(other.expl_landmarks, self)
+		//			other.expl_landmarks_novelty[? self] = 1 // set novelty to 1 by default
+		//		}
+			
+			
+		//	}
 		
-			if (shoot) {
-				var barrel_x = weapon.get_weapon_barrel_x(body)
-				var barrel_y = weapon.get_weapon_barrel_y(body)
-				var desired_weapon_dir = point_direction(barrel_x, barrel_y, target_x, target_y)
-	
-				// Align weapon rotation
-				var dead_angle = 4
-				var angle_diff = angle_difference(weapon.get_weapon_rotation(body), desired_weapon_dir)
-				turn_input = (angle_diff < -dead_angle) - (angle_diff > dead_angle)
-			
-				if (abs(angle_diff) <= 10) {
-					trigger_timer --
-					if (trigger_timer <= 0) {
-						input_attack = true
-						trigger_timer = target_distance * 0.3
-					}
-				}
-			
-			}
-		}
-	
-		if (astpath != undefined && path_exists(astpath)) {
+		//}
 		
-			// Update current path point to nearest point to character in path
-			var _next_pt = astpath_point + 1
-			var _prev_pt = astpath_point - 1
-			var _cur_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))
+		// TODO: Spot packages/pickups
 		
-			var _next_pt_dist = infinity
-			if (astpath_point < path_get_number(astpath)) // if next point exists
-				_next_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _next_pt), path_get_point_y(astpath, _next_pt)) // distance from next pt to character
-			
-			var _prev_pt_dist = infinity
-			if (astpath_point > 0) // if previous point exists
-				_prev_pt_dist = point_distance(_body_x, _body_y, path_get_point_x(astpath, _prev_pt), path_get_point_y(astpath, _prev_pt)) // distance from previous pt to character
-			
-			if (_next_pt_dist == min(_cur_pt_dist, _next_pt_dist, _prev_pt_dist)) // if next point has minimal distance
-				astpath_point ++ // move to next pt
-			else if (_prev_pt_dist < _cur_pt_dist) // else if prev point has minimal distance
-				astpath_point -- // move to prev pt
-			
-			// Update furthest visible path point
-			if (!line_movable(path_get_point_x(astpath, astpath_furthvis_point), path_get_point_y(astpath, astpath_furthvis_point))) // if current furthvis point not visible
-				astpath_furthvis_point -- // go one less
-			else if (astpath_furthvis_point < path_get_number(astpath)-1 && line_movable(path_get_point_x(astpath, astpath_furthvis_point+1), path_get_point_y(astpath, astpath_furthvis_point+1))) // if point after furthvis point is visible
-				astpath_furthvis_point ++ // go one further
-		
-			astpath_furthvis_point = max(astpath_point, astpath_furthvis_point) // lower boundary is current path point
-					
-			// Check if A* path is completed
-			var _path_end_x = path_get_point_x(astpath, path_get_number(astpath)-1)
-			var _path_end_y = path_get_point_y(astpath, path_get_number(astpath)-1)
-			var _dist = point_distance(body.get_x(), body.get_y(), _path_end_x, _path_end_y)
-			var _astpath_completion_tolerance = 30
-			if (_dist <= _astpath_completion_tolerance) {
-			
-				if (astpath != undefined)
-					path_delete(astpath)
-				astpath = undefined
-			
-			} else if (!line_movable(path_get_point_x(astpath, astpath_point), path_get_point_y(astpath, astpath_point))) { // if no free line to path point
-			
-				astpath_compute() // recompute A* path
-			
-			// RRT* motion planning
-			} else if (rrt_branch = undefined) { // if there is no current node
-			
-				// Initialize tree
-				rrt_branch = new rrt_root_element(_body_x, _body_y, _body_rot) // root node of tree
-				rrt_branch.h_cost = rrt_compute_h_cost(_body_x, _body_y, _body_rot) // H cost for init node
-				ds_list_add(rrt_branches, rrt_branch)
-				ds_list_add(rrt_open_branches, rrt_branch)
-				rrt_walk_timer = rrt_walk_maxtime // reset timer
-			
-			} else {
-			
-				// Update tree
-				rrt_update_tree()
-			
-			}
-		}
 	}
 	
-	// Send inputs
+	// Set state based on whether enenmies have been seen
+	state = ds_list_size(apf_enemies) > 0 ? "conflict" : "explore"
+	
+	// Update exploration layer
+	if (state == "explore") {
+		
+		//for (var i = 0; i < ds_list_size(expl_landmarks); i ++) {
+			
+		//	var _landmark = expl_landmarks[|i]
+			
+		//	var _insight = ds_list_find_index(expl_landmarks_insight, _landmark) != -1 // whether landmark is in sight
+		//	if (_insight) {
+		//		var _dist = point_distance(_body_x, _body_y, _landmark.x, _landmark.y)
+		//		expl_landmarks_novelty[? _landmark] -= (max(0, 300 - _dist) / 300) * 0.01
+		//	} else {
+		//		expl_landmarks_novelty[? _landmark] += 0.001 // out of sight, slowly becomes interesting again
+		//	}
+			
+		//	expl_landmarks_novelty[? _landmark] = clamp(expl_landmarks_novelty[? _landmark], 0, 1) // keep in range
+		
+		//}
+		
+		// update exploration grid based on A* grid discovery
+		var _acell_size = layer_agrid.agrid_cell_size
+		for (var i = 0; i < ds_list_size(layer_agrid.agrid_list); i ++) {
+		
+			var _acell = layer_agrid.agrid_list[|i]
+			var _expl_cell_i = floor(_acell.i * _acell_size / expl_grid_cell_size)
+			var _expl_cell_j = floor(_acell.j * _acell_size / expl_grid_cell_size)
+			
+			if (_expl_cell_i >= 0 && _expl_cell_i < ds_grid_width(expl_grid)
+				&& _expl_cell_j >= 0 && _expl_cell_j < ds_grid_height(expl_grid)) {
+					
+				if (expl_grid[# _expl_cell_i, _expl_cell_j] != -1) // if plays part in exploration
+					expl_grid[# _expl_cell_i, _expl_cell_j] -= 0.01 // lower cell
+					
+			}
+		
+		}
+		
+		for (var i = 0; i < ds_grid_width(expl_grid); i ++) {
+			for (var j = 0; j < ds_grid_height(expl_grid); j ++) { // for each cell
+				if (expl_grid[# i, j] != -1) {
+					expl_grid[# i, j] += 0.0005 // heighten cell
+					expl_grid[# i, j] = clamp(expl_grid[# i, j], 0, 1)
+				}
+			}
+		}
+		
+	}
+	
+	// Send inputs to lower level layer and get outputs
+	layer_agrid.body_x = _body_x // send body 2D (x,y) position to A* Grid
+	layer_agrid.body_y = _body_y
+	layer_agrid.cost_field = apf_cost_field_2d // send 2D cost field from APF layer to A* Grid
+	
+	layer_rrt.body_x = _body_x // send body 3D (x,y,th) position to RRT
+	layer_rrt.body_y = _body_y
+	layer_rrt.body_th = _body_rot
+	layer_rrt.cost_field = layer_agrid.cost_field_rrt // pass through cost field computed in A* Grid layer to RRT layer
+	
+	move_input = layer_rrt.move_input // extract move outputs from RRT layer
+	turn_input = layer_rrt.turn_input
+	
+	// Send inputs to character
 	if (instance_exists(character)) {
 	
 		// Send to character
@@ -217,5 +137,5 @@ if (global.ingame()) {
 		character.movement.turn_input = turn_input
 
 	}
-
+	
 }

@@ -19,6 +19,9 @@ global.ingame = function() {
 //Set keybinds
 default_keys()
 
+// Gamespeed (debug purposes)
+//game_set_speed(30, gamespeed_fps) // I tried this but it breaks physics
+
 //Initialize graphics
 global.aspect = clamp(display_get_width()/display_get_height(), 0.5555, 2.3333)
 global.height = display_get_height()

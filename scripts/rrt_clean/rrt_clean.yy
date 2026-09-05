@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"rrt_clean",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"rrt_clean",
+  "parent":{
+    "name":"rrt_functions(mightdelete)",
+    "path":"folders/Code/player/player_ai/rrt_functions(mightdelete).yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

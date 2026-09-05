@@ -28,14 +28,16 @@ if (global.ingame()) { // if in in-game room
 		_total_lives += team_lives[i] // sum lives
 	}
 	
-	if (_total_lives == 0) {
-		show_message($"It's a draw!")
-		game_end()
-	} else {
-		for (var i = 0; i < teams_number; i ++) {
-			if (team_lives[i] == _total_lives) { // if this team is only team that has lives left
-				show_message($"Team {i} wins!") // wins
-				game_end()
+	if (teams_number > 1) { // if not only one team (for debugging)
+		if (_total_lives == 0) {
+			show_message($"It's a draw!")
+			game_end()
+		} else {
+			for (var i = 0; i < teams_number; i ++) {
+				if (team_lives[i] == _total_lives) { // if this team is only team that has lives left
+					show_message($"Team {i} wins!") // wins
+					game_end()
+				}
 			}
 		}
 	}

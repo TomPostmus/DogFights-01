@@ -1,0 +1,1 @@
+ds_stack_destroy(ai_path_scheduled)

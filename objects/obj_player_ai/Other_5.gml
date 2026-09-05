@@ -1,4 +1,3 @@
-if (grid != undefined)
-	mp_grid_destroy(grid)
-if (grid_high != undefined)
-	mp_grid_destroy(grid_high)
+if (global.ingame()) {
+	//ds_grid_destroy(apf_explgrid)
+}

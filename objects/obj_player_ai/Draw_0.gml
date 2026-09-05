@@ -1,63 +1,72 @@
-if (!global.debug)
-	exit
+//if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
+//	var _body = character.body
+//	var _weapon = character.weapon
+	
+//	var _body_x = _body.get_x()
+//	var _body_y = _body.get_y()
+//	var _body_rot = _body.get_rotation()
 
-// Draw target and state
-if (instance_exists(character) && instance_exists(character.body)) {
-	var xp = character.body.get_x()
-	var yp = character.body.get_y()
+//}
 
-//	if (instance_exists(target)) {
-//		draw_set_colour(c_red)
-//		draw_line(xp, yp, target.get_x(), target.get_y())
-//	}
-	
-//	draw_text(xp, yp + 20, "Conflict: " + string(conflict))
-	//draw_text(xp, yp + 40, "FoF: " + fight_or_flight)
-	//draw_text(xp, yp + 40, $"move_input: {move_input}")
-	
-	// Draw RRT* tree
-	draw_set_colour(c_blue)
-	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
-		var _branch = rrt_branches[|i]
-		_branch.draw()
-	}
-	
-	if (rrt_test_pt != undefined) {
-		draw_set_colour(c_lime)
-		draw_circle(rrt_test_pt[0], rrt_test_pt[1], 1, false)
-	}
-	
-	draw_set_colour(c_red)
-	for (var i = 0; i < ds_list_size(rrt_open_branches); i ++) {
-		var _branch = rrt_open_branches[|i]
-		draw_circle(_branch.x_end, _branch.y_end, 1, false) // draw red circles at end points of open branches
-	}
-
-}
-
-// Draw A* path
-if (astpath != undefined && path_exists(astpath)) {
-	draw_set_colour(c_purple)
-	draw_path(astpath, 0, 0, true)
-	draw_set_colour(c_red)
-	var _path_pt_x = path_get_point_x(astpath, astpath_point)
-	var _path_pt_y = path_get_point_y(astpath, astpath_point)
-	draw_circle(_path_pt_x, _path_pt_y, 1, false)
-	draw_set_colour(c_green)
-	var _path_pt_x = path_get_point_x(astpath, astpath_furthvis_point)
-	var _path_pt_y = path_get_point_y(astpath, astpath_furthvis_point)
-	draw_circle(_path_pt_x, _path_pt_y, 1, false)
-	
-	//for (var i = 0; i < path_get_number(astpath); i ++) {
-	//	var _path_pt_x = path_get_point_x(astpath, i)
-	//	var _path_pt_y = path_get_point_y(astpath, i)
+for (var _pi = 0; _pi < ds_list_size(obj_lobby.players_active); _pi ++) { // only draw if AI is active player and we are currently drawing to its viewport
+if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
 		
-	//	draw_text(_path_pt_x, _path_pt_y, astpath_costs[|i])
-	//}
+	if (debug_draw_mode == 1) {
 	
-	//draw_set_colour(c_green)
-	//draw_line(xp, yp, path_get_point_x(path, path_point), path_get_point_y(path, path_point))
-}
+		// Draw RRT Grid layer
+		//layer_agrid.draw(true)
+		layer_rrt.draw()
+	
+	} else if (debug_draw_mode == 2) {
+		
+		// Draw A* Grid layer
+		layer_agrid.draw()
+	
+	} else if (debug_draw_mode == 3) {
+		
+		// Draw both
+		layer_agrid.draw()
+		layer_rrt.draw()
+	
+	}
+	
 
-// Draw collision slider
-with (colslider) draw_self()
+	if (debug_draw_mode != 0) {
+		
+		// Draw exploration layer
+		{
+		
+			// Draw landmarks in sight
+			for (var i = 0; i < ds_list_size(expl_landmarks_insight); i ++) {
+				var _landmark = expl_landmarks_insight[|i]
+			
+				draw_sprite_ext(spr_ai_exploration_landmark, 0, _landmark.x, _landmark.y , 1, 1, 0, c_white, expl_landmarks_novelty[? _landmark])
+				//draw_set_alpha(expl_landmarks_novelty[? _landmark])
+				//with (_landmark) draw_self()
+				//draw_set_alpha(1)
+			
+			}
+		
+		}
+		
+		// Draw exploration grid
+		for (var i = 0; i < ds_grid_width(expl_grid); i ++) {
+			for (var j = 0; j < ds_grid_height(expl_grid); j ++) {
+				var _value = expl_grid[# i, j]
+		
+				if (_value > 0) {
+					var _cell_x = i* expl_grid_cell_size
+					var _cell_y = j * expl_grid_cell_size
+			
+					draw_set_alpha(_value * 0.5)
+					draw_set_colour(c_fuchsia)
+					draw_rectangle(_cell_x, _cell_y, _cell_x + expl_grid_cell_size, _cell_y + expl_grid_cell_size, false)
+	
+					draw_set_alpha(1)
+				}
+			}
+		}
+	
+	}
+	
+}}
