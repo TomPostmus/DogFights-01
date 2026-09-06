@@ -1,2 +1,6 @@
 ds_list_destroy(pois)
-ds_list_destroy(pois_in_sight)
+ds_map_destroy(inst_to_poi)
+ds_list_destroy(enemies)
+ds_list_destroy(teammates)
+ds_list_destroy(packages)
+ds_list_destroy(landmarks)

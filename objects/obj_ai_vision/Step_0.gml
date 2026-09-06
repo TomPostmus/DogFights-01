@@ -5,10 +5,10 @@ if (instance_exists(player) && instance_exists(player.camera)) {
 	var _camera_w = player.camera.get_width()
 	var _camera_h = player.camera.get_height()
 	
-	ds_list_clear(pois_in_sight) // clear POI list
+	//ds_list_clear(pois_in_sight) // clear POI list
 	
 	// Spot Enemies and Teammates
-	var _my_team_id = player.teamid
+	var _my_team_id = player.team_id
 	with (obj_character) {
 		
 		if (self != other.player.character // exclude player itself
@@ -24,12 +24,12 @@ if (instance_exists(player) && instance_exists(player.camera)) {
 		
 				var _is_enemy = _my_team_id == undefined || _my_team_id != team_id // check if enemy or teammate
 				
-				if (inst_to_poi[?id] == undefined) { // if no POI associated with spotted character
+				if (other.inst_to_poi[?id] == undefined) { // if no POI associated with spotted character
 					var _type = _is_enemy ? POI_TYPE.ENEMY : POI_TYPE.TEAMMATE // type of POI
-					inst_to_poi[?id] = new Poi(_type, id, _char_x, _char_y)
+					other.inst_to_poi[?id] = new other.Poi(_type, id, _char_x, _char_y)
 				} else {
-					inst_to_poi[?id].x = _char_x // update position
-					inst_to_poi[?id].y = _char_y
+					other.inst_to_poi[?id].x = _char_x // update position
+					other.inst_to_poi[?id].y = _char_y
 				}
 				
 			}
@@ -46,7 +46,7 @@ if (instance_exists(player) && instance_exists(player.camera)) {
 			_camera_x + _camera_w/2, _camera_y + _camera_h/2)) // check if in camera
 		{
 				
-			inst_to_poi[?id] ??= new Poi(POI_TYPE.LANDMARK, id, x, y) // if not in map, add
+			other.inst_to_poi[?id] ??= new other.Poi(POI_TYPE.LANDMARK, id, x, y) // if not in map, add
 			
 		}
 		

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"exploration_and_apf_layer_code_scrap",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"exploration_and_apf_layer_code_scrap",
+  "parent":{
+    "name":"player_ai",
+    "path":"folders/Code/player/player_ai.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
