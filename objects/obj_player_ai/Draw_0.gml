@@ -33,39 +33,7 @@ if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
 
 	if (debug_draw_mode != 0) {
 		
-		// Draw exploration layer
-		{
-		
-			// Draw landmarks in sight
-			for (var i = 0; i < ds_list_size(expl_landmarks_insight); i ++) {
-				var _landmark = expl_landmarks_insight[|i]
-			
-				draw_sprite_ext(spr_ai_exploration_landmark, 0, _landmark.x, _landmark.y , 1, 1, 0, c_white, expl_landmarks_novelty[? _landmark])
-				//draw_set_alpha(expl_landmarks_novelty[? _landmark])
-				//with (_landmark) draw_self()
-				//draw_set_alpha(1)
-			
-			}
-		
-		}
-		
-		// Draw exploration grid
-		for (var i = 0; i < ds_grid_width(expl_grid); i ++) {
-			for (var j = 0; j < ds_grid_height(expl_grid); j ++) {
-				var _value = expl_grid[# i, j]
-		
-				if (_value > 0) {
-					var _cell_x = i* expl_grid_cell_size
-					var _cell_y = j * expl_grid_cell_size
-			
-					draw_set_alpha(_value * 0.5)
-					draw_set_colour(c_fuchsia)
-					draw_rectangle(_cell_x, _cell_y, _cell_x + expl_grid_cell_size, _cell_y + expl_grid_cell_size, false)
-	
-					draw_set_alpha(1)
-				}
-			}
-		}
+		// Draw Vision
 	
 	}
 	
