@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"ai",
-    "path":"folders/AssetsWeaponsAndPlayer/dir_player/ai.yy",
+    "path":"folders/AssetsMaps/map_objects/markers/ai.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

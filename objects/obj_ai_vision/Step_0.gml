@@ -30,6 +30,7 @@ if (instance_exists(player) && instance_exists(player.camera)) {
 				} else {
 					other.inst_to_poi[?id].x = _char_x // update position
 					other.inst_to_poi[?id].y = _char_y
+					other.inst_to_poi[?id].seen_ago = 0
 				}
 				
 			}
@@ -47,6 +48,7 @@ if (instance_exists(player) && instance_exists(player.camera)) {
 		{
 				
 			other.inst_to_poi[?id] ??= new other.Poi(POI_TYPE.LANDMARK, id, x, y) // if not in map, add
+			other.inst_to_poi[?id].seen_ago = 0
 			
 		}
 		
