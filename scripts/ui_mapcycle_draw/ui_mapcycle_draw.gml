@@ -12,6 +12,9 @@ function ui_mapcycle_draw() {
 		draw_set_alpha(1)
 		draw_text_ext(mapselection.left + mapselection.width/2, mapselection.top + mapselection.height/2, mapselection.nomap_text, 20, 180)
 		draw_set_alpha(1)
+		
+		draw_set_halign(fa_left)
+		draw_set_valign(fa_top)
 	
 		//Mapcycle border
 		draw_set_colour(mapselection.active ? mapselection.border_colour : mapselection.border_colour_inactive)

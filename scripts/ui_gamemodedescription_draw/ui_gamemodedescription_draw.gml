@@ -25,18 +25,12 @@ function ui_gamemodedescription_draw() {
 		draw_rectangle(left, top, left + width, top + height, true)
 	
 		draw_set_colour(text_name_colour)
-		draw_set_halign(fa_left)
 		draw_set_font(gamemode_name_font)
 		draw_text(left + icon_size + 20, top + 23, gamemode_name)
 	
 		draw_set_colour(text_description_colour)
-		draw_set_halign(fa_left)
-		draw_set_valign(fa_top)
 		draw_set_font(gamemode_description_font)
 		draw_text_ext(left + 10, top + 20 + icon_size, gamemode_description, 16, width - 20 - 20)
 	}
-
-	draw_set_valign(fa_center)
-
 
 }

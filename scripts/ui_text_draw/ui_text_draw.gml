@@ -19,8 +19,8 @@ function ui_text_draw() {
 		draw_text_outlined(text.left, text.top, text.text, text.colour, text.outline_colour)
 	}
 
-	draw_set_valign(fa_center)
-	draw_set_colour(c_white)
+	draw_set_valign(fa_top) // back to default
+	draw_set_halign(fa_left)
 	draw_set_alpha(1)
 
 

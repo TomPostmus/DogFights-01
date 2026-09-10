@@ -73,7 +73,6 @@ function ui_window_draw() {
 		//window.header title
 		draw_set_font(window.header_font)
 		draw_set_colour(window.header_text_colour)
-		draw_set_halign(fa_left)
 		draw_text(window.left + 8, window.top + window.header_height/2, window.title)
 	} else {
 		//Body background
@@ -125,7 +124,6 @@ function ui_window_draw() {
 			//Header title
 			draw_set_alpha(1)
 			draw_set_font(ft_menu_title)
-			draw_set_halign(fa_left)
 			draw_set_colour(window.header_text_colour)
 	
 			//draw_text_outlined(window.left + window.corner_size/2, window.top + window.corner_size/2, window.title, window.header_text_colour, c_black)

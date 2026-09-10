@@ -10,8 +10,8 @@ function draw_hud(_parent) {
 	var _text_w = string_width(ammo_reserve)
 	var _m = _parent.cont_margin
 	draw_set_valign(fa_middle)
-	draw_set_halign(fa_left)
 	draw_text(_parent.x + _m, _parent.y + _m+1, ammo_reserve)
+	draw_set_valign(fa_top)
 	for (var i = 0; i < stats.mag_size; i ++) {
 		var _subimg = i > ammo_mag-1
 		draw_sprite(spr_hud_shell, _subimg, _parent.x + _m + _text_w + _m + i*12, _parent.y + _m)

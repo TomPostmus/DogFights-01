@@ -147,9 +147,9 @@ function ui_button_draw() {
 		draw_set_colour(text_colour)
 		draw_set_halign(fa_center)
 		draw_text(ceil(x1 + button.width/2 + button.text_h_offset), ceil(y1 + button.height/2 + button.text_v_offset), button.text)
+		draw_set_halign(fa_left)
 	} else if (button.text != "" && sprite_exists(button.icon)) {
 		draw_set_colour(text_colour)
-		draw_set_halign(fa_left)
 		draw_text(ceil(x1 + button.height/2 + button.text_h_offset), ceil(y1 + button.height/2 + button.text_v_offset), button.text)
 		draw_sprite(button.icon, 0, ceil(x2 - button.height/2), ceil(y1 + button.height/2 + button.text_v_offset))
 	} else if (sprite_exists(button.icon)) {

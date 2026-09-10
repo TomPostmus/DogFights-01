@@ -34,9 +34,7 @@ function ui_cycle_draw() {
 		//Text
 		draw_set_colour(text_colour)
 		draw_set_font(text_font)
-		draw_set_halign(fa_left)
 		draw_text(left + 2 + text_h_offset, top + height/2, value)
-		draw_set_valign(fa_center)
 	
 		//Button
 		button_up.width = height

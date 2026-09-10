@@ -37,8 +37,8 @@ input_firemode = false
 function draw_hud(_parent) {
 	var _m = _parent.cont_margin
 	draw_set_valign(fa_middle)
-	draw_set_halign(fa_left)
 	draw_text(_parent.x +_m, _parent.y + _m + 1, ammo_reserve)
+	draw_set_valign(fa_top) // back to default
 	
 	var _text_w = string_width(ammo_reserve)
 	for (var i = 0; i < stats.mag_size; i ++) {

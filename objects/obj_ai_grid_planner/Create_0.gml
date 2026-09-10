@@ -176,9 +176,11 @@ draw = function(_path_ghost=false) {
 		draw_rectangle(_cell_x, _cell_y, _cell_x + agrid_cell_size, _cell_y + agrid_cell_size, false)
 		draw_set_alpha(1)
 		
-		draw_set_halign(fa_center)
-		if (_cell.child_count != undefined)
+		if (_cell.child_count != undefined) {
+			draw_set_halign(fa_center)
 			draw_text(_cell_cx, _cell_cy, _cell.child_count)
+			draw_set_halign(fa_left)
+		}
 		
 		for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
 			var _child = _cell.children[|j]
