@@ -43,7 +43,7 @@ if (instance_exists(player) && instance_exists(player.camera)) {
 	}
 		
 	// Spot landmarks
-	with (obj_ai_exploration_landmark) {
+	with (obj_ai_landmark) {
 		
 		if (point_in_rectangle(x, y, 
 			_camera_x - _camera_w/2, _camera_y - _camera_h/2,

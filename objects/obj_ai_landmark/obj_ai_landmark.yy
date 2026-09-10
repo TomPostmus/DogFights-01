@@ -1,9 +1,11 @@
 {
   "$GMObject":"",
-  "%Name":"obj_ai_exploration_region",
-  "eventList":[],
+  "%Name":"obj_ai_landmark",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"obj_ai_exploration_region",
+  "name":"obj_ai_landmark",
   "overriddenProperties":[],
   "parent":{
     "name":"markers",
@@ -28,8 +30,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_ai_exploration_region",
-    "path":"sprites/spr_ai_exploration_region/spr_ai_exploration_region.yy",
+    "name":"spr_ai_landmark",
+    "path":"sprites/spr_ai_landmark/spr_ai_landmark.yy",
   },
   "spriteMaskId":null,
   "visible":false,

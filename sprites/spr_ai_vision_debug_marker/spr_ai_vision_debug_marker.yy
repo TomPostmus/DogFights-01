@@ -33,8 +33,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"markers",
-    "path":"folders/Code/player/player_ai/markers.yy",
+    "name":"sprites",
+    "path":"folders/Code/player/player_ai/markers/sprites.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

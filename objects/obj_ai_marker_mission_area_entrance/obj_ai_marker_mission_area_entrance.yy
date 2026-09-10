@@ -1,11 +1,9 @@
 {
   "$GMObject":"",
-  "%Name":"obj_ai_exploration_landmark",
-  "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-  ],
+  "%Name":"obj_ai_marker_mission_area_entrance",
+  "eventList":[],
   "managed":true,
-  "name":"obj_ai_exploration_landmark",
+  "name":"obj_ai_marker_mission_area_entrance",
   "overriddenProperties":[],
   "parent":{
     "name":"markers",
@@ -30,8 +28,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_ai_exploration_landmark",
-    "path":"sprites/spr_ai_exploration_landmark/spr_ai_exploration_landmark.yy",
+    "name":"spr_ai_marker_mission_area_entrance",
+    "path":"sprites/spr_ai_marker_mission_area_entrance/spr_ai_marker_mission_area_entrance.yy",
   },
   "spriteMaskId":null,
   "visible":false,
