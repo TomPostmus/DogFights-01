@@ -1,5 +1,4 @@
 //Config
-draw_set_valign(fa_center)
 randomize()
 application_surface_draw_enable(false)
 global.central_server_base = "http://localhost:8080"
@@ -116,6 +115,7 @@ if (param_count < 2 + shell_count) {
 		var max_id_check = 20000; // maximum identifier number to check for
 	
 		ds_counts = array_create(array_length(ds_types), 0) // reset
+		ds_ns_counts = array_create(DS_NONSTANDARD_TYPES.END, 0)
 	
 		for (var i = 0; i < max_id_check; i ++) { // loop through identifiers
 		
