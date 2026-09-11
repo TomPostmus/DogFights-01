@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"player_implementations",
-    "path":"folders/Code/player/old_player_code/player_implementations.yy",
+    "path":"folders/Code/src/old_player_code/player_implementations.yy",
   },
   "parentObjectId":{
     "name":"obj_player",

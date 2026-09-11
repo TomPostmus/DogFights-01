@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"physics_parents",
-    "path":"folders/Code/ingame_engine/physics_parents.yy",
+    "path":"folders/Code/src/ingame_engine/physics_parents.yy",
   },
   "parentObjectId":null,
   "persistent":false,

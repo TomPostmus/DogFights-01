@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"interactables",
-    "path":"folders/Code/interactables.yy",
+    "path":"folders/Code/src/interactables.yy",
   },
   "parentObjectId":{
     "name":"obj_parent_pickups",

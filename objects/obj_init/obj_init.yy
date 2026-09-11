@@ -14,8 +14,8 @@
   "name":"obj_init",
   "overriddenProperties":[],
   "parent":{
-    "name":"Code",
-    "path":"folders/Code.yy",
+    "name":"src",
+    "path":"folders/Code/src.yy",
   },
   "parentObjectId":null,
   "persistent":true,

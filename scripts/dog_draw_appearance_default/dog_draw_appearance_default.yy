@@ -6,7 +6,7 @@
   "name":"dog_draw_appearance_default",
   "parent":{
     "name":"appearances",
-    "path":"folders/Code/player/old_player_code/appearances.yy",
+    "path":"folders/Code/src/old_player_code/appearances.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

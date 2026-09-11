@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"player_ai",
-    "path":"folders/Code/player/player_ai.yy",
+    "path":"folders/Code/src/player_ai.yy",
   },
   "parentObjectId":null,
   "persistent":true,

@@ -12,7 +12,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"body",
-    "path":"folders/Code/player/body.yy",
+    "path":"folders/Code/src/body.yy",
   },
   "parentObjectId":null,
   "persistent":false,

@@ -6,7 +6,7 @@
   "name":"anim_usp_leveraction",
   "parent":{
     "name":"animations",
-    "path":"folders/Code/weapons/animations.yy",
+    "path":"folders/Code/src/weapons/animations.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

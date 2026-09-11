@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"bullets",
-    "path":"folders/Code/weapons/bullets.yy",
+    "path":"folders/Code/src/weapons/bullets.yy",
   },
   "parentObjectId":null,
   "persistent":false,

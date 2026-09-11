@@ -6,7 +6,7 @@
   "name":"print",
   "parent":{
     "name":"misc",
-    "path":"folders/Code/helper_functions/misc.yy",
+    "path":"folders/Code/src/helper_functions/misc.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

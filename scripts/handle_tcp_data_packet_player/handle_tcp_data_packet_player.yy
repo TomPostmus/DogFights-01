@@ -6,7 +6,7 @@
   "name":"handle_tcp_data_packet_player",
   "parent":{
     "name":"networking",
-    "path":"folders/Code/networking.yy",
+    "path":"folders/Code/src/networking.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

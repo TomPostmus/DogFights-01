@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"markers",
-    "path":"folders/Code/player/player_ai/markers.yy",
+    "path":"folders/Code/src/player_ai/markers.yy",
   },
   "parentObjectId":null,
   "persistent":false,

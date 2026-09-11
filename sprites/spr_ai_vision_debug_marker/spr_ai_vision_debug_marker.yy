@@ -34,7 +34,7 @@
   "origin":4,
   "parent":{
     "name":"sprites",
-    "path":"folders/Code/player/player_ai/markers/sprites.yy",
+    "path":"folders/Code/src/player_ai/markers/sprites.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

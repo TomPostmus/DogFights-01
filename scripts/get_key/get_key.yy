@@ -6,7 +6,7 @@
   "name":"get_key",
   "parent":{
     "name":"key_bindings",
-    "path":"folders/Code/settings/key_bindings.yy",
+    "path":"folders/Code/src/settings/key_bindings.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

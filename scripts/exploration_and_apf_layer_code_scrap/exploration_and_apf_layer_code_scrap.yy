@@ -6,7 +6,7 @@
   "name":"exploration_and_apf_layer_code_scrap",
   "parent":{
     "name":"player_ai",
-    "path":"folders/Code/player/player_ai.yy",
+    "path":"folders/Code/src/player_ai.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

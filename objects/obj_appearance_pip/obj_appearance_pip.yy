@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"appearance",
-    "path":"folders/Code/player/appearance.yy",
+    "path":"folders/Code/src/appearance.yy",
   },
   "parentObjectId":{
     "name":"obj_appearance",
