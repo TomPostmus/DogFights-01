@@ -258,6 +258,7 @@
     {"id":{"name":"anim_usp_leveraction","path":"scripts/anim_usp_leveraction/anim_usp_leveraction.yy",},},
     {"id":{"name":"anim_usp_reload","path":"scripts/anim_usp_reload/anim_usp_reload.yy",},},
     {"id":{"name":"array_functions","path":"scripts/array_functions/array_functions.yy",},},
+    {"id":{"name":"atree_node","path":"scripts/atree_node/atree_node.yy",},},
     {"id":{"name":"biquad_filter","path":"scripts/biquad_filter/biquad_filter.yy",},},
     {"id":{"name":"create_camera","path":"scripts/create_camera/create_camera.yy",},},
     {"id":{"name":"create_controllers","path":"scripts/create_controllers/create_controllers.yy",},},
