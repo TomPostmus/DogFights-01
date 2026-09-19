@@ -5,9 +5,9 @@ atree_list = ds_list_create() // list of nodes in Action tree
 atree_curaction = undefined // current Action we are at
 
 function compute_safety(_x, _y) {
-
+	show_error("Not implemented", true)
 }
 
 function compute_path_cost(_dest_x, _dest_y) {
-
+	show_error("Not implemented", true)
 }
