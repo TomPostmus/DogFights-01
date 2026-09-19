@@ -1,4 +1,5 @@
 enum ACTION_TYPE {
+	ROOT,
 	INSPECT_LANDMARK,
 	ENGAGE_ENEMY,
 	FLEE_ENEMY,
@@ -22,6 +23,16 @@ function Action(_planner, _parent) constructor {
 	g_cost = undefined
 	s_cost = undefined
 
+}
+
+function Action_root(_planner) : Action(_planner, undefined) constructor {
+	_type = ACTION_TYPE.ROOT
+	
+	expected_hp = _planner.player.hp
+	expected_defpower = undefined
+	expected_safety = undefined
+	expected_knowlegde = undefined
+	expected_success = undefined
 }
 
 function Action_inspect_landmark(_planner, _parent, _poi) : Action(_planner, _parent) constructor {
