@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"misc",
-    "path":"folders/Code/helper_functions/misc.yy",
+    "path":"folders/Code/src/helper_functions/misc.yy",
   },
   "parentObjectId":null,
   "persistent":false,

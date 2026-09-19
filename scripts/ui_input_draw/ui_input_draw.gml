@@ -37,7 +37,9 @@ function ui_input_draw() {
 		draw_set_halign(text_halign)
 		draw_set_valign(text_valign)
 		draw_text(left + 2 + text_h_offset, top + height/2, text)
-		draw_set_valign(fa_center)
+		
+		draw_set_halign(fa_left)
+		draw_set_valign(fa_top)
 	}
 
 	draw_set_colour(c_white)

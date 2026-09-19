@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"movement",
-    "path":"folders/Code/player/movement.yy",
+    "path":"folders/Code/src/movement.yy",
   },
   "parentObjectId":null,
   "persistent":false,

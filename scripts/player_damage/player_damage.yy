@@ -6,7 +6,7 @@
   "name":"player_damage",
   "parent":{
     "name":"old_player_code",
-    "path":"folders/Code/player/old_player_code.yy",
+    "path":"folders/Code/src/old_player_code.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

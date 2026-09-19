@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"test_obj_ai_vision",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"test_obj_ai_vision",
+  "parent":{
+    "name":"player_ai",
+    "path":"folders/Code/test/player_ai.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

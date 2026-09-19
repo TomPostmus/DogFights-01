@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"planning_layers",
-    "path":"folders/Code/player/player_ai/planning_layers.yy",
+    "path":"folders/Code/src/player_ai/planning_layers.yy",
   },
   "parentObjectId":null,
   "persistent":false,

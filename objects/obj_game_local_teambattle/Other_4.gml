@@ -28,7 +28,7 @@ if (global.ingame()) { // if in in-game room
 			
 			with (_character) {
 				if (_ti == 0) {
-					appearance = create_controllers(obj_appearance_pip)
+					appearance = create_controllers(obj_appearance_bear)
 					appearance.character = id
 				} else if (_ti == 1) {
 					appearance = create_controllers(obj_appearance_bear)

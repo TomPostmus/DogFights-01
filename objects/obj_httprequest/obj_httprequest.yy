@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"httprequests",
-    "path":"folders/Code/networking/httprequests.yy",
+    "path":"folders/Code/src/networking/httprequests.yy",
   },
   "parentObjectId":null,
   "persistent":false,

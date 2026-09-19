@@ -6,7 +6,7 @@
   "name":"generate_room_index_list",
   "parent":{
     "name":"networking",
-    "path":"folders/Code/networking.yy",
+    "path":"folders/Code/src/networking.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

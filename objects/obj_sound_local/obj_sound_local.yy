@@ -13,7 +13,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"local_sound",
-    "path":"folders/Code/ingame_engine/local_sound.yy",
+    "path":"folders/Code/src/ingame_engine/local_sound.yy",
   },
   "parentObjectId":null,
   "persistent":false,

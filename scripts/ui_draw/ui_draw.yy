@@ -6,7 +6,7 @@
   "name":"ui_draw",
   "parent":{
     "name":"ui",
-    "path":"folders/Code/ui.yy",
+    "path":"folders/Code/src/ui.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

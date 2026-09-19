@@ -15,6 +15,16 @@ enum POI_TYPE { // types of Points of Interest (POI)
 }
 
 function Poi(_type, _inst, _x, _y) constructor {
+	
+	switch (_type) { // check type and set type_name string
+		case POI_TYPE.ENEMY: type_name = "Enemy"; break
+		case POI_TYPE.TEAMMATE: type_name = "Teammate"; break
+		case POI_TYPE.LANDMARK: type_name = "Landmark"; break
+		case POI_TYPE.PACKAGE: type_name = "Package"; break
+		default: 
+			show_error(string("Undefined POI type given in Poi constructor: {0}", _type), true)
+	}
+	
 	type = _type // type of POI
 	inst = _inst // instance associated with POI
 	x = _x // position of POI
@@ -23,15 +33,26 @@ function Poi(_type, _inst, _x, _y) constructor {
 	seen_ago = 0 // how many steps ago POI has been seen
 }
 
+//enum SCREEN_EDGE {
+//	E, NE, N, NW, W, SW, S, SE // 
+//}
+
+//function draw_sprite_screen_edge()
+
 // Draw vision overlay for debugging
 function debug_draw() {
-
-	// Draw landmarks in sight
-	for (var i = 0; i < ds_list_size(expl_landmarks_insight); i ++) {
-		var _landmark = expl_landmarks_insight[|i]
+	
+	// Draw POIs
+	var _m = 10
+	for (var i = 0; i < ds_list_size(pois); i ++) {
+		var _pio = pois[|i]
 			
-		draw_sprite_ext(spr_ai_exploration_landmark, 0, _landmark.x, _landmark.y , 1, 1, 0, c_white, expl_landmarks_novelty[? _landmark])
-			
+		var _alpha = 1 // feature: make marker fade away over time?
+		draw_sprite_ext(spr_ai_vision_debug_marker, 0, _pio.x, _pio.y , 1, 1, 0, c_white, _alpha)
+		
+		draw_set_colour(c_fuchsia)
+		draw_set_font(ft_normal)
+		draw_text(_pio.x + _m, _pio.y + _m, string("POI: {0}", _pio.type_name))
 	}
 	
 }

@@ -4,7 +4,7 @@
   "name":"sh_death_particle_metaball",
   "parent":{
     "name":"ingame_engine",
-    "path":"folders/Code/ingame_engine.yy",
+    "path":"folders/Code/src/ingame_engine.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

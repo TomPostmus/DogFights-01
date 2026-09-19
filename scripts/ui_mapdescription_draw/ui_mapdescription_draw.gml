@@ -25,18 +25,12 @@ function ui_mapdescription_draw() {
 		draw_rectangle(left, top, left + width, top + height, true)
 	
 		draw_set_colour(text_name_colour)
-		draw_set_halign(fa_left)
 		draw_set_font(map_name_font)
 		draw_text(left + 120, top + 23, map_name)
 	
 		draw_set_colour(text_description_colour)
-		draw_set_halign(fa_left)
-		draw_set_valign(fa_top)
 		draw_set_font(map_description_font)
 		draw_text_ext(left + 120, top + 37, map_description, 16, width - 140)
 	}
-
-	draw_set_valign(fa_center)
-
 
 }

@@ -6,7 +6,7 @@
   "name":"dog_anim_usp_leveraction",
   "parent":{
     "name":"animations",
-    "path":"folders/Code/player/old_player_code/appearances/animations.yy",
+    "path":"folders/Code/src/old_player_code/appearances/animations.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

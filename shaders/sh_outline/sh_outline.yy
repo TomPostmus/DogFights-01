@@ -4,7 +4,7 @@
   "name":"sh_outline",
   "parent":{
     "name":"interactables",
-    "path":"folders/Code/interactables.yy",
+    "path":"folders/Code/src/interactables.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

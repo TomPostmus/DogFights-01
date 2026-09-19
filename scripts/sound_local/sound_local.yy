@@ -6,7 +6,7 @@
   "name":"sound_local",
   "parent":{
     "name":"local_sound",
-    "path":"folders/Code/ingame_engine/local_sound.yy",
+    "path":"folders/Code/src/ingame_engine/local_sound.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

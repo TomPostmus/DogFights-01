@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"weapons",
-    "path":"folders/Code/weapons.yy",
+    "path":"folders/Code/src/weapons.yy",
   },
   "parentObjectId":{
     "name":"obj_weapon_gun_shotgun",

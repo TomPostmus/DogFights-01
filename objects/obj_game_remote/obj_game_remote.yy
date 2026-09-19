@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"lobby_and_games",
-    "path":"folders/Code/lobby_and_games.yy",
+    "path":"folders/Code/src/lobby_and_games.yy",
   },
   "parentObjectId":{
     "name":"obj_game",

@@ -204,6 +204,7 @@ draw = function() {
 		draw_set_colour(header_text_colour)
 		draw_set_halign(fa_x)
 		draw_text(x + 8, y + header_height/2, title)
+		draw_set_halign(fa_left)
 	} else {
 		//Body background
 		draw_set_color(backg_colour)
@@ -242,6 +243,7 @@ draw = function() {
 			draw_set_font(ft_menu_title)
 			draw_set_halign(fa_x)
 			draw_set_colour(header_text_colour)
+			draw_set_halign(fa_left)
 	
 			//draw_text_outlined(x + corner_size/2, y + corner_size/2, title, header_text_colour, c_black)
 			draw_text_bolded(x + corner_size/2, y + corner_size/2, title)

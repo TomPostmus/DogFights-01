@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"camera",
-    "path":"folders/Code/player/camera.yy",
+    "path":"folders/Code/src/camera.yy",
   },
   "parentObjectId":null,
   "persistent":false,

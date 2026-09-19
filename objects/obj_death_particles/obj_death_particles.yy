@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"ingame_engine",
-    "path":"folders/Code/ingame_engine.yy",
+    "path":"folders/Code/src/ingame_engine.yy",
   },
   "parentObjectId":null,
   "persistent":false,

@@ -6,7 +6,7 @@
   "name":"world_to_gui_coordinates",
   "parent":{
     "name":"helper_functions",
-    "path":"folders/Code/ui/helper_functions.yy",
+    "path":"folders/Code/src/ui/helper_functions.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -6,7 +6,7 @@
   "name":"strong_mod",
   "parent":{
     "name":"math",
-    "path":"folders/Code/helper_functions/math.yy",
+    "path":"folders/Code/src/helper_functions/math.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

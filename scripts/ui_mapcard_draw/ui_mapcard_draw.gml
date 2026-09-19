@@ -82,7 +82,6 @@ function ui_mapcard_draw() {
 	//Mapcard header title
 	draw_set_font(mapcard.header_font)
 	draw_set_colour(mapcard.header_text_colour)
-	draw_set_halign(fa_left)
 	draw_text(mapcard.left + 8, mapcard.top + mapcard.header_height/2,mapcard.map_index + mapcard.map_name)
 
 	//Exit button
