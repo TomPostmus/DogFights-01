@@ -1,11 +1,5 @@
 suite(function () {
-	section("ai_vision", function() {
-		//test("create_poi", function() {
-		//	var _type = POI_TYPE.ENEMY
-		//	var _poi = new Poi(_type, noone, 0, 0)
-		//	expect(_type).never().toThrow()
-		//})
-		
+	section("obj_ai_vision", function() {		
 		test("memory_contained", function() {
 			var _before = obj_init.ds_count_all()
 			
