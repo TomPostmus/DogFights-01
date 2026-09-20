@@ -71,9 +71,6 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 		}
 	
 		if (_chosen != undefined) { // if cell was chosen
-				
-			//var _i = _chosen.i
-			//var _j = _chosen.j
 	
 			if (!_prune) { // if explore
 					
