@@ -10,6 +10,7 @@ if (instance_exists(player) && instance_exists(player.body)) {
 
 	var _body_x = player.body.trunk.x
 	var _body_y = player.body.trunk.y
+	var _vision = player.vision
 
 	// Initialize Action tree
 	atree_curaction ??= new Action_root(id, _body_x, _body_y)
@@ -21,7 +22,11 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		var _chosen = powerlaw_weighting(atree_list, _grow, 1) // choose Action based on powerlaw weighting of S costs
 		
 		if (_chosen) {
-		
+			
+			// explore action node (add new nodes)
+			if (!_chosen.inside_mission_area)
+				new Action_enter_mission_area(id, _chosen, )
+			
 		}
 	
 	}

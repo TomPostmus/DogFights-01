@@ -13,3 +13,14 @@ function compute_safety(_x, _y) {
 function compute_path_cost(_dest_x, _dest_y) {
 	show_error("Not implemented", true)
 }
+
+// Compute defense power based on current weapon state
+function compute_defpower() {	
+	show_error("Not implemented", true)
+	
+	//if (!instance_exists(player))
+	//	show_error("Player does not exist", true)
+	
+	//if (!instance_exists(player.weapon)) // if has no weapon
+	//	return 0
+}
