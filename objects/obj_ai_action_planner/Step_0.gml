@@ -24,8 +24,17 @@ if (instance_exists(player) && instance_exists(player.body)) {
 		if (_chosen) {
 			
 			// explore action node (add new nodes)
-			if (!_chosen.inside_mission_area)
+			if (!_chosen.inside_mission_area) {
 				new Action_enter_mission_area(id, _chosen, )
+			} else {
+			
+				for (var i = 0; i < ds_list_size(_vision.landmarks); i ++) {
+					var _poi = _vision.landmarks[|i]
+					
+					new Action_inspect_landmark(id, _chosen, _poi.x, _poi.y)
+				}
+			
+			}
 			
 		}
 	
