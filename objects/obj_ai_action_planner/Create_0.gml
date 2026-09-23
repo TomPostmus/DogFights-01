@@ -6,7 +6,23 @@ atree_curaction = undefined // current Action we are at
 atree_update_time = 120 // after how many frames to update Action tree
 atree_update_counter = atree_update_time
 
-function compute_safety(_x, _y) {
+// Player progress state
+pstate = { // the current 'progress state' of the player
+	hp: 0,
+	defpower: 0,
+	mission_success: 0,
+	sochealth: 0,
+	knowlegde: 0
+}
+
+// Weights
+w_hp = 1000
+w_defpower = 100
+w_mission_success = 10
+w_sochealth = 10
+w_knowledge = 1
+
+function compute_social_health(_x, _y) {
 	show_error("Not implemented", true)
 }
 
