@@ -7,36 +7,32 @@ atree_update_time = 120 // after how many frames to update Action tree
 atree_update_counter = atree_update_time
 
 // Player progress state
-pstate = { // the current 'progress state' of the player
-	hp: 0,
-	defpower: 0,
-	mission_success: 0,
-	sochealth: 0,
-	knowlegde: 0
-}
+wstate = new WellnessState()
+wstate_weights = new WellnessStateWeights() // weights associated with each wstate dimension
 
-// Weights
-w_hp = 1000
-w_defpower = 100
-w_mission_success = 10
-w_sochealth = 10
-w_knowledge = 1
-
-function compute_social_health(_x, _y) {
+// For a given x, y position, compute the social energy, which is given by height of manifold bulked by teammates
+// (positive/attractive social energy) and dented by enemies (negative/repulsive), seen by vision of player
+/// @param {real} x
+/// @param {real} y
+/// @param {ds_list} _teammates List of teammate Pois
+/// @param {ds_list} _enemies List of enemy Pois
+/// @returns {integer} Height on manifold, between -500 and 500
+function compute_social_energy(_x, _y, _teammates, _enemies) {	 
 	show_error("Not implemented", true)
 }
 
-function compute_path_cost(_dest_x, _dest_y) {
-	show_error("Not implemented", true)
+// For a weapon and given hp_max value compute the defense power which measures how many kiks can be made using weapon
+/// @param {Inst} _weapon Instance of obj_weapon
+/// @param {integer} hp_max Maximum HP for living character
+/// @returns {real} The defense power, roughly representing how many kiks can be made with weapon
+function compute_defense_power(_weapon, _hp_max) {
+	if (!object_is_ancestor(_weapon.object_index, obj_weapon_gun))
+		show_error("Computation of defense power for non-gun type not implemented yet.", true)
+
+	var _nr_bullets = _weapon.ammo_mag + _weapon.ammo_reserve
+	return _nr_bullets *_weapon.damage /_hp_max
 }
 
-// Compute defense power based on current weapon state
-function compute_defpower() {	
+function compute_path_cost(_dest_x, _dest_y) {	
 	show_error("Not implemented", true)
-	
-	//if (!instance_exists(player))
-	//	show_error("Player does not exist", true)
-	
-	//if (!instance_exists(player.weapon)) // if has no weapon
-	//	return 0
 }

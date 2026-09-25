@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"atree_node",
+  "%Name":"ai_action",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"atree_node",
+  "name":"ai_action",
   "parent":{
     "name":"planning_layers",
     "path":"folders/Code/src/player_ai/planning_layers.yy",
