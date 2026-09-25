@@ -18,9 +18,12 @@ sound_fire : undefined,*/
 
 // Default stats (same for all guns)
 var _stats_default = {
+	fire_mode: GUN_FMODE_SEMI,
+	fire_rate: 1,
 	aim_dist: 30 // displacement of camera when ADS
 }
 stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
+stats = variable_clone(stats_default)
 
 // Weapon state
 aiming = false		// whether aiming weapon (aiming down sight)

@@ -26,11 +26,11 @@ function compute_social_energy(_x, _y, _teammates, _enemies) {
 /// @param {integer} hp_max Maximum HP for living character
 /// @returns {real} The defense power, roughly representing how many kiks can be made with weapon
 function compute_defense_power(_weapon, _hp_max) {
-	if (!object_is_ancestor(_weapon.object_index, obj_weapon_gun))
+	if (!object_is_class(_weapon.object_index, obj_weapon_gun))
 		show_error("Computation of defense power for non-gun type not implemented yet.", true)
 
 	var _nr_bullets = _weapon.ammo_mag + _weapon.ammo_reserve
-	return _nr_bullets *_weapon.damage /_hp_max
+	return _nr_bullets *_weapon.stats.damage /_hp_max
 }
 
 function compute_path_cost(_dest_x, _dest_y) {	

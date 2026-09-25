@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"test_memory_contained",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"test_memory_contained",
+  "parent":{
+    "name":"utils",
+    "path":"folders/Code/test/utils.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
