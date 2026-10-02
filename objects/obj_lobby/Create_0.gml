@@ -18,5 +18,6 @@ repeat (_num_ais) {
 }
 
 // Create game object
-game = instance_create_layer(0, 0, "Players", obj_game_local_teambattle)
+// COMMENTED OUT FOR Since I want games to be unique to room for easily switching between demos
+//game = instance_create_layer(0, 0, "Players", obj_game_local_teambattle)
 room_goto_next() // go to next room (which is assumed to be game room)
