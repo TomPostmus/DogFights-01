@@ -1,11 +1,9 @@
-/// @param object_index_1
-/// @param object_index_2
-function object_is_class() {
+/// @param {int} ind_child
+/// @param {int} ind_parent
+/// @returns {bool} Whether ind_child is child of ind_parent 
+function object_is_class(_ind_child, _ind_par) {
 
-	var obj1 = argument[0];
-	var obj2 = argument[1];
-
-	return (obj1 == obj2 || object_is_ancestor(obj1, obj2) || object_is_ancestor(obj2, obj1))
+	return (_ind_child == _ind_par || object_is_ancestor(_ind_child, _ind_par))
 
 
 }

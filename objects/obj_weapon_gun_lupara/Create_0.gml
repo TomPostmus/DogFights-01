@@ -19,8 +19,7 @@ var _stats_default = {
 	fire_pellets: 7
 }
 stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
-
-stats = struct_functions(stats_default)
+stats = variable_clone(stats_default)
 
 // Mods
 mods = {

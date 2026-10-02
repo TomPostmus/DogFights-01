@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ai_action",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ai_action",
+  "parent":{
+    "name":"planning_layers",
+    "path":"folders/Code/src/player_ai/planning_layers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

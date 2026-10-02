@@ -20,7 +20,7 @@ var _stats_default = {
 }
 stats_default = struct_merge(_stats_default, stats_default) // append to stats_default struct
 
-stats = struct_functions(stats_default)
+stats = variable_clone(stats_default)
 
 // Mods
 mods = {
@@ -75,7 +75,7 @@ function anim_init() {
 
 // Implement mod stats function
 function mod_stats() {
-	stats = struct_functions(stats_default)
+	stats = variable_clone(stats_default)
 	
 	if (mods.barrel == "silencer") {
 		stats.fire_volume -= 200

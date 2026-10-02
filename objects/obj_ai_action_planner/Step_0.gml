@@ -6,20 +6,32 @@ if (atree_update_counter <= 0) {
 	atree_update_counter = atree_update_time // reset update timer
 }
 
-if (instance_exists(player) && instance_exists(player.body)) {
+if (instance_exists(player) && instance_exists(player.character) && instance_exists(player.character.body)) {
 
 	var _body_x = player.body.trunk.x
 	var _body_y = player.body.trunk.y
 	var _vision = player.vision
+	var _character = player.character
+	var _weapon = player.character.weapon
 	
+	// Update current Wellness State of player	
 	if (_update) {
 		
-		// Update current Progress state of player
-
-		// Initialize Action tree
-		atree_curaction ??= new Action_root(id, _body_x, _body_y)
+		wstate.hp = _character.hp
+	
+		// compute defense power based on current weapon state
+		if (instance_exists(_weapon))  // if has weapon
+			wstate.defense_power = compute_defense_power(_weapon, _character.hp_max) // compute defense power using weapon and own character's hp_max
+		else
+			wstate.defense_power = 0
+	
+		// compute social health based on player's current position
+		wstate.social_health = compute_social_energy(_body_x, _body_y, _vision.teammates, _vision.enemies)
 	
 	}
+	
+	// Initialize Action tree
+	atree_curaction ??= new Action_root(id, _body_x, _body_y)
 	
 	// Grow or prune Action tree
 	if (_update) {
