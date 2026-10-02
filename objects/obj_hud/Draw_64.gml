@@ -21,7 +21,8 @@ surface_set_target(hud_surf)
 	}
 	
 	// Draw scoreboard HUD
-	scrboard_hud.draw(obj_lobby.game)
+	if (instance_exists(obj_game))
+		scrboard_hud.draw(obj_game)
 
 surface_reset_target()
 

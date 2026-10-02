@@ -8,7 +8,7 @@ global.key_binds = ds_map_create()
 global.key_actions = ds_map_create()
 global.frame_count = 0
 global.debug_print_count = 0
-global.ingame_rooms = [rm_map_josephsfarm, rm_test]
+global.ingame_rooms = [rm_map_josephsfarm, rm_test, rm_ai_demo_landmark_and_engage]
 
 // In-game function
 global.ingame = function() {
