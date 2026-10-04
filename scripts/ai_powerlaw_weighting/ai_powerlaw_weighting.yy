@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ai_powerlaw_weighting",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ai_powerlaw_weighting",
+  "parent":{
+    "name":"utils",
+    "path":"folders/Code/src/player_ai/planning_layers/utils.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

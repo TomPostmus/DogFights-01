@@ -1,9 +1,12 @@
+event_inherited()
+
 // Run update timer
-atree_update_counter --
+// TODO: use built-in GM timer?
+update_counter --
 var _update = false // whether to do Action tree update
-if (atree_update_counter <= 0) {
+if (update_counter <= 0) {
 	_update = true
-	atree_update_counter = atree_update_time // reset update timer
+	update_counter = update_frames // reset
 }
 
 if (instance_exists(player) && instance_exists(player.character) && instance_exists(player.character.body)) {
@@ -14,10 +17,10 @@ if (instance_exists(player) && instance_exists(player.character) && instance_exi
 	var _character = player.character
 	var _weapon = player.character.weapon
 	
-	// Update current Wellness State of player	
+	// Update current Wellness State of player
+	// TODO: maybe periodically update wstate of curaction node?
 	if (_update) {
 		
-		wstate.pos = [_body_x, _body_y]
 		wstate.hp = _character.hp
 	
 		// compute defense power based on current weapon state
@@ -38,7 +41,7 @@ if (instance_exists(player) && instance_exists(player.character) && instance_exi
 	if (_update) {
 		
 		var _grow = true // TODO: implement pruning selection
-		var _chosen = powerlaw_weighting(atree_list, _grow, 1) // choose Action based on powerlaw weighting of S costs
+		var _chosen = ai_powerlaw_weighting(atree_list, _grow, 1) // choose Action based on powerlaw weighting of S costs
 		
 		if (_chosen) {
 			

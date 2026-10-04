@@ -1,11 +1,10 @@
-// Given a list of structs with S cost fields, randomly chose one on basis of powerlaw weighting
-/// @function powerlaw_weighting(list, inv)
+/// @description Given a list of structs with S cost fields, randomly chose one on basis of powerlaw weighting
 /// @pure
 /// @param {ds_list} list List containing elements
 /// @param {bool} inv Bool whether to take inverse of S cost as weights
 /// @param {real} p Exponent value
 /// @returns {struct} The chosen element
-function powerlaw_weighting(_list, _inv, _p) {
+function ai_powerlaw_weighting(_list, _inv, _p) {
 	
 	var _size = ds_list_size(_list)
 	

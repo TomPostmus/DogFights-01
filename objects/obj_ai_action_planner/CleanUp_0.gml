@@ -1,1 +1,1 @@
-ds_list_destroy(atree_list)
+event_inherited()

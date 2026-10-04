@@ -1,6 +1,5 @@
 // Define a WellnessState
 function WellnessState() constructor {
-	pos = undefined // array of x, y position of destination
 	hp = 0
 	defense_power = 0
 	social_health = 0

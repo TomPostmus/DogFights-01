@@ -1,23 +1,19 @@
 {
   "$GMObject":"",
-  "%Name":"obj_ai_action_planner",
+  "%Name":"obj_ai_tree_planner",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":12,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":2,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_ai_action_planner",
+  "name":"obj_ai_tree_planner",
   "overriddenProperties":[],
   "parent":{
-    "name":"planning_layers",
-    "path":"folders/Code/src/player_ai/planning_layers.yy",
+    "name":"utils",
+    "path":"folders/Code/src/player_ai/planning_layers/utils.yy",
   },
-  "parentObjectId":{
-    "name":"obj_ai_tree_planner",
-    "path":"objects/obj_ai_tree_planner/obj_ai_tree_planner.yy",
-  },
+  "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
