@@ -10,8 +10,8 @@ update_counter = update_frames
 alarm[0] = update_frames
 
 // Player WholeState
-wstate = new WholeState()
-wstate_weights = new WholeStateWeights() // weights associated with each wstate dimension
+//wstate = new WholeState()
+//wstate_weights = new WholeStateWeights() // weights associated with each wstate dimension
 
 // For a given x, y position, compute the social energy, which is given by height of manifold bulked by teammates
 // (positive/attractive social energy) and dented by enemies (negative/repulsive), seen by vision of player

@@ -34,8 +34,10 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 		}
 	}
 	
+	poi_inst = undefined // instance associated with POI associated with this Action
+	expected_wstate = undefined // expected WholeState at the end of completing Action
 	if (_parent)
-		expected_wstate = variable_clone(_parent.expected_wstate) // copy wstate
+		expected_wstate = variable_clone(_parent.expected_wstate, 1) // deep copy wstate
 	
 	// compute H cost based on expected_wstate values
 	function compute_h_cost(_wstate_weights) {
@@ -50,8 +52,8 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	function draw() {
 		draw_circle(x, y, 5, false)
 		
-		if (parent)
-			draw_path(path, parent.x, parent.y, true)
+		if (path != undefined && path_exists(path))
+			draw_path(path, 0, 0, true)
 	}
 	
 	// Extend cleanup
@@ -71,15 +73,27 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 /// @param {WholeState} wstate_init Initial WholeState at position of root
 function AIActionRoot(_x, _y, _wstate_init) : AIAction(undefined, _x, _y) constructor {
 	type = ACTION_TYPE.ROOT
+	type_name = "Root"
 	
 	expected_wstate = _wstate_init // initialise wstate
 }
 
-//function Action_inspect_landmark(_planner, _parent, _x, _y) : Action(_planner, _parent, _x, _y) constructor {
-//	type = ACTION_TYPE.INSPECT_LANDMARK
+function AIActionInspectLandmark(_parent, _x, _y, _poi_inst) : AIAction(_parent, _x, _y) constructor {
+	type = ACTION_TYPE.INSPECT_LANDMARK
+	type_name = "Inspect Landmark"
 	
-//	expected_wstate.knowledge ++ // expect one more knowlegde point
-//}
+	poi_inst = _poi_inst
+	expected_wstate.knowledge ++ // expect one more knowlegde point
+	
+	for (var i = 0; i < ds_list_size(expected_wstate.pois); i ++) {
+		var _poi = expected_wstate.pois[|i]
+		if (_poi.inst = poi_inst) {
+			_poi.novelty_flag = false // landmark explored, lower novelty flag
+			break
+		}
+			
+	}
+}
 
 //function Action_enter_mission_area(_planner, _parent, _x, _y) : Action(_planner, _parent) constructor {
 //	type = ACTION_TYPE.ENTER_MISSION_AREA

@@ -19,7 +19,7 @@ function AIPoiLandmark(_inst, _x, _y) : AIPoi(_inst, _x, _y) constructor {
 	type = AIPOI_TYPE.LANDMARK
 	type_name = "Landmark"
 	
-	novel_flag = true // whether Landmark is novel for player
+	novelty_flag = true // whether Landmark is novel for player
 
 }
 

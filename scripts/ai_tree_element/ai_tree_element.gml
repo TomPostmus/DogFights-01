@@ -5,15 +5,15 @@ function AITreeElement(_parent) constructor {
 	delete_flag = false // flag that element is ready to be deleted from outside
 	cleaned = false // flag indicating that cleanup has been called and element should no longer be called upon
 
-	h_cost = undefined
-	g_cost = undefined
-	s_cost = undefined
+	h_cost = 0
+	g_cost = 0
+	s_cost = 0
 
 	// Mark element and children for deletion recursively
 	function mark_delete(_decouple=true) {
 		delete_flag = true // raise flag
 		
-		if (_decouple) {
+		if (parent && _decouple) {
 			var _list_i = ds_list_find_index(parent.children, self) // find self in parent children list
 			ds_list_delete(parent.children, _list_i) // remove self from list
 		}

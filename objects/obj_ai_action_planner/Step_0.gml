@@ -51,14 +51,14 @@ if (instance_exists(player) && instance_exists(player.character) && instance_exi
 		
 		if (_chosen) {
 			
-			// explore action node (add new nodes)
-			for (var i = 0; i < ds_list_size(_chosen.pois); i ++) {
-				var _poi = _chosen.pois[|i]
+			// Explore Action node (add new nodes)
+			for (var i = 0; i < ds_list_size(_chosen.expected_wstate.pois); i ++) {
+				var _poi = _chosen.expected_wstate.pois[|i]
 				
-				if (_poi.type == AIPOI_TYPE.LANDMARK) {
-					var _action = new AIActionInspectLandmark(id, _chosen, _poi.x, _poi.y)
+				if (_poi.type == AIPOI_TYPE.LANDMARK && _poi.novelty_flag) { // for new landmark
+					var _action = new AIActionInspectLandmark(_chosen, _poi.x, _poi.y, _poi.inst)
+					add_element(_chosen, _action) // add to tree
 				}
-					
 				
 			}
 			
