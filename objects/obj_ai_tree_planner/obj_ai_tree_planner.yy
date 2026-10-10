@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"utils",
-    "path":"folders/Code/src/player_ai/planning_layers/utils.yy",
+    "path":"folders/Code/src/player/player_ai/planning_layers/utils.yy",
   },
   "parentObjectId":null,
   "persistent":false,

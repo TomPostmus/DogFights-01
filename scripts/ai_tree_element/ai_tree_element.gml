@@ -21,5 +21,11 @@ function AITreeElement(_parent) constructor {
 		for (var i = 0; i < ds_list_size(children); i ++)
 			children[|i].mark_delete(false)	// mark children for deletion, without decoupling them (whole branch can go in trash)
 	}	
+	
+	// Cleanup data structures
+	function cleanup() {
+		cleaned = true			
+		ds_list_destroy(children)
+	}
 
 }

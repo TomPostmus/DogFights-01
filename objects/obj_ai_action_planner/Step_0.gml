@@ -11,51 +11,55 @@ if (update_counter <= 0) {
 
 if (instance_exists(player) && instance_exists(player.character) && instance_exists(player.character.body)) {
 
-	var _body_x = player.body.trunk.x
-	var _body_y = player.body.trunk.y
 	var _vision = player.vision
 	var _character = player.character
-	var _weapon = player.character.weapon
+	var _weapon = _character.weapon
+	var _body_x = _character.body.trunk.x
+	var _body_y = _character.body.trunk.y
 	
-	// Update current Wellness State of player
-	// TODO: maybe periodically update wstate of curaction node?
-	if (_update) {
-		
-		wstate.hp = _character.hp
-	
-		// compute defense power based on current weapon state
-		//if (instance_exists(_weapon))  // if has weapon
-		//	wstate.defense_power = compute_defense_power(_weapon, _character.hp_max) // compute defense power using weapon and own character's hp_max
-		//else
-		//	wstate.defense_power = 0
-	
-		// compute social health based on player's current position
-		//wstate.social_health = compute_social_energy(_body_x, _body_y, _vision.teammates, _vision.enemies)
-	
-	}
 	
 	// Initialize Action tree
-	atree_curaction ??= new Action_root(id, [_body_x, _body_y])
+	if (!root) {
+		
+		var _wstate_init = new WholeState()
+		_wstate_init.hp = _character.hp
+		ds_list_copy(_wstate_init.pois, _vision.pois)
+		// TODO: make function for computing WholeState based on current player state?
+		
+		initialize(new AIActionRoot(_body_x, _body_y, _wstate_init)) // initialise with root based on initial whole state
+		
+	}
+		
 	
-	// Grow or prune Action tree
 	if (_update) {
 		
+		// TODO Issue-001: regulary update root WholeState
+		
+			// compute defense power based on current weapon state
+			//if (instance_exists(_weapon))  // if has weapon
+			//	wstate.defense_power = compute_defense_power(_weapon, _character.hp_max) // compute defense power using weapon and own character's hp_max
+			//else
+			//	wstate.defense_power = 0
+	
+			// compute social health based on player's current position
+			//wstate.social_health = compute_social_energy(_body_x, _body_y, _vision.teammates, _vision.enemies)
+	
+		
+		// Grow or prune Action tree
 		var _grow = true // TODO: implement pruning selection
-		var _chosen = ai_powerlaw_weighting(atree_list, _grow, 1) // choose Action based on powerlaw weighting of S costs
+		var _chosen = ai_powerlaw_weighting(elements, _grow, 1) // choose Action based on powerlaw weighting of S costs
 		
 		if (_chosen) {
 			
 			// explore action node (add new nodes)
-			if (!_chosen.inside_mission_area) {
-				// TODO: implement
-			} else {
-			
-				for (var i = 0; i < ds_list_size(_vision.landmarks); i ++) {
-					var _poi = _vision.landmarks[|i]
-					
-					new Action_inspect_landmark(id, _chosen, _poi.x, _poi.y)
+			for (var i = 0; i < ds_list_size(_chosen.pois); i ++) {
+				var _poi = _chosen.pois[|i]
+				
+				if (_poi.type == AIPOI_TYPE.LANDMARK) {
+					var _action = new AIActionInspectLandmark(id, _chosen, _poi.x, _poi.y)
 				}
-			
+					
+				
 			}
 			
 		}

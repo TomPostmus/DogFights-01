@@ -1,37 +1,11 @@
 player = noone // reference to player object that Vision belongs to
-inst_to_poi = ds_map_create() // map of instances that have been seen, to stored Poi object
+inst_to_poi = ds_map_create() // map of instances that have been seen, to stored AIPoi object
 pois = ds_list_create() // list of POIs that have been seen
 enemies = ds_list_create() // list of enemy, teammate, package and landmark POIs that it has seen
 teammates = ds_list_create()
 packages = ds_list_create()
 landmarks = ds_list_create()
 
-
-enum POI_TYPE { // types of Points of Interest (POI)
-	ENEMY,
-	TEAMMATE,
-	LANDMARK,
-	PACKAGE
-}
-
-function Poi(_type, _inst, _x, _y) constructor {
-	
-	switch (_type) { // check type and set type_name string
-		case POI_TYPE.ENEMY: type_name = "Enemy"; break
-		case POI_TYPE.TEAMMATE: type_name = "Teammate"; break
-		case POI_TYPE.LANDMARK: type_name = "Landmark"; break
-		case POI_TYPE.PACKAGE: type_name = "Package"; break
-		default: 
-			show_error(string("Undefined POI type given in Poi constructor: {0}", _type), true)
-	}
-	
-	type = _type // type of POI
-	inst = _inst // instance associated with POI
-	x = _x // position of POI
-	y = _y
-	
-	seen_ago = 0 // how many steps ago POI has been seen
-}
 
 //enum SCREEN_EDGE {
 //	E, NE, N, NW, W, SW, S, SE // 

@@ -10,21 +10,27 @@
 
 for (var _pi = 0; _pi < ds_list_size(obj_lobby.players_active); _pi ++) { // only draw if AI is active player and we are currently drawing to its viewport
 if (obj_lobby.players_active[|_pi] == id && view_current == _pi) {
-		
+	
 	if (debug_draw_mode == 1) {
+		
+		// Draw Action planner
+		if (instance_exists(action_planner))
+			action_planner.draw()
+	
+	} else if (debug_draw_mode == 2) {
 	
 		// Draw RRT Grid layer
 		//layer_agrid.draw(true)
 		if (instance_exists(layer_rrt))
 			layer_rrt.draw()
 	
-	} else if (debug_draw_mode == 2) {
+	} else if (debug_draw_mode == 3) {
 		
 		// Draw A* Grid layer
 		if (instance_exists(layer_agrid))
 			layer_agrid.draw()
 	
-	} else if (debug_draw_mode == 3) {
+	} else if (debug_draw_mode == 4) {
 		
 		// Draw both
 		if (instance_exists(layer_agrid))

@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"central_managers",
-    "path":"folders/Code/src/player_ai/central_managers.yy",
+    "path":"folders/Code/src/player/player_ai/central_managers.yy",
   },
   "parentObjectId":null,
   "persistent":false,

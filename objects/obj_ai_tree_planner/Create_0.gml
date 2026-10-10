@@ -61,11 +61,23 @@ function cleanup_elements() {
 	for (var i = 0; i < ds_list_size(elements); i ++) {
 		var _element = elements[|i]
 		
-		if (root == _element)
-			root = undefined // reset root
-		
-		if (_element.delete_flag)
+		if (_element.delete_flag) {
+			
 			_element.cleanup()
+		
+			if (root == _element)
+				root = undefined // reset root
+				
+		}
 			
 	}
+}
+
+
+/// @function draw()
+/// @description Draw each element in elements list
+/// @context obj_ai_tree_planner
+function draw() {
+	for (var i = 0; i < ds_list_size(elements); i ++)
+		elements[|i].draw()
 }
