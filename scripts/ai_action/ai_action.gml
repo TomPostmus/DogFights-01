@@ -13,13 +13,13 @@ enum ACTION_TYPE {
 /// @param {real} x
 /// @param {real} y
 /// @description Create an AIAction element that represents an Action that the AI player can do.
-function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
+function AIAction(_x, _y) : AITreeElement() constructor {
 	
 	x = _x
 	y = _y
 	
 	 // GM path to destination position
-	if (_parent) {
+	if (parent) {
 		path = undefined
 		if (!instance_exists(obj_ai_topology))
 			show_error("Could not compute A* to destination; obj_ai_topology does not exist.", true)
@@ -28,7 +28,7 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 		
 		path = path_add()
 		if (!mp_grid_path(obj_ai_topology.grid, path, 
-			_parent.x, _parent.y, x, y, false)) {
+			parent.x, parent.y, x, y, false)) {
 			path_delete(path)
 			path = undefined
 		}
@@ -36,8 +36,8 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	
 	poi_inst = undefined // instance associated with POI associated with this Action
 	expected_wstate = undefined // expected WholeState at the end of completing Action
-	if (_parent)
-		expected_wstate = variable_clone(_parent.expected_wstate, 1) // deep copy wstate
+	if (parent)
+		expected_wstate = variable_clone(parent.expected_wstate, 1) // deep copy wstate
 	
 	// compute H cost based on expected_wstate values
 	function compute_h_cost(_wstate_weights) {
@@ -71,14 +71,14 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 /// @param {real} x
 /// @param {real} y
 /// @param {WholeState} wstate_init Initial WholeState at position of root
-function AIActionRoot(_x, _y, _wstate_init) : AIAction(undefined, _x, _y) constructor {
+function AIActionRoot(_x, _y, _wstate_init) : AIAction(_x, _y) constructor {
 	type = ACTION_TYPE.ROOT
 	type_name = "Root"
 	
 	expected_wstate = _wstate_init // initialise wstate
 }
 
-function AIActionInspectLandmark(_parent, _x, _y, _poi_inst) : AIAction(_parent, _x, _y) constructor {
+function AIActionInspectLandmark(_x, _y, _poi_inst) : AIAction(_x, _y) constructor {
 	type = ACTION_TYPE.INSPECT_LANDMARK
 	type_name = "Inspect Landmark"
 	

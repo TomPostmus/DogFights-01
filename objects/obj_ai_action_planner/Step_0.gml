@@ -56,7 +56,7 @@ if (instance_exists(player) && instance_exists(player.character) && instance_exi
 				var _poi = _chosen.expected_wstate.pois[|i]
 				
 				if (_poi.type == AIPOI_TYPE.LANDMARK && _poi.novelty_flag) { // for new landmark
-					var _action = new AIActionInspectLandmark(_chosen, _poi.x, _poi.y, _poi.inst)
+					var _action = new AIActionInspectLandmark(_poi.x, _poi.y, _poi.inst)
 					add_element(_chosen, _action) // add to tree
 				}
 				

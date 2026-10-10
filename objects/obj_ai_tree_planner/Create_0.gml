@@ -8,7 +8,7 @@ root = undefined // current root element
 /// @param {AITreeElement} element The element that is to become the root
 /// @context obj_ai_tree_planner
 function initialize(_element) {
-	if (root != undefined && !root.delete_flag)
+	if (root != undefined)
 		show_error("Root must be deleted before re-initializing tree.", true)
 	
 	root = _element
@@ -26,9 +26,34 @@ function add_element(_parent, _element) {
 		show_error("Could not add element to tree, to undefined parent.", true)
 	if (ds_list_find_index(elements, _parent) == -1)
 		show_error("Could not add element to parent that is not part of tree.", true)
-			
+	
 	ds_list_add(_parent.children, _element)
 	ds_list_add(elements, _element)
+	_element.parent = _parent
+}
+
+/// 
+function delete_element(_element, decouple=true) {
+	var _list_i = ds_list_find_index(elements, _element)
+	if (_list_i == -1)
+		show_error("Could not delete element that is not part of tree.", true)
+	
+	ds_list_delete(elements, _list_i)
+	
+	if (_element == root) {
+		root = undefined	
+	} else if (decouple) { // decouple from parent
+		_list_i = ds_list_find_index(_element.parent.children, _element) // find element in parent children list
+		if (_list_i == -1)
+			show_error("Child is not part of parent's children list, cannot decouple.", true)
+		
+		ds_list_delete(_element.parent.children, _list_i)
+	}
+	
+	for (var i = 0; i < ds_list_size(_element.children); i ++) // delete children recursively
+		delete_element(_element.children[|i], false)
+		
+	_element.cleanup() // clean up data structures
 }
 
 
@@ -50,26 +75,6 @@ function compute_path(_destination) {
 			show_error("Encountered undefined parent link in computing path to destination. Possibly tree is disjointed.", true)
 		
 		ds_list_insert(path, 0, _next_elem) // insert at start of path list
-	}
-}
-
-
-/// @function cleanup_elements()
-/// @description Clean up elements that are marked for deletion
-/// @context obj_ai_tree_planner
-function cleanup_elements() {
-	for (var i = 0; i < ds_list_size(elements); i ++) {
-		var _element = elements[|i]
-		
-		if (_element.delete_flag) {
-			
-			_element.cleanup()
-		
-			if (root == _element)
-				root = undefined // reset root
-				
-		}
-			
 	}
 }
 
