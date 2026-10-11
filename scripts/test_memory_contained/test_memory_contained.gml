@@ -8,4 +8,6 @@ function test_memory_contained(obj){
 	var _after =  obj_init.ds_count_all()
 			
 	expect(_before).toBeEqual(_after)
+	
+	instance_destroy(_inst)
 }

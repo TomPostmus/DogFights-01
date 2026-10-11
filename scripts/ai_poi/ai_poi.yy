@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ai_wellness_state",
+  "%Name":"ai_poi",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ai_wellness_state",
+  "name":"ai_poi",
   "parent":{
     "name":"planning_layers",
-    "path":"folders/Code/src/player_ai/planning_layers.yy",
+    "path":"folders/Code/src/player/player_ai/planning_layers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

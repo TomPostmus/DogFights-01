@@ -183,7 +183,7 @@
   "name":"rm_ai_demo_landmark_and_engage",
   "parent":{
     "name":"demo_rooms",
-    "path":"folders/Code/src/player_ai/demo_rooms.yy",
+    "path":"folders/Code/src/player/player_ai/demo_rooms.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

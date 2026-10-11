@@ -93,7 +93,15 @@ function TestCase(_val, _args) constructor {
 			var _fn_to_run = __gmtl_internal_fn_get_fn_index(__internal_value);
 			if (is_callable(_fn_to_run)) {
 				try {
-					_received = script_execute_ext(_fn_to_run, __internal_args);
+					
+					// My changes (Tom Postmus)
+					if (is_method(__internal_value))
+						_received = method_call(__internal_value, __internal_args) // I want to run a method variable in its own context
+					else if (is_callable(__internal_value))
+						_received = script_execute_ext(__internal_value, __internal_args)
+					else
+						throw "Internal value is not a callable."
+						
 				} catch(e) {
 					var _prev_indent = gmtl_indent;
 					gmtl_indent = 2;
@@ -131,7 +139,15 @@ function TestCase(_val, _args) constructor {
 			var _fn_to_run = __gmtl_internal_fn_get_fn_index(__internal_value);
 			if (is_callable(_fn_to_run)) {
 				try {
-					_received = script_execute_ext(_fn_to_run, __internal_args);
+					
+					// My changes (Tom Postmus)
+					if (is_method(__internal_value))
+						_received = method_call(__internal_value, __internal_args) // I want to run a method variable in its own context
+					else if (is_callable(__internal_value))
+						_received = script_execute_ext(__internal_value, __internal_args)
+					else
+						throw "Internal value is not a callable."
+						
 				} catch(e) {
 					var _prev_indent = gmtl_indent;
 					gmtl_indent = 2;
@@ -457,9 +473,17 @@ function TestCase(_val, _args) constructor {
 
 		var _threw = false;
 		var _thrownMessage = "";
-		var _fn_to_run = __gmtl_internal_fn_get_fn_index(__internal_value);
+		//__gmtl_internal_fn_get_fn_index(__internal_value);
 		try {
-			script_execute_ext(_fn_to_run, __internal_args);
+			
+			// My changes (Tom Postmus)
+			if (is_method(__internal_value))
+				method_call(__internal_value, __internal_args) // I want to run a method variable in its own context
+			else if (is_callable(__internal_value))
+				script_execute_ext(__internal_value, __internal_args)
+			else
+				throw "Internal value is not a callable."
+				
 		} catch(e) {
 			_threw = true;
 			_thrownMessage = is_struct(e) && variable_struct_exists(e, "message") ? e.message : string(e);

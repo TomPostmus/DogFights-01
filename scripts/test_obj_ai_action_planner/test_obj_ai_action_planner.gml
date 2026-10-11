@@ -1,9 +1,9 @@
 suite(function () {
 	section("obj_ai_action_planner", function() {
+		
 		test("memory_contained", function() {			
 			test_memory_contained(obj_ai_action_planner)
-		})
-		
+		})		
 		
 		test("compute_defense_power_gun_goodweather", function() {
 			// Arrange

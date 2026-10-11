@@ -1,7 +1,4 @@
 // Generate motion-planning grid
-grid_cell_size = 16 // cell size for A* Grid
-grid_n_cells_x = ceil(room_width/grid_cell_size)
-grid_n_cells_y = ceil(room_height/grid_cell_size)
 grid = mp_grid_create(0, 0, grid_n_cells_x, grid_n_cells_y, grid_cell_size, grid_cell_size)
 for (var i = 0; i < array_length(obstr_objects); i ++) {
 	mp_grid_add_instances(grid, obstr_objects[i], true)

@@ -19,6 +19,10 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 	move_input = layer_rrt.move_input // extract move outputs from RRT layer
 	turn_input = layer_rrt.turn_input
 	
+	// LOWER TWO LINES ARE PURELY FOR DEBUGGING: manual player controls
+	move_input = get_key(KEY_P2_FORWARD, KEYACTION_HOLD) - get_key(KEY_P2_BACKWARD, KEYACTION_HOLD)
+	turn_input = get_key(KEY_P2_LEFT, KEYACTION_HOLD) - get_key(KEY_P2_RIGHT, KEYACTION_HOLD)
+	
 	
 	// Send to character
 	character.interact = input_interact

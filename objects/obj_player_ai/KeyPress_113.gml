@@ -1,2 +1,2 @@
 debug_draw_mode ++
-debug_draw_mode = debug_draw_mode mod 4
+debug_draw_mode = debug_draw_mode mod 5

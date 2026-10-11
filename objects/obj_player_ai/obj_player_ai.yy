@@ -14,8 +14,8 @@
   "name":"obj_player_ai",
   "overriddenProperties":[],
   "parent":{
-    "name":"player",
-    "path":"folders/Code/src/player.yy",
+    "name":"player_ai",
+    "path":"folders/Code/src/player/player_ai.yy",
   },
   "parentObjectId":{
     "name":"obj_player",
