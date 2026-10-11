@@ -16,22 +16,21 @@ if (instance_exists(player) && instance_exists(player.character) && instance_exi
 	var _weapon = _character.weapon
 	var _body_x = _character.body.trunk.x
 	var _body_y = _character.body.trunk.y
-	
-	
-	// Initialize Action tree
-	if (!root) {
 		
-		var _wstate_init = new WholeState()
-		_wstate_init.hp = _character.hp
-		ds_list_copy(_wstate_init.pois, _vision.pois)
-		// TODO: make function for computing WholeState based on current player state?
-		
-		initialize(new AIActionRoot(_body_x, _body_y, _wstate_init)) // initialise with root based on initial whole state
-		
-	}
-		
-	
 	if (_update) {
+		
+	
+		// Initialize Action tree
+		if (!root) {
+		
+			var _wstate_init = new WholeState()
+			_wstate_init.hp = _character.hp
+			ds_list_copy(_wstate_init.pois, _vision.pois)
+			// TODO: make function for computing WholeState based on current player state?
+		
+			initialize(new AIActionRoot(_body_x, _body_y, _wstate_init)) // initialise with root based on initial whole state
+		
+		}
 		
 		// TODO Issue-001: regulary update root WholeState
 		
@@ -56,8 +55,8 @@ if (instance_exists(player) && instance_exists(player.character) && instance_exi
 				var _poi = _chosen.expected_wstate.pois[|i]
 				
 				if (_poi.type == AIPOI_TYPE.LANDMARK && _poi.novelty_flag) { // for new landmark
-					var _action = new AIActionInspectLandmark(_poi.x, _poi.y, _poi.inst)
-					add_element(_chosen, _action) // add to tree
+					var _action = new AIActionInspectLandmark(_chosen, _poi.x, _poi.y, _poi.inst)
+					add_element(_action) // add to tree
 				}
 				
 			}

@@ -12,6 +12,19 @@ function WholeState() constructor {
 	function cleanup() {
 		ds_list_destroy(pois)
 	}
+	
+	/// @function deep_copy() Return deep copy of self
+	/// @description Returns a deep copy of WholeState, where pois is a unique list with unique POI structs
+	/// @returns {WholeState} The deep copied WholeState
+	/// @context WholeState
+	function deep_copy() {
+		var _wstate_copy = variable_clone(self) // clone all fields
+		_wstate_copy.pois = ds_list_create() // create new list
+		for (var i = 0; i < ds_list_size(pois); i ++)
+			ds_list_add(_wstate_copy.pois, variable_clone(pois[|i])) // fill list with cloned POIs
+			
+		return _wstate_copy
+	}
 }
 
 /// @function WholeStateWeights()

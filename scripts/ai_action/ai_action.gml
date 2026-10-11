@@ -19,8 +19,8 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	y = _y
 	
 	 // GM path to destination position
+	path = undefined
 	if (parent) {
-		path = undefined
 		if (!instance_exists(obj_ai_topology))
 			show_error("Could not compute A* to destination; obj_ai_topology does not exist.", true)
 		if (obj_ai_topology.grid == undefined)
@@ -37,7 +37,7 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	poi_inst = undefined // instance associated with POI associated with this Action
 	expected_wstate = undefined // expected WholeState at the end of completing Action
 	if (parent)
-		expected_wstate = variable_clone(parent.expected_wstate, 1) // deep copy wstate
+		expected_wstate = parent.expected_wstate.deep_copy() // deep copy wstate
 	
 	// compute H cost based on expected_wstate values
 	function compute_h_cost(_wstate_weights) {
