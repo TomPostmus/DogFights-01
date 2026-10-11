@@ -1,3 +1,5 @@
+event_inherited()
+
 if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
 	var _body = character.body
 	var _weapon = character.weapon

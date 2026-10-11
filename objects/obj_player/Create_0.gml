@@ -5,7 +5,7 @@
 // References
 character = noone
 profile = noone
-camera = noone // created at start of room
+camera = noone // created when character spawns
 
 // Player id, id of player in game
 player_id = undefined

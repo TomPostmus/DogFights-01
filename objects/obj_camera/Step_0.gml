@@ -9,6 +9,6 @@ if (instance_exists(player) && instance_exists(player.character)) {
 		var _cam_x = player.character.body.get_x() + lengthdir_x(_forward, player.character.body.get_rotation())
 		var _cam_y = player.character.body.get_y() + lengthdir_y(_forward, player.character.body.get_rotation())
 		
-		set_target(_cam_x, _cam_y, 3)
+		set_target(_cam_x, _cam_y, zoom) // TODO: zoom to target_zoom value for e.g. weapon zoom behaviour (currently, zoom just remains unchanged)
 	}
 }
