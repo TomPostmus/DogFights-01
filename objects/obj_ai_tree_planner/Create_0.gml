@@ -10,6 +10,8 @@ root = undefined // current root element
 function initialize(_element) {
 	if (root != undefined)
 		show_error("Root must be deleted before re-initializing tree.", true)
+	if (_element.parent)
+		show_error("Tree must be initialised with element that has no parent.", true)
 	
 	root = _element
 	ds_list_add(elements, _element)
@@ -18,10 +20,10 @@ function initialize(_element) {
 
 /// @function add_element(parent, element)
 /// @description Adds a new element to the tree at the parent
-/// @param {AITreeElement} parent The parent element that new element is based on
 /// @param {AITreeElement} element The new element being added to tree
 /// @context obj_ai_tree_planner
-function add_element(_parent, _element) {
+function add_element(_element) {
+	var _parent = _element.parent
 	if (!_parent)
 		show_error("Could not add element to tree, to undefined parent.", true)
 	if (ds_list_find_index(elements, _parent) == -1)
@@ -29,10 +31,13 @@ function add_element(_parent, _element) {
 	
 	ds_list_add(_parent.children, _element)
 	ds_list_add(elements, _element)
-	_element.parent = _parent
 }
 
-/// 
+/// @function delete_element(element, [decouple])
+/// @description Gracefully removes element from tree. Also its children are removed.
+/// @param {AITreeElement} element The element to be removed
+/// @param {bool} decouple Whether to remove element from its parent's children list. Should only be false in recursive calls on children.
+/// @context obj_ai_tree_planner
 function delete_element(_element, decouple=true) {
 	var _list_i = ds_list_find_index(elements, _element)
 	if (_list_i == -1)
@@ -43,10 +48,7 @@ function delete_element(_element, decouple=true) {
 	if (_element == root) {
 		root = undefined	
 	} else if (decouple) { // decouple from parent
-		_list_i = ds_list_find_index(_element.parent.children, _element) // find element in parent children list
-		if (_list_i == -1)
-			show_error("Child is not part of parent's children list, cannot decouple.", true)
-		
+		_list_i = ds_list_find_index(_element.parent.children, _element) // find element in parent children list		
 		ds_list_delete(_element.parent.children, _list_i)
 	}
 	

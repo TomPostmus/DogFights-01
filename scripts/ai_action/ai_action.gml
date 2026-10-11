@@ -13,7 +13,7 @@ enum ACTION_TYPE {
 /// @param {real} x
 /// @param {real} y
 /// @description Create an AIAction element that represents an Action that the AI player can do.
-function AIAction(_x, _y) : AITreeElement() constructor {
+function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	
 	x = _x
 	y = _y
@@ -71,14 +71,14 @@ function AIAction(_x, _y) : AITreeElement() constructor {
 /// @param {real} x
 /// @param {real} y
 /// @param {WholeState} wstate_init Initial WholeState at position of root
-function AIActionRoot(_x, _y, _wstate_init) : AIAction(_x, _y) constructor {
+function AIActionRoot(_x, _y, _wstate_init) : AIAction(undefined, _x, _y) constructor {
 	type = ACTION_TYPE.ROOT
 	type_name = "Root"
 	
 	expected_wstate = _wstate_init // initialise wstate
 }
 
-function AIActionInspectLandmark(_x, _y, _poi_inst) : AIAction(_x, _y) constructor {
+function AIActionInspectLandmark(_parent, _x, _y, _poi_inst) : AIAction(_parent, _x, _y) constructor {
 	type = ACTION_TYPE.INSPECT_LANDMARK
 	type_name = "Inspect Landmark"
 	

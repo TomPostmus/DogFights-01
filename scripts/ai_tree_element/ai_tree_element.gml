@@ -1,6 +1,6 @@
-function AITreeElement() constructor {
+function AITreeElement(_parent) constructor {
 	
-	parent = undefined
+	parent = _parent
 	children = ds_list_create()
 	
 	h_cost = 0
