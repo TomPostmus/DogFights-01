@@ -195,21 +195,77 @@ suite(function () {
 		
 		})
 				
-		test("compute_path", function() {	
+		test("compute_path_goodweather", function() {	
 					
 			// Arrange
 			var _planner = create(0, 0, obj_ai_tree_planner)
-			var _root1 = new AITreeElement(undefined)
-			var _root2 = new AITreeElement(undefined)
-			_planner.initialize(_root1)
+			var _root = new AITreeElement(undefined)
+			var _branch1_element1 = new AITreeElement(_root)
+			var _branch2_element1 = new AITreeElement(_root)
+			var _branch2_element2 = new AITreeElement(_branch2_element1)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_branch1_element1)
+			_planner.add_element(_branch2_element1)
+			_planner.add_element(_branch2_element2)
+			
+			var _destination = _branch2_element2
 			
 			// Assert
-			// TODO: implement
+			expect(ds_list_size(_planner.path)).toBeEqual(0)
+			
+			// Act
+			expect(_planner.compute_path, [_destination]).never().toThrow()
+			
+			// Assert
+			expect(ds_list_size(_planner.path)).toBe(3)
+			expect(_planner.path[|0]).toBe(_root) // expect path to be branch 2, starting at root, ending at destination
+			expect(_planner.path[|1]).toBe(_branch2_element1)
+			expect(_planner.path[|2]).toBe(_destination)
+			expect(ds_list_find_index(_planner.path, _branch1_element1)).toBe(-1) // expect branch 1 not to be included in path
 			
 			// Cleanup
 			instance_destroy(_planner)
 		
 		})
+		
+		test("compute_path_tree_size_one", function() {
+			
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			
+			_planner.initialize(_root)
+			
+			// Act
+			expect(_planner.compute_path, [_root]).never().toThrow()
+			
+			// Assert
+			expect(ds_list_size(_planner.path)).toBe(1)  // expect path to only root
+			expect(_planner.path[|0]).toBe(_root)
+			
+			// Cleanup
+			instance_destroy(_planner)
+			
+		})
+		
+		test("compute_path_destination_outside_tree", function() {	
+					
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			var _element = new AITreeElement(_root)
+			
+			_planner.initialize(_root)
+			
+			// Act
+			expect(_planner.compute_path, [_element]).toThrow(
+				"Could not compute path to destination that is not part of tree.")
+			
+			// Cleanup
+			instance_destroy(_planner)
+		
+		})		
 		
 	})
 })

@@ -2,19 +2,24 @@ event_inherited()
 
 player = noone // reference to player object that planning layer belongs to
 
-atree_max_depth = 3 //maximum depth Action tree can have
+wstate_weights = new WholeStateWeights() // weights associated with each wstate dimension
 
 // Timer
-update_frames = 120 // after how many frames to update Action tree
-update_counter = update_frames
-alarm[0] = update_frames
+tree_update_frames = 120 // set timer lengths
+path_update_frames = 120
 
-// Player WholeState
-//wstate = new WholeState()
-//wstate_weights = new WholeStateWeights() // weights associated with each wstate dimension
+/// @description Compute H cost for AIAction element
+/// @context obj_ai_action_planner
+function compute_h_cost(_action) {
+	_action.h_cost = -wstate_weights.w_hp * _action.expected_wstate.hp 
+			- wstate_weights.w_defense_power * _action.expected_wstate.defense_power
+			- wstate_weights.w_mission_success * _action.expected_wstate.mission_success
+			- wstate_weights.w_social_health * _action.expected_wstate.social_health
+			- wstate_weights.w_knowledge * _action.expected_wstate.knowledge
+}
 
-// For a given x, y position, compute the social energy, which is given by height of manifold bulked by teammates
-// (positive/attractive social energy) and dented by enemies (negative/repulsive), seen by vision of player
+/// @description For a given x, y position, compute the social energy, which is given by height of manifold bulked by teammates
+/// (positive/attractive social energy) and dented by enemies (negative/repulsive), seen by vision of player
 /// @param {real} x
 /// @param {real} y
 /// @param {ds_list} _teammates List of teammate Pois
@@ -24,7 +29,7 @@ function compute_social_energy(_x, _y, _teammates, _enemies) {
 	show_error("Not implemented", true)
 }
 
-// For a weapon and given hp_max value compute the defense power which measures how many kiks can be made using weapon
+/// @description For a weapon and given hp_max value compute the defense power which measures how many kiks can be made using weapon
 /// @param {Inst} _weapon Instance of obj_weapon
 /// @param {integer} hp_max Maximum HP for living character
 /// @returns {real} The defense power, roughly representing how many kiks can be made with weapon

@@ -30,8 +30,8 @@ function WholeState() constructor {
 /// @function WholeStateWeights()
 /// @description Weights struct, associating importance to each WholeState field for H cost computation
 function WholeStateWeights() constructor {
-	w_hp = 1000
-	w_defense_power = 100
+	w_hp = 100
+	w_defense_power = 500
 	w_mission_success = 10
 	w_social_health = 10
 	w_knowledge = 1

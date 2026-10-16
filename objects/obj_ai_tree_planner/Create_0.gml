@@ -2,6 +2,10 @@ elements = ds_list_create() // list of AITreeNode elements
 path = ds_list_create() // list of elements that are the path from the root node to a destination node
 root = undefined // current root element
 
+tree_update_frames = 1 // after how many frames to do tree update (grow or prune)
+alarm[0] = tree_update_frames
+path_update_frames = 1 // after how many frames to compute optimal path through tree
+alarm[1] = path_update_frames
 
 /// @function initialize(element)
 /// @description Initializes tree with root element
@@ -72,12 +76,19 @@ function compute_path(_destination) {
 	var _next_elem = _destination // start backtracking from destination
 	while (_next_elem != root) { // backtrack through parents until found root
 		_next_elem = _next_elem.parent // go to parent
-		
-		if (_next_elem == undefined)
-			show_error("Encountered undefined parent link in computing path to destination. Possibly tree is disjointed.", true)
-		
 		ds_list_insert(path, 0, _next_elem) // insert at start of path list
 	}
+}
+
+// TODO Issue-004: implement flow based path computation
+function compute_path_flow() {
+	show_error("Not implemented yet.", true)
+}
+
+/// @description Compute H cost
+/// @context obj_ai_tree_planner
+function compute_h_cost(_element) {
+	show_error("This function is meant to be implemented in inheriting objects.", true)
 }
 
 
