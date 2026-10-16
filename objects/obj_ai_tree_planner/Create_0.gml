@@ -96,6 +96,17 @@ function compute_h_cost(_element) {
 /// @description Draw each element in elements list
 /// @context obj_ai_tree_planner
 function draw() {
-	for (var i = 0; i < ds_list_size(elements); i ++)
+	
+	draw_set_colour(c_blue)
+	for (var i = 0; i < ds_list_size(elements); i ++) {
+		if (ds_list_find_index(path, elements[|i]) != -1)
+			continue
+		
 		elements[|i].draw()
+	}
+		
+	draw_set_colour(c_lime)
+	for (var i = 0; i < ds_list_size(path); i ++)
+		path[|i].draw()
+		
 }

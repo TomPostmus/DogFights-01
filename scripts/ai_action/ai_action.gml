@@ -28,7 +28,7 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 		
 		path = path_add()
 		if (mp_grid_path(obj_ai_topology.grid, path, parent.x, parent.y, x, y, false)) {
-			g_cost = path_get_length(path) // TODO: compute implementation-specific G cost for AIActions
+			//g_cost = path_get_length(path) // TODO: compute implementation-specific G cost for AIActions
 		} else {
 			path_delete(path)
 			path = undefined
@@ -44,8 +44,8 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	function draw() {
 		draw_circle(x, y, 5, false)
 		
-		if (h_cost != undefined)
-			draw_text(x + 20, y + 20, h_cost)
+		if (s_cost != undefined)
+			draw_text(x + 20, y + 20, s_cost)
 		
 		for (var i = 0; i < ds_list_size(expected_wstate.pois); i ++) {
 			var _poi = expected_wstate.pois[|i]
