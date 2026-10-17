@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Globals",
   "parent":{
-    "name":"DogFights",
-    "path":"DogFights.yyp",
+    "name":"src",
+    "path":"folders/Code/src.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

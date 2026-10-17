@@ -6,7 +6,7 @@
   "name":"draw_text_bolded",
   "parent":{
     "name":"OldUI",
-    "path":"folders/OldUI.yy",
+    "path":"folders/Legacy/OldUI.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

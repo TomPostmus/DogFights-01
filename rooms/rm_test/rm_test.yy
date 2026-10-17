@@ -162,8 +162,8 @@
   ],
   "name":"rm_test",
   "parent":{
-    "name":"DogFights",
-    "path":"DogFights.yyp",
+    "name":"demo",
+    "path":"folders/AssetsRooms/ingame_rooms/demo.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

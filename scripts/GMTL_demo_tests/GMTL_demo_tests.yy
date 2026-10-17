@@ -6,7 +6,7 @@
   "name":"GMTL_demo_tests",
   "parent":{
     "name":"Demo",
-    "path":"folders/Libraries/GMTL/Demo.yy",
+    "path":"folders/Code/third_party_libraries/GMTL/Demo.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

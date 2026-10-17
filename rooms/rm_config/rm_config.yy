@@ -17,8 +17,8 @@
   ],
   "name":"rm_config",
   "parent":{
-    "name":"DogFights",
-    "path":"DogFights.yyp",
+    "name":"AssetsRooms",
+    "path":"folders/AssetsRooms.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

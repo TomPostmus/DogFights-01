@@ -6,7 +6,7 @@
   "name":"ui_window_position_element",
   "parent":{
     "name":"ui_window",
-    "path":"folders/OldUI/scripts/ui_window.yy",
+    "path":"folders/Legacy/OldUI/scripts/ui_window.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

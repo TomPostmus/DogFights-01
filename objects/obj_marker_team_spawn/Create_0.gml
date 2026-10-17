@@ -1,1 +1,1 @@
-team_id = undefined // the team that this marker is for
+team_id = 0 // the team that this marker is for, team 0 by default

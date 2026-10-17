@@ -1,13 +1,46 @@
+event_inherited()
+
 // Create in-game related player objects (so outside of lobby room)
 if (global.ingame()) { // if in in-game room
 	
+	team_scores = array_create(teams_number, 0)
 	team_lives = array_create(teams_number, lives_init) // reset lives
+	team_spawns = array_create(teams_number, undefined)
+	team_reserves = array_create(teams_number, undefined)
 	team_scores = array_create(teams_number, 0)
 	
-	// Gather team spawns in lists
 	for (var i = 0; i < teams_number; i ++) {
-		ds_list_clear(team_spawns[i]) // clear lists
-		ds_list_clear(team_reserves[i])
+		team_spawns[i] = ds_list_create() // create lists
+		team_reserves[i] = ds_list_create()
+	}
+	
+	// Determine team sizes
+	var _players_number = ds_list_size(obj_lobby.players)
+	var _team_size = floor(_players_number / teams_number) // floored average size of teams
+	var _remainder = _players_number - _team_size * teams_number // how many remaining players (after dividing in equal portions)
+	team_sizes = array_create(teams_number) // array of team sizes (players divided across teams equally, with remainder)
+	for (var i = 0; i < teams_number; i ++) { // determine distribution
+		if (_remainder > 0) {
+			team_sizes[i] = _team_size + 1
+			_remainder -= 1 // use up one of remaining (unassigned) players
+		} else {
+			team_sizes[i] = _team_size
+		}
+	}
+
+	// Populate teams
+	teams = array_create(teams_number) // array of teams (lists) of players
+	var _player_i = 0 // index of player inst
+	for (var i = 0; i < teams_number; i ++) {
+		teams[i] = ds_list_create()
+		repeat (team_sizes[i]) {
+			var _player = instance_find(obj_player, _player_i) // find next player
+			_player.team_id = i
+			_player.team_color = team_colors[i]
+		
+			ds_list_add(teams[i], _player) // add to team
+			_player_i += 1
+		}
 	}
 		
 	with (obj_marker_team_spawn) {

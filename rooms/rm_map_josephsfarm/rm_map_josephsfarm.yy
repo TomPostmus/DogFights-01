@@ -1514,8 +1514,8 @@
   ],
   "name":"rm_map_josephsfarm",
   "parent":{
-    "name":"AssetsMaps",
-    "path":"folders/AssetsMaps.yy",
+    "name":"maps",
+    "path":"folders/AssetsRooms/ingame_rooms/maps.yy",
   },
   "parentRoom":null,
   "physicsSettings":{
