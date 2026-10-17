@@ -1,13 +1,8 @@
-enum AI_PATH_MODE {
-	FLOW, // path flow mode, path is computed based on largest child count
-	FIND // path find mode, path is computed based on lowest H cost
-}
-
 // Inputs from player
 body_x = undefined // the current x,y position of the player
 body_y = undefined
 cost_field = undefined // the cost field in which A* Grid should grow
-path_mode = AI_PATH_MODE.FLOW // set to path flow mode
+path_mode = AI_PATH_MODE.FLOW_BASED // set to path flow mode
 
 // Output to player
 cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path

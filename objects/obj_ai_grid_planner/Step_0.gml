@@ -168,7 +168,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined) { // 
 			ds_list_clear(agrid_path) // clear old path
 			
 			// Find path based on flow
-			if (path_mode == AI_PATH_MODE.FLOW) {
+			if (path_mode == AI_PATH_MODE.FLOW_BASED) {
 				
 				var _cur_cell = agrid_curcell
 				var _prev_orientation = undefined // orientation from previous cell to current cell

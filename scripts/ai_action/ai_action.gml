@@ -27,30 +27,42 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 			show_error("Could not compute A* to destination; obj_ai_topology.grid is undefined.", true)
 		
 		path = path_add()
-		if (!mp_grid_path(obj_ai_topology.grid, path, 
-			parent.x, parent.y, x, y, false)) {
+		if (mp_grid_path(obj_ai_topology.grid, path, parent.x, parent.y, x, y, false)) {
+			//g_cost = path_get_length(path) // TODO: compute implementation-specific G cost for AIActions
+		} else {
 			path_delete(path)
 			path = undefined
 		}
 	}
 	
-	poi_inst = undefined // instance associated with POI associated with this Action
+	inst = undefined // instance associated with this Action
 	expected_wstate = undefined // expected WholeState at the end of completing Action
 	if (parent)
 		expected_wstate = parent.expected_wstate.deep_copy() // deep copy wstate
 	
-	// compute H cost based on expected_wstate values
-	function compute_h_cost(_wstate_weights) {
-		h_cost = -_wstate_weights.w_hp * expected_wstate.hp 
-			- _wstate_weights.w_defpower * expected_wstate.defpower
-			- _wstate_weights.w_mission_success * expected_wstate.mission_success
-			- _wstate_weights.w_sochealth * expected_wstate.sochealth
-			- _wstate_weights.w_knowledge * expected_wstate.knowledge
-	}
-	
 	// Draw Action node with path
 	function draw() {
 		draw_circle(x, y, 5, false)
+		
+		if (s_cost != undefined)
+			draw_text(x + 20, y + 20, s_cost)
+		
+		for (var i = 0; i < ds_list_size(expected_wstate.pois); i ++) {
+			var _poi = expected_wstate.pois[|i]
+			
+			var _exists_in_children = false
+			for (var j = 0; j < ds_list_size(children); j ++)
+				if (children[|j].inst == _poi.inst)
+					_exists_in_children = true
+			if (_exists_in_children)
+				continue
+			
+			if (_poi.type == AIPOI_TYPE.LANDMARK && _poi.novelty_flag) {
+				var dir = point_direction(x, y, _poi.x, _poi.y)
+				draw_arrow(x + lengthdir_x(7, dir), y + lengthdir_y(7, dir),
+						   x + lengthdir_x(15, dir), y + lengthdir_y(15, dir), 3)
+			}
+		}
 		
 		if (path != undefined && path_exists(path))
 			draw_path(path, 0, 0, true)
@@ -58,7 +70,7 @@ function AIAction(_parent, _x, _y) : AITreeElement(_parent) constructor {
 	
 	// Extend cleanup
 	super_cleanup = cleanup
-	function cleanup() {
+	cleanup = function() {
 		super_cleanup() // call super function
 		
 		if (path_exists(path))
@@ -78,16 +90,16 @@ function AIActionRoot(_x, _y, _wstate_init) : AIAction(undefined, _x, _y) constr
 	expected_wstate = _wstate_init // initialise wstate
 }
 
-function AIActionInspectLandmark(_parent, _x, _y, _poi_inst) : AIAction(_parent, _x, _y) constructor {
+function AIActionInspectLandmark(_parent, _x, _y, _inst) : AIAction(_parent, _x, _y) constructor {
 	type = ACTION_TYPE.INSPECT_LANDMARK
 	type_name = "Inspect Landmark"
 	
-	poi_inst = _poi_inst
+	inst = _inst // instance action is associated with
 	expected_wstate.knowledge ++ // expect one more knowlegde point
 	
 	for (var i = 0; i < ds_list_size(expected_wstate.pois); i ++) {
 		var _poi = expected_wstate.pois[|i]
-		if (_poi.inst = poi_inst) {
+		if (_poi.inst = inst) {
 			_poi.novelty_flag = false // landmark explored, lower novelty flag
 			break
 		}
