@@ -131,6 +131,29 @@ suite(function () {
 			
 		})
 		
+		test("add_element_progeny_count", function() {
+			
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			
+			var _root = new AITreeElement(undefined)
+			var _element1 = new AITreeElement(_root)
+			var _element2 = new AITreeElement(_element1)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_element1)
+			_planner.add_element(_element2)
+			
+			// Assert
+			expect(_root.progeny).toBe(2)
+			expect(_element1.progeny).toBe(1)
+			expect(_element2.progeny).toBe(0)
+			
+			// Cleanup
+			instance_destroy(_planner)
+			
+		})
+		
 		test("delete_element_from_root", function() {	
 					
 			// Arrange
@@ -194,6 +217,29 @@ suite(function () {
 			instance_destroy(_planner)
 		
 		})
+		
+		test("delete_element_progeny_count", function() {
+			
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			var _element1 = new AITreeElement(_root)
+			var _element2 = new AITreeElement(_element1)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_element1)
+			_planner.add_element(_element2)
+			
+			// Act
+			_planner.delete_element(_element1)
+			
+			// Assert
+			expect(_root.progeny).toBe(0)
+			
+			// Cleanup
+			instance_destroy(_planner)
+			
+		})
 				
 		test("compute_path_goodweather", function() {	
 					
@@ -210,9 +256,6 @@ suite(function () {
 			_planner.add_element(_branch2_element2)
 			
 			var _destination = _branch2_element2
-			
-			// Assert
-			expect(ds_list_size(_planner.path)).toBeEqual(0)
 			
 			// Act
 			expect(_planner.compute_path, [_destination]).never().toThrow()
@@ -249,6 +292,34 @@ suite(function () {
 			
 		})
 		
+		test("compute_path_reinitialize", function() {
+			
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			var _element1 = new AITreeElement(_root)
+			var _element2 = new AITreeElement(_root)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_element1)
+			_planner.add_element(_element2)
+			
+			_planner.compute_path(_element1)
+			
+			// Act
+			_planner.compute_path(_element2) // reinitialize path
+			
+			// Assert
+			expect(ds_list_size(_planner.path)).toBe(2)
+			expect(_planner.path[|0]).toBe(_root) // expect path to be to element 2
+			expect(_planner.path[|1]).toBe(_element2)
+			expect(ds_list_find_index(_planner.path, _element1)).toBe(-1) // expect element 1 no longer to be included
+			
+			// Cleanup
+			instance_destroy(_planner)
+			
+		})
+		
 		test("compute_path_destination_outside_tree", function() {	
 					
 			// Arrange
@@ -265,7 +336,36 @@ suite(function () {
 			// Cleanup
 			instance_destroy(_planner)
 		
-		})		
+		})
+		
+		test("compute_path_flow", function() {	
+					
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			var _branch1_element1 = new AITreeElement(_root)
+			var _branch2_element1 = new AITreeElement(_root)
+			var _branch2_element2 = new AITreeElement(_branch2_element1)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_branch1_element1)
+			_planner.add_element(_branch2_element1)
+			_planner.add_element(_branch2_element2)
+			
+			// Act
+			_planner.compute_path_flow()
+			
+			// Assert
+			expect(ds_list_size(_planner.path)).toBe(3)
+			expect(_planner.path[|0]).toBe(_root) // expect path to be branch 2, starting at root, ending at destination
+			expect(_planner.path[|1]).toBe(_branch2_element1)
+			expect(_planner.path[|2]).toBe(_branch2_element2)
+			expect(ds_list_find_index(_planner.path, _branch1_element1)).toBe(-1) // expect branch 1 not to be included in path
+			
+			// Cleanup
+			instance_destroy(_planner)
+		
+		})
 		
 	})
 })
