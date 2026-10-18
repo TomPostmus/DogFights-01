@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"camera",
-    "path":"folders/Code/src/camera.yy",
+    "path":"folders/Code/src/ingame_engine/camera.yy",
   },
   "parentObjectId":null,
   "persistent":false,

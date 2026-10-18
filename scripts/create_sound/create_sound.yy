@@ -6,7 +6,7 @@
   "name":"create_sound",
   "parent":{
     "name":"layer_create_functions",
-    "path":"folders/Code/src/helper_functions/layer_create_functions.yy",
+    "path":"folders/Code/src/utils/layer_create_functions.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

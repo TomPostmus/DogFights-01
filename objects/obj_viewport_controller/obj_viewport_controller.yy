@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"viewports",
-    "path":"folders/Code/src/viewports.yy",
+    "path":"folders/Code/src/ingame_engine/viewports.yy",
   },
   "parentObjectId":null,
   "persistent":true,

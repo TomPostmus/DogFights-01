@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"body",
-    "path":"folders/Code/src/body.yy",
+    "path":"folders/Code/src/player/body.yy",
   },
   "parentObjectId":{
     "name":"obj_phygroup_half",

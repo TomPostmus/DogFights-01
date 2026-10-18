@@ -6,7 +6,7 @@
   "name":"ds_list_contains",
   "parent":{
     "name":"misc",
-    "path":"folders/Code/src/helper_functions/misc.yy",
+    "path":"folders/Code/src/utils/misc.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

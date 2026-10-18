@@ -6,7 +6,7 @@
   "name":"room_set_viewports",
   "parent":{
     "name":"viewports",
-    "path":"folders/Code/src/viewports.yy",
+    "path":"folders/Code/src/ingame_engine/viewports.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
