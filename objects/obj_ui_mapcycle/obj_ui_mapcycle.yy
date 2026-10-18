@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"elements",
-    "path":"folders/OldUI/elements.yy",
+    "path":"folders/Legacy/OldUI/elements.yy",
   },
   "parentObjectId":null,
   "persistent":false,

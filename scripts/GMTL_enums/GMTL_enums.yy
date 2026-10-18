@@ -6,7 +6,7 @@
   "name":"GMTL_enums",
   "parent":{
     "name":"Setup",
-    "path":"folders/Libraries/GMTL/Setup.yy",
+    "path":"folders/Code/third_party_libraries/GMTL/Setup.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

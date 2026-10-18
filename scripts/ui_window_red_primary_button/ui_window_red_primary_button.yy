@@ -6,7 +6,7 @@
   "name":"ui_window_red_primary_button",
   "parent":{
     "name":"styles",
-    "path":"folders/OldUI/scripts/styles.yy",
+    "path":"folders/Legacy/OldUI/scripts/styles.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

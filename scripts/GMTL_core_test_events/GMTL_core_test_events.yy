@@ -6,7 +6,7 @@
   "name":"GMTL_core_test_events",
   "parent":{
     "name":"Core",
-    "path":"folders/Libraries/GMTL/Core.yy",
+    "path":"folders/Code/third_party_libraries/GMTL/Core.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

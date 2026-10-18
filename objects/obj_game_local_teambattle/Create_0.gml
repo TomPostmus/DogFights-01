@@ -2,50 +2,16 @@ event_inherited()
 
 // Game stats
 friendly_fire = false
-teams_number = 2 // how many teams
+teams_number = 2 // how many teams, default 2
 score_win = 60 // score for winning
 lives_init = 3 // how many lives each team begins with (army size), defined in creation code in rooms
 
-// Team vars
+// Team vars (initialized in Room Start)
 team_colors = [c_red, c_blue, c_green] // team identification colors
-team_scores = array_create(teams_number, 0) // array keeping track of scores of teams
-team_reserves = array_create(teams_number, undefined) // array of lists of reserves (remaining soldier/characters) that teams have
-team_spawns = array_create(teams_number, undefined)
-team_lives = array_create(teams_number, lives_init) // array keeping track of team lives
-
-for (var i = 0; i < teams_number; i ++) {
-	team_spawns[i] = ds_list_create() // create lists
-	team_reserves[i] = ds_list_create()
-}
-
-// Determine team sizes
-var _players_number = ds_list_size(obj_lobby.players)
-var _team_size = floor(_players_number / teams_number) // floored average size of teams
-var _remainder = _players_number - _team_size * teams_number // how many remaining players (after dividing in equal portions)
-team_sizes = array_create(teams_number) // array of team sizes (players divided across teams equally, with remainder)
-for (var i = 0; i < teams_number; i ++) { // determine distribution
-	if (_remainder > 0) {
-		team_sizes[i] = _team_size + 1
-		_remainder -= 1 // use up one of remaining (unassigned) players
-	} else {
-		team_sizes[i] = _team_size
-	}
-}
-
-// Populate teams
-teams = array_create(teams_number) // array of teams (lists) of players
-var _player_i = 0 // index of player inst
-for (var i = 0; i < teams_number; i ++) {
-	teams[i] = ds_list_create()
-	repeat (team_sizes[i]) {
-		var _player = instance_find(obj_player, _player_i) // find next player
-		_player.team_id = i
-		_player.team_color = team_colors[i]
-		
-		ds_list_add(teams[i], _player) // add to team
-		_player_i += 1
-	}
-}
+team_scores = undefined // array keeping track of scores of teams
+team_reserves = undefined // array of lists of reserves (remaining soldier/characters) that teams have
+team_spawns = undefined
+team_lives = undefined // array keeping track of team lives
 
 // Register damage, check team ids and decide whether to deal damage
 function register_damage(_c_affected, _c_affector_team_id, _p_affector, _damage) {
@@ -63,6 +29,9 @@ function register_kik(_p_affected, _p_affector) {
 
 // Draw game state in HUD (hud controller as _parent)
 function draw_hud(_parent) {
+	if (!is_initialized)
+		return 0
+	
 	var _m = _parent.cont_margin
 	
 	// Draw score to win in big text

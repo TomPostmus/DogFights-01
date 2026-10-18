@@ -18,7 +18,7 @@
   "name":"r_gmtl_demo",
   "parent":{
     "name":"Demo",
-    "path":"folders/Libraries/GMTL/Demo.yy",
+    "path":"folders/Code/third_party_libraries/GMTL/Demo.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

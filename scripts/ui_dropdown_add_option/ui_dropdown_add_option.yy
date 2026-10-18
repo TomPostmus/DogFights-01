@@ -6,7 +6,7 @@
   "name":"ui_dropdown_add_option",
   "parent":{
     "name":"scripts",
-    "path":"folders/OldUI/scripts.yy",
+    "path":"folders/Legacy/OldUI/scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

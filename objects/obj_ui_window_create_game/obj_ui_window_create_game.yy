@@ -13,7 +13,7 @@
   ],
   "parent":{
     "name":"windows",
-    "path":"folders/OldUI/windows.yy",
+    "path":"folders/Legacy/OldUI/windows.yy",
   },
   "parentObjectId":{
     "name":"obj_ui_window",

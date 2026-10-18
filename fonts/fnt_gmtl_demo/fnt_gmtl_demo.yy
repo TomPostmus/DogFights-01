@@ -648,7 +648,7 @@
   "name":"fnt_gmtl_demo",
   "parent":{
     "name":"Demo",
-    "path":"folders/Libraries/GMTL/Demo.yy",
+    "path":"folders/Code/third_party_libraries/GMTL/Demo.yy",
   },
   "pointRounding":0,
   "ranges":[

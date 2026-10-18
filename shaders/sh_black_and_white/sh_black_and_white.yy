@@ -4,7 +4,7 @@
   "name":"sh_black_and_white",
   "parent":{
     "name":"OldUI",
-    "path":"folders/OldUI.yy",
+    "path":"folders/Legacy/OldUI.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

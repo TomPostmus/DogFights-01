@@ -182,8 +182,8 @@
   ],
   "name":"rm_ai_demo_landmark_and_engage",
   "parent":{
-    "name":"demo_rooms",
-    "path":"folders/Code/src/player/player_ai/demo_rooms.yy",
+    "name":"ai",
+    "path":"folders/AssetsRooms/ingame_rooms/demo/ai.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

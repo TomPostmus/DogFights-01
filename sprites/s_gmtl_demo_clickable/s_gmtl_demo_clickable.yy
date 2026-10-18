@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"Demo",
-    "path":"folders/Libraries/GMTL/Demo.yy",
+    "path":"folders/Code/third_party_libraries/GMTL/Demo.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
