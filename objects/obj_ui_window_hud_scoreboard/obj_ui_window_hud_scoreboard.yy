@@ -8,8 +8,8 @@
   "name":"obj_ui_window_hud_scoreboard",
   "overriddenProperties":[],
   "parent":{
-    "name":"ui",
-    "path":"folders/Code/src/ui.yy",
+    "name":"hud",
+    "path":"folders/Code/src/ui/hud.yy",
   },
   "parentObjectId":{
     "name":"obj_ui_window",

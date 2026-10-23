@@ -1,1 +1,0 @@
-ds_list_destroy(global.room_index_list)

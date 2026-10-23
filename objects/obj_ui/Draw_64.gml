@@ -1,2 +1,9 @@
 draw_surface(application_surface, 0, 0)
-//ui_draw() // draw UI over application surface
+
+// Draw current menu from menu tree
+with (obj_ui_menu_tree) {
+	
+	if (menu)
+		menu.draw()
+	
+}

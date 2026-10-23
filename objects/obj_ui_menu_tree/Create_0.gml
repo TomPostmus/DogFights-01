@@ -1,0 +1,1 @@
+menu = undefined // current menu we're at, navigation happens by going to child or back (to parent)

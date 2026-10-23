@@ -4,7 +4,7 @@ if (active && subfocus) {
 	click = false
 	clicked = false
 	var mouse = window_to_gui_coordinates(window_mouse_get_x(), window_mouse_get_y())
-	if (point_in_rectangle(mouse[0], mouse[1], left, top, left + width, top + height-1)) {
+	if (point_in_rectangle(mouse[0], mouse[1], x, y, x + width, y + height-1)) {
 		hover = true
 	}
 	
@@ -16,7 +16,8 @@ if (active && subfocus) {
 		clicked = true
 	}
 	
-	if (clicked && script_onclicked != undefined) {
-		script_execute(script_onclicked)
+	if (clicked) {
+		if (clicked_callback && is_method(clicked_callback))
+			method_call(clicked_callback)
 	}
 }

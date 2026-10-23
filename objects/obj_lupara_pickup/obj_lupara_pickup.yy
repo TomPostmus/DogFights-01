@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"interactables",
-    "path":"folders/Code/src/interactables.yy",
+    "path":"folders/Code/src/ingame_engine/interactables.yy",
   },
   "parentObjectId":{
     "name":"obj_parent_pickups",

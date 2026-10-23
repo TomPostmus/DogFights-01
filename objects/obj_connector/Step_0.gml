@@ -141,7 +141,7 @@ if (state == "connected") {
 	game_handler.game_obj = game
 	
 	
-	room_goto(global.room_index_list[|room_index])
+	room_goto(room_index)
 	instance_destroy(loading_window)
 	instance_destroy(self)
 }

@@ -63,3 +63,6 @@ screenshot_i = 0 // current index of screenshot
 	}
 
 }
+
+// Demos
+demos = object_get_children(obj_demo) // create demo list (ds_list)

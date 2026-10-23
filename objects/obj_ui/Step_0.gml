@@ -1,3 +1,6 @@
+var _gui_w = display_get_gui_width()
+var _gui_h = display_get_gui_height()
+
 //Check if windows exist
 var active_click_outside = false
 for (var i = 0; i < ds_list_size(windows); i++) {

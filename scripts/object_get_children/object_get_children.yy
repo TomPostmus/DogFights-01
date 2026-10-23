@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"object_get_children",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"object_get_children",
+  "parent":{
+    "name":"misc",
+    "path":"folders/Code/src/utils/misc.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
