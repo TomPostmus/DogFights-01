@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"print",
+  "%Name":"run_multiple_shells",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"print",
+  "name":"run_multiple_shells",
   "parent":{
-    "name":"misc",
-    "path":"folders/Code/src/utils/misc.yy",
+    "name":"Legacy",
+    "path":"folders/Legacy.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

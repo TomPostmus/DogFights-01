@@ -180,7 +180,7 @@ suite(function () {
 					
 			// Arrange
 			var _planner = create(0, 0, obj_ai_tree_planner)
-			var _ds_count_before = obj_init.ds_count_all()
+			var _ds_count_before = obj_debug.ds_count_all()
 			var _root = new AITreeElement(undefined)
 			var _element = new AITreeElement(_root)
 			_planner.initialize(_root)
@@ -188,7 +188,7 @@ suite(function () {
 			
 			// Act
 			_planner.delete_element(_root)
-			var _ds_count_after = obj_init.ds_count_all()
+			var _ds_count_after = obj_debug.ds_count_all()
 			
 			// Assert
 			expect(ds_list_size(_planner.elements)).toBe(0)

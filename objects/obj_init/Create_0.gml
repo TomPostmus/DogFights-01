@@ -1,27 +1,28 @@
-//Config
-randomize()
-application_surface_draw_enable(false)
-global.central_server_base = "http://localhost:8080"
-global.debug = false
+// Randomization
+randomize() // set seed to random value
 global.room_index_list = generate_room_index_list()
-global.key_binds = ds_map_create()
-global.key_actions = ds_map_create()
-global.frame_count = 0
-global.debug_print_count = 0
-global.ingame_rooms = [rm_map_josephsfarm, rm_test, rm_ai_demo_landmark_and_engage]
+
+// Kick off UI
+create_controllers(obj_ui)
+
+// Kick off obj_debug
+debug = true // whether game is run in debug mode (then obj_debug is created)
+if (debug)
+	create_controllers(obj_debug)
+	
+// Kick off obj_settings
+create_controllers(obj_settings)
 
 // In-game function
+// TODO: replace by if instance_exists(obj_engine) everywhere
+global.ingame_rooms = [rm_map_josephsfarm, rm_test, rm_ai_demo_landmark_and_engage]
 global.ingame = function() {
 	return array_contains(global.ingame_rooms, room)
 } // whether we are in an in-game room
 
-//Set keybinds
-default_keys()
-
-// Gamespeed (debug purposes)
-//game_set_speed(30, gamespeed_fps) // I tried this but it breaks physics
 
 //Initialize graphics
+application_surface_draw_enable(false)
 global.aspect = clamp(display_get_width()/display_get_height(), 0.5555, 2.3333)
 global.height = display_get_height()
 global.width = global.aspect*global.height
@@ -35,9 +36,6 @@ global.sound_directional = true
 audio_group_load(agroup_local_sounds)
 audio_falloff_set_model(audio_falloff_linear_distance_clamped)
 audio_listener_orientation(0, 1, 0, 0, 0, 1)
-
-// Screenshot index
-screenshot_i = 0 // current index of screenshot
 
 //Next room
 room_goto_next()
@@ -63,84 +61,3 @@ room_goto_next()
 #macro WINDOW_RED_SECCOLOUR_CLICK $FFB73E3E
 
 #macro WINDOW_GREEN_COLOUR $FF10A348
-
-//Run multiple shells
-var shell_count = 2;
-var param_count = parameter_count()
-if (param_count < 2 + shell_count) {
-	var params = "";
-	for (var i = 1; i < param_count+1; i ++) {
-		if (i == 2) {
-			params += "\"" + parameter_string(i) + "\" "
-		} else {
-			params += parameter_string(i) + " "
-		}
-	}
-	
-	params += " -secondary "
-	
-	shell_execute(parameter_string(0), params)
-	window_set_caption("Shell " + string(param_count - 2))
-} else if (param_count == 2 + shell_count) {
-	window_set_caption("Shell " + string(param_count - 2))
-}
-
-// Data structure management
-{
-	
-	ds_types = [ // all DS types
-		ds_type_grid,
-		ds_type_list,
-		ds_type_map,
-		ds_type_priority,
-		ds_type_queue,
-		ds_type_stack,
-	]
-	ds_counts = array_create(array_length(ds_types), 0) // array containing for each ds type how many there are
-	
-	enum DS_NONSTANDARD_TYPES { // non-standard ds types
-		PATH,
-		SURFACE,
-		BUFFER,
-		END // last element
-	}
-	ds_ns_counts = array_create(DS_NONSTANDARD_TYPES.END, 0) // counts of non-standard ds's
-	
-	// Runtime reports timer
-	ds_report_tick = 0
-	ds_report_time = 60
-
-	// Count datastructures for DS report (useful for spotting memory leaks)
-	function ds_count_all() {
-		var max_id_check = 20000; // maximum identifier number to check for
-	
-		ds_counts = array_create(array_length(ds_types), 0) // reset
-		ds_ns_counts = array_create(DS_NONSTANDARD_TYPES.END, 0)
-	
-		for (var i = 0; i < max_id_check; i ++) { // loop through identifiers
-		
-			// count standard data structures
-			for (var j = 0; j < array_length(ds_types); j++)
-				ds_counts[j] += ds_exists(i, ds_types[j])
-					
-			// count non-standard structures
-			for (var j = 0; j < DS_NONSTANDARD_TYPES.END; j++) {
-				switch (j) {
-					case DS_NONSTANDARD_TYPES.PATH: ds_ns_counts[j] += path_exists(i); break
-					case DS_NONSTANDARD_TYPES.SURFACE: ds_ns_counts[j] += surface_exists(i); break
-					case DS_NONSTANDARD_TYPES.BUFFER: ds_ns_counts[j] += buffer_exists(i); break
-				}
-			}
-		}
-	
-		// count total amount of data structures
-		var _total = 0
-		for (var j = 0; j < array_length(ds_types); j++)
-			_total += ds_counts[j]
-		for (var j = 0; j < DS_NONSTANDARD_TYPES.END; j++)
-			_total += ds_ns_counts[j]
-	
-		return _total
-	}
-
-}

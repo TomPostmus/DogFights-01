@@ -1,3 +1,4 @@
+// Physics debug draw
 if (global.debug) {
 	draw_set_colour(c_purple)
 	with(obj_parent_physics) {

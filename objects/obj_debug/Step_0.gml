@@ -3,19 +3,23 @@ if (keyboard_check_pressed(vk_escape)) game_end()
 if (keyboard_check_pressed(vk_f1)) room_restart()
 if (keyboard_check_pressed(vk_f2)) global.debug = !global.debug
 if (keyboard_check_pressed(vk_f3)) {
-	window_set_fullscreen(!window_get_fullscreen())
-	alarm[0] = 1
+	
+	var _fullscreen = !window_get_fullscreen()
+	window_set_fullscreen(_fullscreen)
+	
+	if (!_fullscreen) {
+		alarm[0] = 1 // first resize timer
+		alarm[1] = 2 // then center timer
+	}
+		
 }
 
+// Screenshot shortcut
 if (keyboard_check_pressed(ord("Q"))) {
 	screen_save($"screenshot{screenshot_i}.png")
 	show_debug_message("Screenshot made!")
 	screenshot_i ++
 }
-
-//Frame count
-global.frame_count ++
-if (global.frame_count > 1000000) global.frame_count = 0
 
 // Update DS report
 if (global.debug) {
