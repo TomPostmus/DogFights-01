@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"test_struct_functions",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"test_struct_functions",
+  "parent":{
+    "name":"utils",
+    "path":"folders/Code/test/utils.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

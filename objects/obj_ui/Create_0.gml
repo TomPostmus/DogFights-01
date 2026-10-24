@@ -5,12 +5,24 @@ active_window = undefined
 create_controllers(obj_ui_menu_tree)
 room_goto(rm_menu) // go to menu room
 
+/// @function center_window(window)
 /// @description Center a given window in the GUI layer
-/// @param {obj_window} window The window to be centerd
+/// @param {obj_window} window The window to be centered
 function center_window(_window) {
 
 	_window.x = display_get_gui_width() / 2 - _window.width / 2
 	_window.y = display_get_gui_height() / 2 - _window.height / 2
+
+}
+
+/// @function set_active_window(window)
+/// @param {obj_window} window The window to be the new active window
+function set_active_window(_window) {
+
+	with (obj_ui_window) // set active to false in all windows
+		active = false // TODO query obj_ui.active_window in windows instead?
+		
+	_window.active = true
 
 }
 

@@ -15,7 +15,7 @@
     "name":"obj_ui_menu",
     "path":"objects/obj_ui_menu/obj_ui_menu.yy",
   },
-  "persistent":false,
+  "persistent":true,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

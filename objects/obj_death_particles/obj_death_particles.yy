@@ -10,8 +10,8 @@
   "name":"obj_death_particles",
   "overriddenProperties":[],
   "parent":{
-    "name":"ingame_engine",
-    "path":"folders/Code/src/ingame_engine.yy",
+    "name":"engine",
+    "path":"folders/Code/src/engine.yy",
   },
   "parentObjectId":null,
   "persistent":false,

@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"ingame_engine",
-    "path":"folders/Code/src/ingame_engine.yy",
+    "name":"engine",
+    "path":"folders/Code/src/engine.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

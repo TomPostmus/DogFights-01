@@ -8,14 +8,14 @@
   "name":"obj_demo_ai_astar_path",
   "overriddenProperties":[],
   "parent":{
-    "name":"debug",
-    "path":"folders/Code/src/debug.yy",
+    "name":"demo",
+    "path":"folders/Code/src/debug/demo.yy",
   },
   "parentObjectId":{
     "name":"obj_demo",
     "path":"objects/obj_demo/obj_demo.yy",
   },
-  "persistent":false,
+  "persistent":true,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

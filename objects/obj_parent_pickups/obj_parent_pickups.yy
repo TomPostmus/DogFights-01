@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"interactables",
-    "path":"folders/Code/src/ingame_engine/interactables.yy",
+    "path":"folders/Code/src/engine/interactables.yy",
   },
   "parentObjectId":null,
   "persistent":false,
