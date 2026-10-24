@@ -1,13 +1,16 @@
 {
   "$GMObject":"",
   "%Name":"obj_ui_menu_demo",
-  "eventList":[],
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":12,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
   "name":"obj_ui_menu_demo",
   "overriddenProperties":[],
   "parent":{
-    "name":"ui_menu",
-    "path":"folders/Code/src/ui/ui_menu.yy",
+    "name":"menu",
+    "path":"folders/Code/src/ui/menu.yy",
   },
   "parentObjectId":{
     "name":"obj_ui_menu",

@@ -13,7 +13,7 @@ alarm[0] = 1 // set timer for kicking off UI, delay is needed for application su
 randomize() // set seed to random value
 
 // Kick off obj_debug
-debug = false // whether game runs in debug mode (then obj_debug is created) or release mode
+debug = true // whether game runs in debug mode (then obj_debug is created) or release mode
 if (debug)
 	create_controllers(obj_debug)
 	

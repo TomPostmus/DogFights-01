@@ -11,7 +11,6 @@ border_colour = c_black
 dragable = false // stationary window
 header = false // no title and exit button
 has_title = true
-title = "Main menu"
 
 text_colour = c_white
 
@@ -36,20 +35,3 @@ function add_button() {
 	
 	return _button
 }
-
-// Add buttons
-button_start_game = add_button()
-button_start_game.text = "Start game"
-
-button_demos = undefined
-if (obj_init.debug) { // if game runs in debug mode
-	button_demos = add_button() // demos become visible
-	button_demos.text = "Demos"
-}
-
-button_settings = add_button()
-button_settings.text = "Settings"
-
-button_exit = add_button()
-button_exit.text = "Exit"
-button_exit.clicked_callback = function() {game_end()}

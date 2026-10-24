@@ -1,15 +1,15 @@
 {
   "$GMObject":"",
-  "%Name":"obj_ui_window_main_menu",
+  "%Name":"obj_ui_window_menu_buttons_list",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_ui_window_main_menu",
+  "name":"obj_ui_window_menu_buttons_list",
   "overriddenProperties":[],
   "parent":{
-    "name":"ui_menu",
-    "path":"folders/Code/src/ui/ui_menu.yy",
+    "name":"menu",
+    "path":"folders/Code/src/ui/menu.yy",
   },
   "parentObjectId":{
     "name":"obj_ui_window",

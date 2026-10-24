@@ -9,8 +9,8 @@
   "name":"obj_ui_menu",
   "overriddenProperties":[],
   "parent":{
-    "name":"ui_menu",
-    "path":"folders/Code/src/ui/ui_menu.yy",
+    "name":"menu",
+    "path":"folders/Code/src/ui/menu.yy",
   },
   "parentObjectId":null,
   "persistent":false,
