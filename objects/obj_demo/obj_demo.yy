@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"demo",
-    "path":"folders/Code/src/debug/demo.yy",
+    "path":"folders/Code/test/debug/demo.yy",
   },
   "parentObjectId":null,
   "persistent":true,

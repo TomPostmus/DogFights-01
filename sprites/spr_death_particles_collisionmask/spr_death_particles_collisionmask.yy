@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"engine",
-    "path":"folders/Code/src/engine.yy",
+    "name":"particles",
+    "path":"folders/Code/src/engine/particles.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

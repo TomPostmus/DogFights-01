@@ -1,2 +1,1 @@
 ds_map_destroy(game_settings)
-ds_map_destroy(respawn_timer)

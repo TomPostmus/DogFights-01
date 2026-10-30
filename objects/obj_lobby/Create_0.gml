@@ -1,33 +1,13 @@
 /// @description This is the lobby controller that keeps track of the players that are participating in the game
 
+players = undefined // list of players in lobby
+players_active = undefined // list that keeps track of active players, i.e. players followed by viewports
+
 // Melt properties from LobbyConfiguration into instance
 if (!variable_instance_exists(id, "lobby_configuration")) // if lobby_configuration has not been given upon creation
 	lobby_configuration = new LobbyConfiguration() // initialize as default
 
-struct_melt_into_instance(lobby_configuration, id)
-
-// Players
-players = ds_list_create()
-players_active = ds_list_create() // list that keeps track of active players, i.e. players followed by viewports
-
-// Add human players
-if (num_human_players > 0) {
-	var _p1 = create_controllers(obj_player_p1) // add player one (WASD)
-	ds_list_add(players_active, _p1) // add to active players list
-	ds_list_add(players, _p1) // and general players list
-}
-
-if (num_human_players > 1) {
-	var _p2 = create_controllers(obj_player_p2) // add player two (arrow keys)
-	ds_list_add(players_active, _p2)
-	ds_list_add(players, _p2)
-}
-
-// Add AI players
-repeat (num_ai_players) {
-	var _ai = create_controllers(obj_player_ai)	
-	ds_list_add(players, _ai)
-}
+struct_melt_into_instance(lobby_configuration, id) // melt config variables into instance
 
 // Create game
 game = undefined // game object made on basis of game_mode. Life-time managed by obj_lobby
@@ -39,8 +19,9 @@ if (game_mode_object_index) {
 
 /// @function start_game()
 /// @description Kicks off the engine object and moves to the map room
+/// @context obj_lobby
 function start_game() {	
 	create_controllers(obj_engine) // kick off engine
 	
-	room_goto(map_room) // go to map room
+	room_goto(lobby_configuration.map_room) // go to map room
 }
