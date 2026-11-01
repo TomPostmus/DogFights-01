@@ -15,5 +15,19 @@ function random_spawn_player(player) {
 		spawn_y = random(room_height)
 		spawn_rot = 0
 	}
-	player.spawn(spawn_x, spawn_y, spawn_rot)
+	spawn_character(spawn_x, spawn_y, spawn_rot)
+}
+
+/// @function spawn_character(x, y, rot)
+/// @description Spawn character according to x, y, rotation pose
+/// @returns The spawned character instance
+/// @context obj_spawns_controller
+function spawn_character(_x, _y, _rot) {
+	var _character = create_groundhigh(_x, _y, obj_character)
+	_character.rotation = _rot
+	_character.appearance = create_controllers(obj_appearance_pip)
+	_character.appearance.character = _character
+	_character.initialize()
+	
+	return _character
 }

@@ -1,19 +1,19 @@
 {
   "$GMObject":"",
-  "%Name":"obj_demo_map_josephs_farm_teambattle",
+  "%Name":"obj_demo_game_josephs_farm_teambattle",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_demo_map_josephs_farm_teambattle",
+  "name":"obj_demo_game_josephs_farm_teambattle",
   "overriddenProperties":[],
   "parent":{
     "name":"demo",
     "path":"folders/Code/test/debug/demo.yy",
   },
   "parentObjectId":{
-    "name":"obj_demo",
-    "path":"objects/obj_demo/obj_demo.yy",
+    "name":"obj_demo_game",
+    "path":"objects/obj_demo_game/obj_demo_game.yy",
   },
   "persistent":true,
   "physicsAngularDamping":0.1,

@@ -8,7 +8,7 @@ hud_surf = surface_create(hud_width, hud_height)
 
 // Create weapon hud window objects
 weapon_huds = ds_list_create() // list of weapon hud elements for each active player
-for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
+for (var i = 0; i < obj_viewport_controller.nr_viewports; i ++) {
 	var _vp_pos = [view_get_xport(i) / hud_scale, view_get_yport(i) / hud_scale] // position of vport in GUI crds
 	var _vp_dim = [view_get_wport(i) / hud_scale, view_get_hport(i) / hud_scale] // dimensions of vport in GUI crds
 	

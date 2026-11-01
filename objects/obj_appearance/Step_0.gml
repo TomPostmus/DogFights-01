@@ -1,6 +1,7 @@
 // Update animation state
 if (instance_exists(character) && instance_exists(character.body)) {
 	var body = character.body
+	var _weapon = character.weapon
 	
 	//Breathing
 	if (character.movement.move_input != 0) breath_exhaustion += 0.003
@@ -50,7 +51,7 @@ if (instance_exists(character) && instance_exists(character.body)) {
 			blink_tick = blink_time
 			blink = true
 		}
-		if (character.weapon.aiming) { // if aiming down sight
+		if (instance_exists(_weapon) && character.weapon.aiming) { // if aiming down sight
 			eye_right_closed = true // close right eye
 		}
 	}

@@ -1,8 +1,14 @@
 // Inherit the parent event
 event_inherited();
 
-name = "AI player A* path example"
-lobby_configuration.num_human_players = 0
-lobby_configuration.map_room = rm_ai_demo_astar_path
-lobby_configuration.teams_number = 0
-// TODO: manually add a custom AI player object to players here
+demo_player = undefined
+
+/// @function start()
+/// @description Starts demo
+/// @context obj_demo_ai_astar_path
+function start() {
+	demo_player = create_controllers(obj_player_ai)
+	
+	create_controllers(obj_engine) // kick off engine
+	obj_engine.start(rm_ai_demo_astar_path) // go to demo room
+}

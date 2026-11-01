@@ -82,7 +82,8 @@ function arms_add_force(_force_x, _force_y) {
 function draw(_body) {
 	
 	// Draw weapon
-	character.weapon.draw(_body)
+	if (instance_exists(character.weapon))
+		character.weapon.draw(_body)
 	
 	// Draw body
 	draw_sprite_ext(spr_body, anim_body, _body.get_x(), _body.get_y(), 1, 1, _body.get_trunk_rotation(), c_white, 1)
