@@ -1,13 +1,12 @@
-event_inherited()
+event_inheritfed()
 
 // Create in-game related player objects (so outside of lobby room)
-if (global.ingame()) { // if in in-game room
+if (instance_exists(obj_engine)) { // if in-game
 	
 	team_scores = array_create(teams_number, 0)
 	team_lives = array_create(teams_number, lives_init) // reset lives
 	team_spawns = array_create(teams_number, undefined)
 	team_reserves = array_create(teams_number, undefined)
-	team_scores = array_create(teams_number, 0)
 	
 	for (var i = 0; i < teams_number; i ++) {
 		team_spawns[i] = ds_list_create() // create lists
