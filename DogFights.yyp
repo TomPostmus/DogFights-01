@@ -180,6 +180,7 @@
     {"id":{"name":"obj_demo_ai_astar_path","path":"objects/obj_demo_ai_astar_path/obj_demo_ai_astar_path.yy",},},
     {"id":{"name":"obj_demo_game_josephs_farm_teambattle","path":"objects/obj_demo_game_josephs_farm_teambattle/obj_demo_game_josephs_farm_teambattle.yy",},},
     {"id":{"name":"obj_demo_game","path":"objects/obj_demo_game/obj_demo_game.yy",},},
+    {"id":{"name":"obj_demo_start_spawn_characters","path":"objects/obj_demo_start_spawn_characters/obj_demo_start_spawn_characters.yy",},},
     {"id":{"name":"obj_demo_ui","path":"objects/obj_demo_ui/obj_demo_ui.yy",},},
     {"id":{"name":"obj_demo","path":"objects/obj_demo/obj_demo.yy",},},
     {"id":{"name":"obj_engine","path":"objects/obj_engine/obj_engine.yy",},},
@@ -285,6 +286,7 @@
     {"id":{"name":"rm_init","path":"rooms/rm_init/rm_init.yy",},},
     {"id":{"name":"rm_map_josephsfarm","path":"rooms/rm_map_josephsfarm/rm_map_josephsfarm.yy",},},
     {"id":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
+    {"id":{"name":"rm_start_spawn_single_team","path":"rooms/rm_start_spawn_single_team/rm_start_spawn_single_team.yy",},},
     {"id":{"name":"rm_test","path":"rooms/rm_test/rm_test.yy",},},
     {"id":{"name":"ai_action","path":"scripts/ai_action/ai_action.yy",},},
     {"id":{"name":"ai_poi","path":"scripts/ai_poi/ai_poi.yy",},},
@@ -674,6 +676,7 @@
     {"roomId":{"name":"rm_ingame_parent","path":"rooms/rm_ingame_parent/rm_ingame_parent.yy",},},
     {"roomId":{"name":"rm_direct_connect","path":"rooms/rm_direct_connect/rm_direct_connect.yy",},},
     {"roomId":{"name":"r_gmtl_demo","path":"rooms/r_gmtl_demo/r_gmtl_demo.yy",},},
+    {"roomId":{"name":"rm_start_spawn_single_team","path":"rooms/rm_start_spawn_single_team/rm_start_spawn_single_team.yy",},},
   ],
   "templateType":null,
   "TextureGroups":[

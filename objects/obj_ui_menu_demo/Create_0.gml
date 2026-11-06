@@ -11,8 +11,16 @@ window.title = "Choose a demo"
 
 // Demos
 demo_buttons = ds_list_create()
-demo_object_indices = [obj_demo_ai_astar_path, obj_demo_game_josephs_farm_teambattle] // demo list
-demo_names = ["AI player A* path example", "Joseph's Farm Teambattle"] // corresponding names
+demo_object_indices = [ // demo list
+	obj_demo_ai_astar_path, 
+	obj_demo_game_josephs_farm_teambattle,
+	obj_demo_start_spawn_characters
+]
+demo_names = [ // corresponding names
+	"AI player A* path example",
+	"Joseph's Farm Teambattle",
+	"Team start spawn"
+]
 
 // Add buttons for demos
 for (var i = 0; i < array_length(demo_object_indices); i ++) {
