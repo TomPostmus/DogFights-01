@@ -1,0 +1,2 @@
+ds_list_destroy(windows)
+ds_map_destroy(children)

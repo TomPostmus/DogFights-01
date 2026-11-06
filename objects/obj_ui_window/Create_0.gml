@@ -202,9 +202,9 @@ draw = function() {
 		//header title
 		draw_set_font(header_font)
 		draw_set_colour(header_text_colour)
-		draw_set_halign(fa_x)
+		draw_set_valign(fa_middle)
 		draw_text(x + 8, y + header_height/2, title)
-		draw_set_halign(fa_left)
+		draw_set_valign(fa_top)
 	} else {
 		//Body background
 		draw_set_color(backg_colour)
@@ -241,9 +241,9 @@ draw = function() {
 			//Header title
 			draw_set_alpha(1)
 			draw_set_font(ft_menu_title)
-			draw_set_halign(fa_x)
+			draw_set_valign(fa_middle)
 			draw_set_colour(header_text_colour)
-			draw_set_halign(fa_left)
+			draw_set_valign(fa_top)
 	
 			//draw_text_outlined(x + corner_size/2, y + corner_size/2, title, header_text_colour, c_black)
 			draw_text_bolded(x + corner_size/2, y + corner_size/2, title)
@@ -254,16 +254,16 @@ draw = function() {
 	for (var i = 0; i < ds_list_size(elements); i++) {
 		var element = elements[| i];
 		var coord = ds_map_exists(element_positions, element) ? element_positions[? element] : array_create(2, 0);
-		element.x = x + coord[0]
+		element.x = x + coord[0] // update position of element relative to window position
 		element.y = y + coord[1]
 	
 		if (element != subfocus_element) {
-			ui_window_draw_element(element)
+			element.draw()
 		}
 	}
 
 	if (subfocus_element != -1) {
-		ui_window_draw_element(subfocus_element)
+		subfocus_element.draw()
 	}
 
 	draw_set_color(c_white)

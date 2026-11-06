@@ -9,7 +9,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"hitmasks",
-    "path":"folders/Code/src/body/hitmasks.yy",
+    "path":"folders/Code/src/player/body/hitmasks.yy",
   },
   "parentObjectId":{
     "name":"obj_hitmask",

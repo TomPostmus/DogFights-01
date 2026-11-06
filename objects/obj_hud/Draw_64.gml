@@ -7,13 +7,13 @@ surface_set_target(hud_surf)
 	draw_clear_alpha(c_white, 0) // clear surface
 	
 	// Draw weapon HUDS
-	for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) { // draw weapon hud windows 
-		var _player = obj_lobby.players_active[|i]
+	for (var i = 0; i < obj_viewport_controller.nr_viewports; i ++) { // draw weapon hud windows 
+		var _player = obj_viewport_controller.viewport_to_player[i]
 		weapon_huds[|i].draw(_player)
 	}
 	
 	// Draw splitscreen line
-	if (ds_list_size(obj_lobby.players_active) == 2) {
+	if (obj_viewport_controller.nr_viewports == 2) {
 		draw_set_colour(c_black)
 		
 		draw_line(hud_width/2, 0, hud_width/2, hud_height)

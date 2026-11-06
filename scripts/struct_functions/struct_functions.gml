@@ -14,3 +14,13 @@ function struct_merge(_struct1, _struct2) {
 	}
 	return new_struct
 }
+
+/// @function struct_melt_into_instance(struct, inst)
+/// @description Melts variables from struct into instance, i.e. the instance will have the variables
+function struct_melt_into_instance(_struct, _inst) {
+	var _vars = variable_struct_get_names(_struct)
+	for (var i = 0; i < array_length(_vars); i ++) {
+		var _value = variable_struct_get(_struct,  _vars[i]) // read value from struct
+		variable_instance_set(_inst, _vars[i], _value)
+	}
+}

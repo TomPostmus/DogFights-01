@@ -6,7 +6,7 @@
   "name":"ranges_overlap",
   "parent":{
     "name":"math",
-    "path":"folders/Code/src/helper_functions/math.yy",
+    "path":"folders/Code/src/utils/math.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

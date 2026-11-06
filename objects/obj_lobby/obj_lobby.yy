@@ -10,8 +10,8 @@
   "name":"obj_lobby",
   "overriddenProperties":[],
   "parent":{
-    "name":"lobby_and_games",
-    "path":"folders/Code/src/lobby_and_games.yy",
+    "name":"lobby",
+    "path":"folders/Code/src/lobby.yy",
   },
   "parentObjectId":null,
   "persistent":true,

@@ -1,1 +1,0 @@
-lives_init = 12
