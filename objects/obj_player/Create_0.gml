@@ -9,7 +9,7 @@ camera = noone // created when character spawns
 
 // Player id, id of player in game
 player_id = undefined
-team_id = undefined
+team_id = -1
 team_color = undefined
 
 // Player state

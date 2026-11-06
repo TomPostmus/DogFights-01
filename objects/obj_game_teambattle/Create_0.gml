@@ -6,12 +6,73 @@ teams_number = 2 // how many teams, default 2
 score_win = 60 // score for winning
 lives_init = 3 // how many lives each team begins with (army size), defined in creation code in rooms
 
-// Team vars (initialized in Room Start)
+// Teams
+teams = ds_list_create() // list of obj_team
 team_colors = [c_red, c_blue, c_green] // team identification colors
-team_scores = undefined // array keeping track of scores of teams
-team_reserves = undefined // array of lists of reserves (remaining soldier/characters) that teams have
-team_spawns = undefined
-team_lives = undefined // array keeping track of team lives
+
+/// @function initialize_teams(n_teams)
+/// @description Create N team objects and add to teams list
+/// @param {int} n_teams The number of team objects to create
+/// @context obj_game_teambattle
+function initialize_teams(_n_teams) {
+	if (!ds_list_empty(teams))
+		show_error("Team list expected to be empty when calling initial player to team assignment.", true)
+		
+	// Create teams
+	for (var i = 0; i < _n_teams; i ++) {
+		var _team = create_controllers(obj_team)
+		_team.team_id = i // assign team id
+		ds_list_add(teams, _team)
+	}
+	
+}
+
+/// @function compute_team_size_uniform_with_remainder(n_teams, n_players)
+/// @description Given a number of teams and players, compute integer team sizes such that players are evenly distributed and some teams get an extra player from the remainder
+/// @returns {array: int} Array of integers that represent team sizes
+/// @pure
+function compute_team_size_uniform_with_remainder(_n_teams, _n_players) {
+	if (_n_teams < 1)
+		show_error("Cannot compute team sizes; n_teams smaller than or equal to 0.", true)
+	if (_n_players < 0)
+		show_error("Cannot compute team sizes; n_players smaller than 0.", true)
+
+	var _team_sizes = array_create(_n_teams) // array of team sizes
+	var _team_avg_size = floor(_n_players / _n_teams) // floored average size of teams
+	var _remainder = _n_players - _team_avg_size * _n_teams // how many remaining players (after dividing in equal portions)
+	for (var i = 0; i < _n_teams; i ++) { // determine distribution
+		if (_remainder > 0) {
+			_team_sizes[i] = _team_avg_size + 1
+			_remainder -= 1 // use up one of remaining (unassigned) players
+		} else {
+			_team_sizes[i] = _team_avg_size
+		}
+	}
+	
+	return _team_sizes
+	
+}
+
+/// @function initial_player_team_assignment()
+/// @description Assign all players to a team
+/// @param {ds_list} players The list of players to assign to the teams
+/// @context obj_game_teambattle
+function initial_player_team_assignment(_players) {
+	
+	var _player_i = 0 // index of player inst
+	var _team_sizes = compute_team_size_uniform_with_remainder(ds_list_size(teams), ds_list_size(_players))
+	for (var i = 0; i < ds_list_size(teams); i ++) {
+		var _team = teams[|i]
+		repeat (_team_sizes[i]) {
+			var _player = _players[|_player_i] // find next player
+			
+			_team.assign_player_to_team(_player)
+			_player_i += 1
+		}
+	}
+
+} 
+
 
 // Register damage, check team ids and decide whether to deal damage
 function register_damage(_c_affected, _c_affector_team_id, _p_affector, _damage) {

@@ -1,5 +1,23 @@
 score_ = undefined // number of points scored by team
+players = ds_list_create() // list of players that play for team
 characters = ds_list_create() // list of characters that team is comprised of
+team_id = -1
+team_color = c_white
+
+/// @function assign_player_to_team(player, team)
+/// @description Put player in team, expects player is yet unassigned
+/// @param {obj_player} The player to put in team
+/// @context obj_team
+function assign_player_to_team(_player) {
+	if (_player.team_id != -1)
+		show_error(string("Player's team_id is expected to be -1, is {0}. Cannot reassign player to a team", _player.team_id), true)
+	
+	_player.team_id = team_id
+	_player.team_color = team_color
+		
+	ds_list_add(players, _player) // add to players list
+
+}
 
 /// @description Spawn a team from a coordinate in a given formation
 function start_spawn(_size, _x, _y, _rot, _formation="piramid") {

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"test_obj_team",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"test_obj_team",
+  "parent":{
+    "name":"game",
+    "path":"folders/Code/test/lobby/game.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
