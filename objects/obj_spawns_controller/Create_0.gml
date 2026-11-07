@@ -22,7 +22,7 @@ function random_spawn_player(player) {
 /// @description Spawn character according to x, y, rotation pose
 /// @returns The spawned character instance
 /// @context obj_spawns_controller
-function spawn_character(_x, _y, _rot) {
+spawn_character = function(_x, _y, _rot) {
 	var _character = create_groundhigh(_x, _y, obj_character)
 	_character.rotation = _rot
 	_character.appearance = create_controllers(obj_appearance_pip)

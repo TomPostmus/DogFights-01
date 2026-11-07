@@ -391,6 +391,7 @@
     {"id":{"name":"sound_local","path":"scripts/sound_local/sound_local.yy",},},
     {"id":{"name":"strong_mod","path":"scripts/strong_mod/strong_mod.yy",},},
     {"id":{"name":"struct_functions","path":"scripts/struct_functions/struct_functions.yy",},},
+    {"id":{"name":"test_inject_spy","path":"scripts/test_inject_spy/test_inject_spy.yy",},},
     {"id":{"name":"test_memory_contained","path":"scripts/test_memory_contained/test_memory_contained.yy",},},
     {"id":{"name":"test_obj_ai_action_planner","path":"scripts/test_obj_ai_action_planner/test_obj_ai_action_planner.yy",},},
     {"id":{"name":"test_obj_ai_tree_planner","path":"scripts/test_obj_ai_tree_planner/test_obj_ai_tree_planner.yy",},},

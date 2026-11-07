@@ -44,23 +44,21 @@ function start_spawn_team_characters(_n_characters) {
 
 /// @function find_start_spawn_marker()
 /// @description Find the start spawn marker in the room that has same team id
+/// @return {obj_marker_team_spawn} The marker that it has found
 /// @context obj_game_teambattle
 find_start_spawn_marker = function() {
 	
-	var _marker = noone
-	with (obj_marker_team_spawn) {
-		if (team_id == other.team_id) {
-			_marker = id
-			break
-		}
-	}
+	with (obj_marker_team_spawn)
+		if (team_id == other.team_id)
+			return id // return first marker that has corresponding team_id
 	
-	return _marker
+	return noone
 	
 }
 
 /// @function spawn_team_in_formation(size, x, y, rot, [formation])
 /// @description Spawn a team from a coordinate in a given formation
+/// @param {int} size The size of the team to spawn, i.e. the number of characters
 /// @param {real} x The x coordinate to spawn team
 /// @param {real} y The y coordinate
 /// @param {real} rotation What rotation to spawn team in
@@ -68,6 +66,9 @@ find_start_spawn_marker = function() {
 /// @returns {ds_list} A list of spawned characters
 /// @pure (only dependent on existance of obj_spawns_controller)
 spawn_team_in_formation = function(_size, _x, _y, _rot, _formation="piramid") {
+	
+	if (!instance_exists(obj_spawns_controller))
+		show_error("Team could not be spawned; obj_spawns_controller does not exist.", true)
 	
 	var _characters = ds_list_create()
 	if (_formation == "piramid") {
