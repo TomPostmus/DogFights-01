@@ -22,8 +22,8 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 	turn_input = layer_rrt.turn_input
 	
 	// LOWER TWO LINES ARE PURELY FOR DEBUGGING: manual player controls
-	move_input = get_key(KEY_P2_FORWARD, KEYACTION_HOLD) - get_key(KEY_P2_BACKWARD, KEYACTION_HOLD)
-	turn_input = get_key(KEY_P2_LEFT, KEYACTION_HOLD) - get_key(KEY_P2_RIGHT, KEYACTION_HOLD)
+	//move_input = get_key(KEY_P2_FORWARD, KEYACTION_HOLD) - get_key(KEY_P2_BACKWARD, KEYACTION_HOLD)
+	//turn_input = get_key(KEY_P2_LEFT, KEYACTION_HOLD) - get_key(KEY_P2_RIGHT, KEYACTION_HOLD)
 	
 	
 	// Send to character

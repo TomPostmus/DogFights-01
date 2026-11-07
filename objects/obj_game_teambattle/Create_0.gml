@@ -2,9 +2,8 @@ event_inherited()
 
 // Game stats
 friendly_fire = false
-teams_number = 2 // how many teams, default 2
 score_win = 60 // score for winning
-lives_init = 3 // how many lives each team begins with (army size), defined in creation code in rooms
+lives_init = 0 // how many lives each team begins with (army size), defined in creation code in rooms
 
 // Teams
 teams = ds_list_create() // list of obj_team
@@ -16,7 +15,7 @@ team_colors = [c_red, c_blue, c_green] // team identification colors
 /// @context obj_game_teambattle
 function initialize_teams(_n_teams) {
 	if (!ds_list_empty(teams))
-		show_error("Team list expected to be empty when calling initial player to team assignment.", true)
+		show_error("Team list expected to be empty when calling initialize_teams().", true)
 		
 	// Create teams
 	for (var i = 0; i < _n_teams; i ++) {
@@ -89,10 +88,7 @@ function register_kik(_p_affected, _p_affector) {
 }
 
 // Draw game state in HUD (hud controller as _parent)
-function draw_hud(_parent) {
-	if (!is_initialized)
-		return 0
-	
+function draw_hud(_parent) {	
 	var _m = _parent.cont_margin
 	
 	// Draw score to win in big text
@@ -108,14 +104,14 @@ function draw_hud(_parent) {
 	)
 	
 	var _max_w = 0 // compute maximum string width between lives
-	for (var i = 0; i < teams_number; i ++) {
-		var _lives = team_lives[i]
+	for (var i = 0; i < ds_list_size(teams); i ++) {
+		var _lives = ds_list_size(teams[|i].characters)
 		if (string_width(_lives) > _max_w)
 			_max_w = string_width(_lives)
 	}
 	
-	for (var i = 0; i < teams_number; i ++) {
-		var _lives = team_lives[i]
+	for (var i = 0; i <  ds_list_size(teams); i ++) {
+		var _lives = ds_list_size(teams[|i].characters)
 		var _yp = _parent.y + _m + i*_m*2
 		var _xp = _parent.x + _m + _max_w / 2
 		
@@ -146,5 +142,5 @@ function draw_hud(_parent) {
 		}		
 	}
 	
-	return teams_number * _m * 2 // return height of inner elements
+	return ds_list_size(teams) * _m * 2 // return height of inner elements
 }

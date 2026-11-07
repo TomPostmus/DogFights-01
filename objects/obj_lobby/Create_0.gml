@@ -37,6 +37,10 @@ if (game_mode_object_index != undefined) {
 		game.initialize_teams(teams_number)
 		game.initial_player_team_assignment(players) // do initial player to team assignment
 	}
+	
+	// Pass config to game
+	// TODO: make seperate GameConfig struct that is passed to game instead?
+	game.lives_init = lives_init
 }
 
 /// @function start_game()

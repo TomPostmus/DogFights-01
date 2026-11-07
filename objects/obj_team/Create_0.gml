@@ -4,6 +4,9 @@ characters = ds_list_create() // list of characters that team is comprised of
 team_id = -1
 team_color = c_white
 
+// Character to player
+character_to_player = ds_map_create() // backwards mapping from character to player
+
 /// @function assign_player_to_team(player, team)
 /// @description Put player in team, expects player is yet unassigned
 /// @param {obj_player} The player to put in team
@@ -103,4 +106,53 @@ function spawn_team_in_formation(_size, _x, _y, _rot, _formation="piramid") {
 	
 	return _characters
 
+}
+
+/// @function initial_character_assignment()
+/// @description Assign characters to all players at the start
+/// @context obj_team
+function initial_character_assignment() {
+	if (!ds_map_empty(character_to_player)) {
+		show_error("Cannot do initial assignment of characters; no character is expected to be assigned.", false)
+		return
+	}
+	
+	for (var i = 0; i < ds_list_size(players); i ++) {
+		var _player = players[|i]
+		var _character = find_first_unassigned_character()
+		if (instance_exists(_character))
+			assign_character_to_player(_character, _player)
+	}
+	
+}
+
+/// @description Assigns a character to a player
+/// @param {obj_character} character The character to assign to the player
+/// @param {obj_player} player The player to which character is assigned
+/// @context obj_team
+function assign_character_to_player(_character, _player) {
+	if (ds_map_exists(character_to_player, _character)) {
+		show_error(string("Cannot assign character {0} to player {1}; already assigned.", _character, _player), false)
+		return
+	}
+	
+	// TODO: disable HP protection if still applicable
+	_player.character = _character
+	_character.player = _player // TODO: replace backwards dependency on player with more light-weight observer pattern
+
+	character_to_player[?_character] = _player // update mapping
+
+}
+
+/// @description Find first character in list that is not assigned to a player
+/// @returns {obj_character} The character that is found, or noone if there is no unassigned character
+/// @context obj_team
+function find_first_unassigned_character() {
+	for (var i = 0; i < ds_list_size(characters); i ++) {
+		var _character = characters[|i]
+		if (!ds_map_exists(character_to_player, _character)) // if character has no mapping to player
+			return _character
+	}
+	
+	return noone
 }

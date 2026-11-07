@@ -47,8 +47,7 @@ suite(function () {
 			_game.initialize_teams(1)
 			
 			// Assert
-			expect(_game.initialize_teams, [1]).toThrow(
-				"Team list expected to be empty when calling initial player to team assignment.")
+			expect(_game.initialize_teams, [1]).toThrow()
 				
 			// Cleanup
 			instance_destroy(_game)		

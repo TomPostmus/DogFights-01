@@ -4,7 +4,7 @@ if (instance_exists(obj_engine)) { // if in-game
 	
 	for (var i = 0; i < ds_list_size(teams); i ++) {
 		var _team = teams[|i]
-		_team.spawn_team()
+		_team.start_spawn_team_characters(lives_init)
 		_team.initial_character_assignment()
 	}
 	
