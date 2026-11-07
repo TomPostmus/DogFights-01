@@ -8,6 +8,7 @@ lives_init = 0 // how many lives each team begins with (army size), defined in c
 // Teams
 teams = ds_list_create() // list of obj_team
 team_colors = [c_red, c_blue, c_green] // team identification colors
+team_appearances = [obj_appearance_pip, obj_appearance_bear]
 
 /// @function initialize_teams(n_teams)
 /// @description Create N team objects and add to teams list
@@ -21,6 +22,7 @@ function initialize_teams(_n_teams) {
 	for (var i = 0; i < _n_teams; i ++) {
 		var _team = create_controllers(obj_team)
 		_team.team_id = i // assign team id
+		_team.team_appearance = team_appearances[i]
 		ds_list_add(teams, _team)
 	}
 	

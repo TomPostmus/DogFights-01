@@ -14,11 +14,13 @@ demo_buttons = ds_list_create()
 demo_object_indices = [ // demo list
 	obj_demo_ai_astar_path, 
 	obj_demo_game_josephs_farm_teambattle,
+	obj_demo_game_teambattle_test_room,
 	obj_demo_start_spawn_characters
 ]
 demo_names = [ // corresponding names
 	"AI player A* path example",
 	"Joseph's Farm Teambattle",
+	"Test Room Teambattle",
 	"Team start spawn"
 ]
 

@@ -3,6 +3,7 @@ players = ds_list_create() // list of players that play for team
 characters = ds_list_create() // list of characters that team is comprised of
 team_id = -1
 team_color = c_white
+team_appearance = obj_appearance_pip
 
 // Character to player
 character_to_player = ds_map_create() // backwards mapping from character to player
@@ -36,8 +37,21 @@ function start_spawn_team_characters(_n_characters) {
 	
 	var _characters = spawn_team_in_formation(_n_characters, _marker.x, _marker.y, _marker.image_angle) // spawn characters at marker
 	
-	for (var i = 0; i < ds_list_size(_characters); i ++) // add to characters list
-		ds_list_add(characters, _characters[|i])
+	for (var i = 0; i < ds_list_size(_characters); i ++) {
+		var _character = _characters[|i]
+		
+		ds_list_add(characters, _character) // add to characters list
+		
+		// Arm characters
+		var _weapon = create_controllers(obj_weapon_gun_usp)
+		_character.weapon = _weapon
+		_weapon.character = _character
+		_weapon.anim_init()
+		
+		// Set team_id
+		_character.team_id = team_id
+		
+	}
 	ds_list_destroy(_characters)
 	
 }
@@ -64,7 +78,7 @@ find_start_spawn_marker = function() {
 /// @param {real} rotation What rotation to spawn team in
 /// @param {string} [formation] What type of formation to spawn team in
 /// @returns {ds_list} A list of spawned characters
-/// @pure (only dependent on existance of obj_spawns_controller)
+/// @context obj_team
 spawn_team_in_formation = function(_size, _x, _y, _rot, _formation="piramid") {
 	
 	if (!instance_exists(obj_spawns_controller))
@@ -84,7 +98,7 @@ spawn_team_in_formation = function(_size, _x, _y, _rot, _formation="piramid") {
 			
 			repeat (_row_count+1) {
 				
-				var _character = obj_spawns_controller.spawn_character(_x + _x_acc, _y + _y_acc, _rot)
+				var _character = obj_spawns_controller.spawn_character(_x + _x_acc, _y + _y_acc, _rot, team_appearance)
 				ds_list_add(_characters, _character)
 				
 				_x_acc += lengthdir_x(-_m_trans, _rot - 90) // move a tranverse margin distance over to the left

@@ -179,6 +179,7 @@
     {"id":{"name":"obj_debug","path":"objects/obj_debug/obj_debug.yy",},},
     {"id":{"name":"obj_demo_ai_astar_path","path":"objects/obj_demo_ai_astar_path/obj_demo_ai_astar_path.yy",},},
     {"id":{"name":"obj_demo_game_josephs_farm_teambattle","path":"objects/obj_demo_game_josephs_farm_teambattle/obj_demo_game_josephs_farm_teambattle.yy",},},
+    {"id":{"name":"obj_demo_game_teambattle_test_room","path":"objects/obj_demo_game_teambattle_test_room/obj_demo_game_teambattle_test_room.yy",},},
     {"id":{"name":"obj_demo_game","path":"objects/obj_demo_game/obj_demo_game.yy",},},
     {"id":{"name":"obj_demo_start_spawn_characters","path":"objects/obj_demo_start_spawn_characters/obj_demo_start_spawn_characters.yy",},},
     {"id":{"name":"obj_demo_ui","path":"objects/obj_demo_ui/obj_demo_ui.yy",},},
