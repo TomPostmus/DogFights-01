@@ -45,7 +45,7 @@ function start_spawn_team_characters(_n_characters) {
 /// @function find_start_spawn_marker()
 /// @description Find the start spawn marker in the room that has same team id
 /// @context obj_game_teambattle
-function find_start_spawn_marker() {
+find_start_spawn_marker = function() {
 	
 	var _marker = noone
 	with (obj_marker_team_spawn) {
@@ -67,7 +67,7 @@ function find_start_spawn_marker() {
 /// @param {string} [formation] What type of formation to spawn team in
 /// @returns {ds_list} A list of spawned characters
 /// @pure (only dependent on existance of obj_spawns_controller)
-function spawn_team_in_formation(_size, _x, _y, _rot, _formation="piramid") {
+spawn_team_in_formation = function(_size, _x, _y, _rot, _formation="piramid") {
 	
 	var _characters = ds_list_create()
 	if (_formation == "piramid") {
