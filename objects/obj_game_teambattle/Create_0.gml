@@ -109,12 +109,12 @@ function draw_hud(_parent) {
 	draw_set_color(c_white)
 	draw_set_valign(fa_middle)
 	var _scrwin_w = string_width(lives_init)
-	draw_set_valign(fa_top)
 	draw_text(
 		_parent.x + _parent.width - _m - _scrwin_w, 
 		_parent.y + _parent.height/2 - 1, 
 		lives_init
 	)
+	draw_set_valign(fa_top)
 	
 	var _max_w = 0 // compute maximum string width between lives
 	for (var i = 0; i < ds_list_size(teams); i ++) {
@@ -132,8 +132,11 @@ function draw_hud(_parent) {
 		draw_set_font(ft_small)
 		draw_set_color(c_white)
 		draw_set_halign(fa_center)
+		draw_set_valign(fa_middle)
 		draw_text(_xp, _yp, _lives)
 		draw_set_halign(fa_left)
+		draw_set_valign(fa_top)
+		
 		_xp += _m + _max_w / 2
 		
 		var _bar_w = _parent.width - (_xp - _parent.x) - _m * 2 - _scrwin_w

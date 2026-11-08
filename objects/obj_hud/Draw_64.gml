@@ -11,7 +11,9 @@ surface_set_target(hud_surf)
 	// Draw weapon HUDS
 	for (var i = 0; i < obj_viewport_controller.nr_viewports; i ++) { // draw weapon hud windows 
 		var _player = obj_viewport_controller.viewport_to_player[i]
-		weapon_huds[|i].draw(_player)
+		
+		if (instance_exists(_player))
+			weapon_huds[|i].draw(_player)
 	}
 	
 	// Draw splitscreen line
