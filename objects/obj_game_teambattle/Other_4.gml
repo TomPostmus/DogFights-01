@@ -6,6 +6,7 @@ if (instance_exists(obj_engine)) { // if in-game
 		var _team = teams[|i]
 		_team.start_spawn_team_characters(lives_init)
 		_team.initial_character_assignment()
+		subscribe_to_team_characters(_team)
 	}
 	
 	// Create characters for each team

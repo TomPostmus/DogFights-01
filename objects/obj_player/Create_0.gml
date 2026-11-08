@@ -35,23 +35,13 @@ observers_kik = ds_list_create()
 notify_on_character_kik = function (_character, _kikker) {
 	
 	if (_character != character) // if called for another character; ignore
-		return
+		return;
 		
 	// Notify player observers in turn
 	for (var i = 0; i < ds_list_size(observers_kik); i ++)
 		observers_kik[|i].notify_on_player_kik(id, character, _kikker)
-		
-	character = noone // reset ref
 	
 }
 
 //alive = false				//if type dog, whether alive or dead, or not yet spawned
 //movement_mode = undefined	//control mode of dog, e.g. walking or driving
-
-// Kill body
-//function die() {
-//	alive = false
-//	appearance.death_effect(body) // death effect
-//	instance_destroy(body)
-//	instance_destroy(movement)
-//}

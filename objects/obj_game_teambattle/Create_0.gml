@@ -10,15 +10,14 @@ teams = ds_list_create() // list of obj_team
 team_colors = [c_red, c_blue, c_green] // team identification colors
 team_appearances = [obj_appearance_pip, obj_appearance_bear]
 
-/// @description On event that player is kikked
-/// @param {obj_player} player The player that is kikked
-/// @param {obj_character} character The character belong to player that is kikked
+/// @description On event that character is kikked
+/// @param {obj_character} character The character that is kikked
 /// @param {obj_player} kikker The player that is the offender that caused the kik
 /// @context obj_game_teambattle
-notify_on_player_kik = function(_player, _character, _kikker) {
+notify_on_character_kik = function (_character, _kikker) {
 	
-	if (_player.team_id == _kikker.team_id)
-		return // same team_id; ignore
+	if (_character.team_id == _kikker.team_id)
+		return; // same team_id; ignore
 		
 	var _kikker_team = teams[|_kikker.team_id]
 	_kikker_team.score_ ++ // increment score of kikker's team
@@ -69,6 +68,13 @@ function compute_team_size_uniform_with_remainder(_n_teams, _n_players) {
 	
 }
 
+/// @description Subscribe to kik notifications of the characters of a given team
+/// @param {obj_team} team The team of which to subscribe to the characters
+function subscribe_to_team_characters(_team) {
+	for (var i = 0; i < ds_list_size(_team.characters); i ++)
+		ds_list_add(_team.characters[|i].observers_kik, id)
+}
+
 /// @function initial_player_team_assignment()
 /// @description Assign all players to a team
 /// @param {ds_list} players The list of players to assign to the teams
@@ -83,9 +89,6 @@ function initial_player_team_assignment(_players) {
 			var _player = _players[|_player_i] // find next player
 			
 			_team.assign_player_to_team(_player)
-			
-			// Attach game as observer
-			ds_list_add(_player.observers_kik, id)
 			
 			_player_i += 1
 		}
@@ -118,13 +121,13 @@ function draw_hud(_parent) {
 	
 	var _max_w = 0 // compute maximum string width between lives
 	for (var i = 0; i < ds_list_size(teams); i ++) {
-		var _lives = ds_list_size(teams[|i].characters)
-		if (string_width(_lives) > _max_w)
-			_max_w = string_width(_lives)
+		var _score = teams[|i].score_
+		if (string_width(_score) > _max_w)
+			_max_w = string_width(_score)
 	}
 	
 	for (var i = 0; i <  ds_list_size(teams); i ++) {
-		var _lives = ds_list_size(teams[|i].characters)
+		var _score = teams[|i].score_
 		var _yp = _parent.y + _m + i*_m*2
 		var _xp = _parent.x + _m + _max_w / 2
 		
@@ -133,7 +136,7 @@ function draw_hud(_parent) {
 		draw_set_color(c_white)
 		draw_set_halign(fa_center)
 		draw_set_valign(fa_middle)
-		draw_text(_xp, _yp, _lives)
+		draw_text(_xp, _yp, _score)
 		draw_set_halign(fa_left)
 		draw_set_valign(fa_top)
 		
@@ -148,13 +151,13 @@ function draw_hud(_parent) {
 		draw_line(_xp, _yp-1, _xp + _bar_w, _yp-1)
 		
 		draw_set_colour(team_colors[i])
-		if (_lives > 0) {
+		if (_score > 0) {
 			draw_line(_xp, _yp - _bar_h/2-1, _xp, _yp + _bar_h/2-1)
 			
-			var _lives_w = (_lives / lives_init) * _bar_w
-			draw_line(_xp + _lives_w, _yp - _bar_h/2-1, _xp + _lives_w, _yp + _bar_h/2-1) // right red border line
+			var _score_w = (_score / lives_init) * _bar_w
+			draw_line(_xp + _score_w, _yp - _bar_h/2-1, _xp + _score_w, _yp + _bar_h/2-1) // right red border line
 			var _hp_h_inner = 2 // inner height of hp bar
-			draw_rectangle(_xp, _yp - _hp_h_inner/2, _xp + _lives_w, _yp + _hp_h_inner/2-1, false) // draw inner bar
+			draw_rectangle(_xp, _yp - _hp_h_inner/2, _xp + _score_w, _yp + _hp_h_inner/2-1, false) // draw inner bar
 		}		
 	}
 	

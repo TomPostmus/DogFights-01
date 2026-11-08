@@ -15,17 +15,31 @@ character_to_player = ds_map_create() // backwards mapping from character to pla
 /// @context obj_team
 notify_on_player_kik = function(_player, _character, _kikker) {
 	
-	// Remove kikked character from list
-	var _list_i = ds_list_find_index(characters, _character)
-	if (_list_i == -1)
-		return // if character not part of team; ignore notification
-	
-	ds_list_delete(characters, _list_i)
-	
 	// Assign new character to player
 	var _new_character = find_first_unassigned_character()
 	if (instance_exists(_new_character))
 		assign_character_to_player(_new_character, _player)
+	else
+		_player.character = noone // assign no one
+	
+}
+
+/// @description On event that character is kikked
+/// @param {obj_character} character The character that is kikked
+/// @param {obj_player} kikker The player that is the offender that caused the kik
+/// @context obj_team
+notify_on_character_kik = function(_character, _kikker) {
+	
+	// Remove kikked character from list
+	var _list_i = ds_list_find_index(characters, _character)
+	if (_list_i == -1)
+		return; // if character not part of team; ignore notification
+	
+	ds_list_delete(characters, _list_i)
+	
+	// Remove from mapping
+	if (ds_map_exists(character_to_player, _character))
+		ds_map_delete(character_to_player, _character)
 	
 }
 
@@ -74,6 +88,9 @@ function start_spawn_team_characters(_n_characters) {
 		
 		// Set team_id
 		_character.team_id = team_id
+		
+		// Subscribe to kik event
+		ds_list_add(_character.observers_kik, id)
 		
 	}
 	ds_list_destroy(_characters)
