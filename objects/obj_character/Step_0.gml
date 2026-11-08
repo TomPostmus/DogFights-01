@@ -59,8 +59,8 @@ if (interact_focus != undefined && interact) { // if we have object in our inter
 
 // Die
 if (hp <= 0) {
-	if (instance_exists(player))
-		obj_game.register_kik(player, damage_last_affector) // register kik at game object (cute word for kill)
+	for (var i = 0; i < ds_list_size(observers_kik); i ++)
+		observers_kik[|i].notify_on_character_kik(id, damage_last_affector)
 
 	appearance.death_effect(body) // death effect
 	instance_destroy() // destroy self

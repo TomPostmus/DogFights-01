@@ -2,12 +2,15 @@
 // It holds the weapon, movement controller, body and appearance
 
 // References
-player = noone
+player = noone // TODO: fully implement observer-like pattern to remove player ref here
 body = noone
 weapon = noone
 movement = create_controllers(obj_movement_walking)
 movement.character = id
 appearance = noone
+
+// Observers
+observers_kik = ds_list_create() // observer list for event that character is kikked
 
 // Rotation variable used for initialization
 rotation = 0
@@ -36,7 +39,7 @@ hp_previous = hp_max
 
 // Damage bill
 damage_bill = ds_list_create() // list of tuples mapping player to damage dealt [player, damage] like a bill
-damage_last_affector = noone // last affector player that dealt damage
+damage_last_affector = noone // last affector obj_player that dealt damage
 
 // Initialize character
 function initialize() {	

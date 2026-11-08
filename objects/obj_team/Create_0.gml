@@ -1,4 +1,4 @@
-score_ = undefined // number of points scored by team
+score_ = 0 // number of points scored by team
 players = ds_list_create() // list of players that play for team
 characters = ds_list_create() // list of characters that team is comprised of
 team_id = -1
@@ -7,6 +7,27 @@ team_appearance = obj_appearance_pip
 
 // Character to player
 character_to_player = ds_map_create() // backwards mapping from character to player
+
+/// @description On event that player is kikked
+/// @param {obj_player} player The player that is kikked
+/// @param {obj_character} character The character belong to player that is kikked
+/// @param {obj_player} kikker The player that is the offender that caused the kik
+/// @context obj_team
+notify_on_player_kik = function(_player, _character, _kikker) {
+	
+	// Remove kikked character from list
+	var _list_i = ds_list_find_index(characters, _character)
+	if (_list_i == -1)
+		return // if character not part of team; ignore notification
+	
+	ds_list_delete(characters, _list_i)
+	
+	// Assign new character to player
+	var _new_character = find_first_unassigned_character()
+	if (instance_exists(_new_character))
+		assign_character_to_player(_new_character, _player)
+	
+}
 
 /// @function assign_player_to_team(player, team)
 /// @description Put player in team, expects player is yet unassigned
@@ -20,6 +41,9 @@ function assign_player_to_team(_player) {
 	_player.team_color = team_color
 		
 	ds_list_add(players, _player) // add to players list
+	
+	// Attach team as observer
+	ds_list_add(_player.observers_kik, id)
 
 }
 
@@ -156,6 +180,9 @@ function assign_character_to_player(_character, _player) {
 	_character.player = _player // TODO: replace backwards dependency on player with more light-weight observer pattern
 
 	character_to_player[?_character] = _player // update mapping
+	
+	// Attach player as observer to character
+	ds_list_add(_character.observers_kik, _player)
 
 }
 

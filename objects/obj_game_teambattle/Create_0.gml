@@ -10,6 +10,21 @@ teams = ds_list_create() // list of obj_team
 team_colors = [c_red, c_blue, c_green] // team identification colors
 team_appearances = [obj_appearance_pip, obj_appearance_bear]
 
+/// @description On event that player is kikked
+/// @param {obj_player} player The player that is kikked
+/// @param {obj_character} character The character belong to player that is kikked
+/// @param {obj_player} kikker The player that is the offender that caused the kik
+/// @context obj_game_teambattle
+notify_on_player_kik = function(_player, _character, _kikker) {
+	
+	if (_player.team_id == _kikker.team_id)
+		return // same team_id; ignore
+		
+	var _kikker_team = teams[|_kikker.team_id]
+	_kikker_team.score_ ++ // increment score of kikker's team
+	
+}
+
 /// @function initialize_teams(n_teams)
 /// @description Create N team objects and add to teams list
 /// @param {int} n_teams The number of team objects to create
@@ -68,25 +83,21 @@ function initial_player_team_assignment(_players) {
 			var _player = _players[|_player_i] // find next player
 			
 			_team.assign_player_to_team(_player)
+			
+			// Attach game as observer
+			ds_list_add(_player.observers_kik, id)
+			
 			_player_i += 1
 		}
 	}
 
 } 
 
-
 // Register damage, check team ids and decide whether to deal damage
 function register_damage(_c_affected, _c_affector_team_id, _p_affector, _damage) {
 	if (_c_affected.team_id != _c_affector_team_id || friendly_fire) {
 		_c_affected.register_damage(_p_affector, _damage) // register damage at affected character
 	}
-}
-
-// Register that affected player has been kikked by affector player
-function register_kik(_p_affected, _p_affector) {
-	var _ti_affector = _p_affector.team_id
-	var _ti_affected = _p_affected.team_id
-	team_scores[_ti_affector] += 1
 }
 
 // Draw game state in HUD (hud controller as _parent)

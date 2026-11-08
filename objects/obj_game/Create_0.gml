@@ -8,10 +8,3 @@ game_settings = ds_map_create()
 function register_damage(_p_affected, _p_affector, _damage) {
 	_p_affected.hp.register_damage(_p_affector, _damage) // register at hp object
 }
-
-
-// Register that affected player has been kikked by affector player
-function register_kik(_p_affected, _p_affector) {
-	var _ti = _p_affector.team_id
-	team_scores[_ti] += 1
-}
