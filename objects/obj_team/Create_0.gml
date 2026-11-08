@@ -9,19 +9,19 @@ team_name = ""
 // Character to player
 character_to_player = ds_map_create() // backwards mapping from character to player
 
-/// @description On event that player is kikked
+/// @description On event that the character of a player is kikked
 /// @param {obj_player} player The player that is kikked
 /// @param {obj_character} character The character belong to player that is kikked
 /// @param {obj_player} kikker The player that is the offender that caused the kik
 /// @context obj_team
 notify_on_player_kik = function(_player, _character, _kikker) {
 	
+	unassign_player(_player) // first, unassign old character
+	
 	// Assign new character to player
 	var _new_character = find_first_unassigned_character()
 	if (instance_exists(_new_character))
 		assign_character_to_player(_new_character, _player)
-	else
-		_player.character = noone // assign no one
 	
 }
 
@@ -202,6 +202,22 @@ function assign_character_to_player(_character, _player) {
 	// Attach player as observer to character
 	ds_list_add(_character.observers_kik, _player)
 
+}
+
+/// @description Unassign a player from its character
+/// @param {obj_player} player The player for which to unassign character
+function unassign_player(_player) {
+	
+	var _character = _player.character
+	if (instance_exists(_character)) // if character still alive
+		_character.player = noone // TODO: remove these lines once backwards dependency on player is gone in character
+	
+	// Remove from mapping
+	if (ds_map_exists(character_to_player, _character))
+		ds_map_delete(character_to_player, _character)
+		
+	_player.character = noone
+	
 }
 
 /// @description Find first character in list that is not assigned to a player
