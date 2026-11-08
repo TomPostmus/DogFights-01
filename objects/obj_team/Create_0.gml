@@ -4,6 +4,7 @@ characters = ds_list_create() // list of characters that team is comprised of
 team_id = -1
 team_color = c_white
 team_appearance = obj_appearance_pip
+team_name = ""
 
 // Character to player
 character_to_player = ds_map_create() // backwards mapping from character to player

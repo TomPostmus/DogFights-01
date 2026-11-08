@@ -9,6 +9,7 @@ lives_init = 0 // how many lives each team begins with (army size), defined in c
 teams = ds_list_create() // list of obj_team
 team_colors = [c_red, c_blue, c_green] // team identification colors
 team_appearances = [obj_appearance_pip, obj_appearance_bear]
+team_names = ["Pips", "Black Bears"]
 
 /// @description On event that character is kikked
 /// @param {obj_character} character The character that is kikked
@@ -22,6 +23,68 @@ notify_on_character_kik = function (_character, _kikker) {
 	var _kikker_team = teams[|_kikker.team_id]
 	_kikker_team.score_ ++ // increment score of kikker's team
 	
+	check_end_criterion()
+	
+}
+
+/// @description On event that engine has started up
+/// @context obj_game_teambattle
+notify_on_engine_startup = function () {
+
+	for (var i = 0; i < ds_list_size(teams); i ++) {
+		var _team = teams[|i]
+		_team.start_spawn_team_characters(lives_init)
+		_team.initial_character_assignment()
+		subscribe_to_team_characters(_team)
+	}
+	
+}
+
+function check_end_criterion() {
+
+	// Check if a team has depleted lives
+	var _game_over = false
+	for (var i = 0; i < ds_list_size(teams); i ++) {
+		if (ds_list_empty(teams[|i].characters)) { // if team has no more characters
+			_game_over = true
+			break
+		}
+	}
+
+	// End game
+	if (_game_over) {
+		
+		// compute maximum score among teams
+		var _max_score = 0
+		for (var i = 0; i < ds_list_size(teams); i ++) {
+			if (teams[|i].score_ > _max_score)
+				_max_score = teams[|i].score_
+		}
+		
+		// check which team won
+		var _winners = ds_list_create()
+		for (var i = 0; i < ds_list_size(teams); i ++) {
+			if (teams[|i].score_ == _max_score)
+				ds_list_add(_winners, teams[|i])
+		}
+		
+		// show result
+		if (ds_list_size(_winners) == 1) {
+			show_message($"Team {teams[|0].team_name} wins!")
+		} else {
+			var _message = "Team "
+			for (var i = 0; i < ds_list_size(teams); i ++) {
+				_message += $"{teams[|i].team_name} and "
+			}
+			_message += "have drawn!"
+			show_message(_message)
+		}
+		ds_list_destroy(_winners)
+		
+		
+		room_restart() // restart room for now
+	}
+
 }
 
 /// @function initialize_teams(n_teams)
@@ -37,6 +100,7 @@ function initialize_teams(_n_teams) {
 		var _team = create_controllers(obj_team)
 		_team.team_id = i // assign team id
 		_team.team_appearance = team_appearances[i]
+		_team.team_name = team_names[i]
 		ds_list_add(teams, _team)
 	}
 	

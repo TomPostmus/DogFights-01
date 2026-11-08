@@ -48,5 +48,10 @@ if (game_mode_object_index != undefined) {
 /// @context obj_lobby
 function start_game() {	
 	create_controllers(obj_engine) // kick off engine
+	
+	// Subscribe game to engine startup
+	if (instance_exists(game))
+		ds_list_add(obj_engine.observers_startup, game)
+	
 	obj_engine.start(map_room)
 }
