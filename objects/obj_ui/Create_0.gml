@@ -1,10 +1,6 @@
 windows = ds_list_create() // TODO: remove and just draw windows by looping over existing windows (with (obj_window))
 active_window = undefined
 
-// Kick off Menu Tree
-create_controllers(obj_ui_menu_tree)
-room_goto(rm_menu) // go to menu room
-
 /// @function center_window(window)
 /// @description Center a given window in the GUI layer
 /// @param {obj_window} window The window to be centered
@@ -25,6 +21,10 @@ function set_active_window(_window) {
 	_window.active = true
 
 }
+
+// Kick off Menu Tree
+create_controllers(obj_ui_menu_tree)
+room_goto(rm_menu) // go to menu room
 
 //Define macro's
 // TODO: where is this used? Delete or move to better place

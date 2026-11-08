@@ -16,7 +16,7 @@ var _button_demos = undefined
 if (obj_init.debug) { // if game runs in debug mode
 	_button_demos = window.add_button() // demos become visible
 	_button_demos.text = "Demos"
-	_button_demos.clicked_callback = function() {obj_ui_menu_tree.step_in(obj_ui_menu_demo)}
+	_button_demos.clicked_callback = method(id, function() {step_in(obj_ui_menu_demo)})
 }
 
 var _button_settings = window.add_button()
