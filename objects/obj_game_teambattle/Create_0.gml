@@ -40,7 +40,7 @@ notify_on_engine_startup = function () {
 	
 }
 
-function check_end_criterion() {
+check_end_criterion = function() {
 
 	// Check if a team has depleted lives
 	var _game_over = false

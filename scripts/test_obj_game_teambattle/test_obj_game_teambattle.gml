@@ -120,5 +120,58 @@ suite(function () {
 			instance_destroy(_player2)
 			instance_destroy(_player3)
 		})
+		
+		test("notify_on_character_kik", function() {
+		
+			// Arrange
+			var _game = create(0, 0, obj_game_teambattle)
+			_game.initialize_teams(2)
+			var _team1 = _game.teams[|0]
+			var _team2 = _game.teams[|1]
+			
+			var _player = create(0, 0, obj_player)
+			_team1.assign_player_to_team(_player)
+			var _character = create(0, 0, obj_character)
+			ds_list_add(_team1.characters, _character)
+			_character.team_id = _team1.team_id
+			_team1.assign_character_to_player(_character, _player)
+			
+			var _kikker = create(0, 0, obj_player)
+			var _kikker_same_team = create(0, 0, obj_player)
+			_team2.assign_player_to_team(_kikker)
+			_team1.assign_player_to_team(_kikker_same_team) // assign to same team as player
+			
+			var _score2_before = _team2.score_
+			
+			// Arrange spy for end criterion
+			_game.end_criterion_spy = spy(function () {})
+			_game.check_end_criterion = method(_game, function () {end_criterion_spy.call()})
+			
+			// Act 
+			_game.notify_on_character_kik(_character, _kikker) // kikker kiks character
+			expect(_game.end_criterion_spy).toHaveBeenCalledTimes(1)
+			
+			// Assert
+			expect(_team2.score_).toBeEqual(_score2_before + 1)
+			
+			var _score1_before = _team1.score_
+			_score2_before = _team2.score_
+			
+			// Act 
+			_game.notify_on_character_kik(_character, _kikker_same_team) // kikker kiks character from same team
+			
+			// Assert
+			expect(_team1.score_).toBeEqual(_score1_before)
+			expect(_team2.score_).toBeEqual(_score2_before)
+						
+			// Cleanup
+			instance_destroy(_game)
+			instance_destroy(_player)
+			instance_destroy(_kikker)
+			instance_destroy(_kikker_same_team)
+			instance_destroy(_character)
+		
+		})
+		
 	})
 })

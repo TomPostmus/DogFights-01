@@ -1,20 +1,19 @@
 {
   "$GMObject":"",
-  "%Name":"obj_demo_ai_astar_path",
+  "%Name":"obj_demo_engine_layer_start_spawn_characters",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":7,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_demo_ai_astar_path",
+  "name":"obj_demo_engine_layer_start_spawn_characters",
   "overriddenProperties":[],
   "parent":{
     "name":"demo",
     "path":"folders/Code/test/debug/demo.yy",
   },
   "parentObjectId":{
-    "name":"obj_demo",
-    "path":"objects/obj_demo/obj_demo.yy",
+    "name":"obj_demo_engine_layer",
+    "path":"objects/obj_demo_engine_layer/obj_demo_engine_layer.yy",
   },
   "persistent":true,
   "physicsAngularDamping":0.1,

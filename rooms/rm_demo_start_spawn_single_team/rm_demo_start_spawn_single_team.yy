@@ -1,15 +1,15 @@
 {
   "$GMRoom":"v1",
-  "%Name":"rm_start_spawn_single_team",
+  "%Name":"rm_demo_start_spawn_single_team",
   "creationCodeFile":"",
   "inheritCode":true,
   "inheritCreationOrder":true,
   "inheritLayers":true,
   "instanceCreationOrder":[
-    {"name":"inst_543E3023_1","path":"rooms/rm_start_spawn_single_team/rm_start_spawn_single_team.yy",},
-    {"name":"inst_EEF6FE3_1","path":"rooms/rm_start_spawn_single_team/rm_start_spawn_single_team.yy",},
-    {"name":"inst_1799DBDD1","path":"rooms/rm_start_spawn_single_team/rm_start_spawn_single_team.yy",},
-    {"name":"inst_3DD72D5D","path":"rooms/rm_start_spawn_single_team/rm_start_spawn_single_team.yy",},
+    {"name":"inst_543E3023_1","path":"rooms/rm_demo_start_spawn_single_team/rm_demo_start_spawn_single_team.yy",},
+    {"name":"inst_EEF6FE3_1","path":"rooms/rm_demo_start_spawn_single_team/rm_demo_start_spawn_single_team.yy",},
+    {"name":"inst_1799DBDD1","path":"rooms/rm_demo_start_spawn_single_team/rm_demo_start_spawn_single_team.yy",},
+    {"name":"inst_3DD72D5D","path":"rooms/rm_demo_start_spawn_single_team/rm_demo_start_spawn_single_team.yy",},
   ],
   "isDnd":false,
   "layers":[
@@ -34,7 +34,7 @@
     {"$GMRTileLayer":"","%Name":"Floors","depth":1100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":true,"inheritLayerDepth":true,"inheritLayerSettings":true,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Floors","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":0,"SerialiseWidth":0,"TileSerialiseData":[],},"tilesetId":null,"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
     {"$GMRBackgroundLayer":"","%Name":"Background","animationFPS":15.0,"animationSpeedType":0,"colour":4294967295,"depth":1200,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":true,"hspeed":0.0,"htiled":true,"inheritLayerDepth":true,"inheritLayerSettings":true,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Background","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":{"name":"spr_grass","path":"sprites/spr_grass/spr_grass.yy",},"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":true,"vspeed":0.0,"vtiled":true,"x":0,"y":0,},
   ],
-  "name":"rm_start_spawn_single_team",
+  "name":"rm_demo_start_spawn_single_team",
   "parent":{
     "name":"demo",
     "path":"folders/AssetsRooms/ingame_rooms/demo.yy",

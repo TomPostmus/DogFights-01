@@ -238,6 +238,32 @@ suite(function () {
 		
 		})
 		
+		test("unassign_player", function() {
+					
+			// Arrange
+			var _team = create(0, 0, obj_team)
+			var _player = create(0, 0, obj_player)
+			var _character = create(0, 0, obj_character)
+			_team.assign_character_to_player(_character, _player)
+			
+			// Assert
+			expect(ds_map_exists(_team.character_to_player, _character)).toBeTruthy()
+			expect(instance_exists(_player.character)).toBeTruthy()
+			
+			// Act
+			_team.unassign_player(_player)
+			
+			// Assert
+			expect(ds_map_exists(_team.character_to_player, _character)).toBeFalsy()
+			expect(instance_exists(_player.character)).toBeFalsy()
+			
+			// Cleanup
+			instance_destroy(_team)
+			instance_destroy(_player)
+			instance_destroy(_character)
+		
+		})
+		
 		test("find_first_unassigned_character", function() {
 		
 			// Arrange
@@ -256,6 +282,25 @@ suite(function () {
 			instance_destroy(_player)
 			instance_destroy(_character1)
 			instance_destroy(_character2)
+		
+		})
+		
+		test("notify_on_character_kik", function() {
+		
+			// Arrange
+			var _team = create(0, 0, obj_team)
+			var _character = create(0, 0, obj_character)
+			ds_list_add(_team.characters, _character)
+			
+			// Act
+			_team.notify_on_character_kik(_character, noone)
+			
+			// Assert
+			expect(ds_list_find_index(_team.characters, _character)).toBeEqual(-1)
+			
+			// Cleanup
+			instance_destroy(_team)
+			instance_destroy(_character)
 		
 		})
 		

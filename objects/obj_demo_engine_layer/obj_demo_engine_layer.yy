@@ -1,12 +1,11 @@
 {
   "$GMObject":"",
-  "%Name":"obj_demo_start_spawn_characters",
+  "%Name":"obj_demo_engine_layer",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":7,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_demo_start_spawn_characters",
+  "name":"obj_demo_engine_layer",
   "overriddenProperties":[],
   "parent":{
     "name":"demo",
@@ -16,7 +15,7 @@
     "name":"obj_demo",
     "path":"objects/obj_demo/obj_demo.yy",
   },
-  "persistent":true,
+  "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

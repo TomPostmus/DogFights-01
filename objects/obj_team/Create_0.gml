@@ -9,41 +9,6 @@ team_name = ""
 // Character to player
 character_to_player = ds_map_create() // backwards mapping from character to player
 
-/// @description On event that the character of a player is kikked
-/// @param {obj_player} player The player that is kikked
-/// @param {obj_character} character The character belong to player that is kikked
-/// @param {obj_player} kikker The player that is the offender that caused the kik
-/// @context obj_team
-notify_on_player_kik = function(_player, _character, _kikker) {
-	
-	unassign_player(_player) // first, unassign old character
-	
-	// Assign new character to player
-	var _new_character = find_first_unassigned_character()
-	if (instance_exists(_new_character))
-		assign_character_to_player(_new_character, _player)
-	
-}
-
-/// @description On event that character is kikked
-/// @param {obj_character} character The character that is kikked
-/// @param {obj_player} kikker The player that is the offender that caused the kik
-/// @context obj_team
-notify_on_character_kik = function(_character, _kikker) {
-	
-	// Remove kikked character from list
-	var _list_i = ds_list_find_index(characters, _character)
-	if (_list_i == -1)
-		return; // if character not part of team; ignore notification
-	
-	ds_list_delete(characters, _list_i)
-	
-	// Remove from mapping
-	if (ds_map_exists(character_to_player, _character))
-		ds_map_delete(character_to_player, _character)
-	
-}
-
 /// @function assign_player_to_team(player, team)
 /// @description Put player in team, expects player is yet unassigned
 /// @param {obj_player} The player to put in team
@@ -106,7 +71,7 @@ find_start_spawn_marker = function() {
 	
 	with (obj_marker_team_spawn)
 		if (team_id == other.team_id)
-			return id // return first marker that has corresponding team_id
+			return id; // return first marker that has corresponding team_id
 	
 	return noone
 	
@@ -231,4 +196,39 @@ function find_first_unassigned_character() {
 	}
 	
 	return noone
+}
+
+/// @description On event that the character of a player is kikked
+/// @param {obj_player} player The player that is kikked
+/// @param {obj_character} character The character belong to player that is kikked
+/// @param {obj_player} kikker The player that is the offender that caused the kik
+/// @context obj_team
+notify_on_player_kik = function(_player, _character, _kikker) {
+	
+	unassign_player(_player) // first, unassign old character
+	
+	// Assign new character to player
+	var _new_character = find_first_unassigned_character()
+	if (instance_exists(_new_character))
+		assign_character_to_player(_new_character, _player)
+	
+}
+
+/// @description On event that character is kikked
+/// @param {obj_character} character The character that is kikked
+/// @param {obj_player} kikker The player that is the offender that caused the kik
+/// @context obj_team
+notify_on_character_kik = function(_character, _kikker) {
+	
+	// Remove kikked character from list
+	var _list_i = ds_list_find_index(characters, _character)
+	if (_list_i == -1)
+		return; // if character not part of team; ignore notification
+	
+	ds_list_delete(characters, _list_i)
+	
+	// Remove from mapping
+	if (ds_map_exists(character_to_player, _character))
+		ds_map_delete(character_to_player, _character)
+	
 }
