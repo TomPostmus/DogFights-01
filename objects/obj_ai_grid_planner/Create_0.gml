@@ -8,12 +8,12 @@ path_mode = AI_PATH_MODE.FLOW_BASED // set to path flow mode
 cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path
 
 // A* Grid properties
-agrid_cell_size = 16
+agrid_cell_size = 16 // TODO: refactor to cell_size
 agrid_max_size = 200 // size that the A* Grid can maximally grow to
-agrid_curcell = undefined // the cell we are currently at
+//agrid_curcell = undefined // the cell we are currently at
 
-agrid_mp_grid = mp_grid_create(0, 0, room_width/agrid_cell_size, room_height/agrid_cell_size, agrid_cell_size, agrid_cell_size) // motion planning grid to perform GM engine A* in
-mp_grid_add_rectangle(agrid_mp_grid, 0, 0, room_width, room_height) // mark all cells as forbidden by default
+//agrid_mp_grid = mp_grid_create(0, 0, room_width/agrid_cell_size, room_height/agrid_cell_size, agrid_cell_size, agrid_cell_size) // motion planning grid to perform GM engine A* in
+//mp_grid_add_rectangle(agrid_mp_grid, 0, 0, room_width, room_height) // mark all cells as forbidden by default
 
 agrid_grid = ds_grid_create(room_width/agrid_cell_size, room_height/agrid_cell_size) // grid of A* cells
 for (var i = 0; i < ds_grid_width(agrid_grid); i ++)

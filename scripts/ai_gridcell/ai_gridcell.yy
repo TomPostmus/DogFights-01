@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ai_gridcell",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ai_gridcell",
+  "parent":{
+    "name":"planning_layers",
+    "path":"folders/Code/src/player/player_ai/planning_layers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
