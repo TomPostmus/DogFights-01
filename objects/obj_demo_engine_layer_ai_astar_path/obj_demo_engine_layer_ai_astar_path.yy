@@ -9,8 +9,8 @@
   "name":"obj_demo_engine_layer_ai_astar_path",
   "overriddenProperties":[],
   "parent":{
-    "name":"demo",
-    "path":"folders/Code/test/debug/demo.yy",
+    "name":"demo_ai_astar_path",
+    "path":"folders/Code/test/debug/demo/demo_ai_astar_path.yy",
   },
   "parentObjectId":{
     "name":"obj_demo_engine_layer",
