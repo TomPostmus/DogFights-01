@@ -17,7 +17,7 @@
     "name":"obj_ui_window",
     "path":"objects/obj_ui_window/obj_ui_window.yy",
   },
-  "persistent":false,
+  "persistent":true,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

@@ -10,8 +10,8 @@
   "name":"obj_particles_controller",
   "overriddenProperties":[],
   "parent":{
-    "name":"ingame_engine",
-    "path":"folders/Code/src/ingame_engine.yy",
+    "name":"particles",
+    "path":"folders/Code/src/engine/particles.yy",
   },
   "parentObjectId":null,
   "persistent":false,

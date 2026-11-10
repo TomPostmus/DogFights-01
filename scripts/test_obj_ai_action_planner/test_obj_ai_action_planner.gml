@@ -37,6 +37,9 @@ suite(function () {
 			
 			// Assert
 			expect(_defpow).toBeEqual(0)
+			
+			// Cleanup
+			instance_destroy(_gun)
 		})
 		
 		test("compute_defense_power_melee", function() {
@@ -47,6 +50,9 @@ suite(function () {
 			
 			// Assert
 			expect(obj_ai_action_planner.compute_defense_power, [_weapon, _hp_max]).toThrow() // expect to throw 'not implemented' error
+			
+			// Cleanup
+			instance_destroy(_weapon)
 		})
 	})
 })

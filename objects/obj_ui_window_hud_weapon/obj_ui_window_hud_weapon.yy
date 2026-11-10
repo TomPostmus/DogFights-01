@@ -8,14 +8,14 @@
   "name":"obj_ui_window_hud_weapon",
   "overriddenProperties":[],
   "parent":{
-    "name":"ui",
-    "path":"folders/Code/src/ui.yy",
+    "name":"hud",
+    "path":"folders/Code/src/ui/hud.yy",
   },
   "parentObjectId":{
     "name":"obj_ui_window",
     "path":"objects/obj_ui_window/obj_ui_window.yy",
   },
-  "persistent":false,
+  "persistent":true,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
   "physicsFriction":0.2,

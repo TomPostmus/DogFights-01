@@ -6,7 +6,7 @@
   "name":"anim_striker_reload_end",
   "parent":{
     "name":"animations",
-    "path":"folders/Code/src/weapons/animations.yy",
+    "path":"folders/Code/src/player/weapons/animations.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -1,25 +1,30 @@
-//Synchronize gamemaker cameras with player camera objects
-for (var i = 0; i < ds_list_size(obj_lobby.players_active); i ++) {
-	var _player = obj_lobby.players_active[|i] // corresponding active player
-	var _camera = _player.camera
-	
-	if (instance_exists(_camera)) {
-		var gm_camera = view_get_camera(i); // retrieve gamemaker camera that corresponds to viewport
-		camera_set_view_size(gm_camera, _camera.get_width(), _camera.get_height()) // set size to correspond to player camera size
-		camera_set_view_pos(gm_camera, _camera.x - _camera.get_width()/2, _camera.y - _camera.get_height()/2) // same for position
+// Follow active player with viewport
+if (instance_exists(obj_lobby)) {
+	for (var i = 0; i < nr_viewports; i ++) {
+		if (i >= ds_list_size(obj_lobby.players_active)) // if less active players than viewports, break
+			break
+			
+		follow_player(i, obj_lobby.players_active[|i]) // follow corresponding active player
+	}
+// Otherwise follow first best player with a camera
+} else {
+	var _vp_i = 0
+	with (obj_player) {
+		if (instance_exists(camera)) {
+			other.follow_player(_vp_i, id)
+			_vp_i ++
+		}
+		
+		if (_vp_i >= other.nr_viewports)
+			break
 	}
 }
 
 //Audio listener
-if (ds_list_size(obj_lobby.players_active) == 1) { // if there is only 1 active player
-	var gm_camera = view_get_camera(0); // gamemaker camera instance of 1st viewport
-	var _player = obj_lobby.players_active[|0]
-	var _camera = _player.camera // camera instance corresponding to player
+if (nr_viewports == 1) { // if there is only 1 active viewport
+	var _gm_camera = view_get_camera(0); // GM camera of 1st viewport
+	var _camera_cx = camera_get_view_x(_gm_camera) + camera_get_view_width(_gm_camera)/2 // center position of camera
+	var _camera_cy = camera_get_view_y(_gm_camera) + camera_get_view_height(_gm_camera)/2
 	
-	if (instance_exists(_camera)) {
-		audio_listener_position(_camera.x, _camera.y, 0) // update listener to camera position
-		global.sound_directional = true // enable directional mode
-	}
-} else {
-	global.sound_directional = false // undirectional mode
+	audio_listener_position(_camera_cx, _camera_cy, 0) // update listener to camera position
 }

@@ -7,7 +7,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"weapons",
-    "path":"folders/Code/src/weapons.yy",
+    "path":"folders/Code/src/player/weapons.yy",
   },
   "parentObjectId":{
     "name":"obj_weapon_melee",

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"test_inject_spy",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"test_inject_spy",
+  "parent":{
+    "name":"test_utils",
+    "path":"folders/Code/test/test_utils.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

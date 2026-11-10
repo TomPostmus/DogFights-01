@@ -3,8 +3,8 @@
   "%Name":"sh_death_particle_metaball",
   "name":"sh_death_particle_metaball",
   "parent":{
-    "name":"ingame_engine",
-    "path":"folders/Code/src/ingame_engine.yy",
+    "name":"particles",
+    "path":"folders/Code/src/engine/particles.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

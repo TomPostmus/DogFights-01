@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"test_obj_game_teambattle",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"test_obj_game_teambattle",
+  "parent":{
+    "name":"game",
+    "path":"folders/Code/test/lobby/game.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

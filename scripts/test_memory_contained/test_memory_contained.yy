@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"test_memory_contained",
   "parent":{
-    "name":"utils",
-    "path":"folders/Code/test/utils.yy",
+    "name":"test_utils",
+    "path":"folders/Code/test/test_utils.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

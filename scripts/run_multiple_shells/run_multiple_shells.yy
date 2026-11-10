@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"run_multiple_shells",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"run_multiple_shells",
+  "parent":{
+    "name":"Legacy",
+    "path":"folders/Legacy.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

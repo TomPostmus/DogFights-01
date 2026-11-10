@@ -11,8 +11,8 @@
   "name":"obj_hud",
   "overriddenProperties":[],
   "parent":{
-    "name":"ui",
-    "path":"folders/Code/src/ui.yy",
+    "name":"hud",
+    "path":"folders/Code/src/ui/hud.yy",
   },
   "parentObjectId":null,
   "persistent":false,
