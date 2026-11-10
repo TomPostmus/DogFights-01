@@ -2,7 +2,6 @@
 body_x = undefined // the current x,y position of the player
 body_y = undefined
 cost_field = undefined // the cost field in which A* Grid should grow
-path_mode = AI_PATH_MODE.FLOW_BASED // set to path flow mode
 
 // Output to player
 cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path
@@ -10,22 +9,85 @@ cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based
 // A* Grid properties
 agrid_cell_size = 16 // TODO: refactor to cell_size
 agrid_max_size = 200 // size that the A* Grid can maximally grow to
+	// TODO: generic max size for growing or pruning choice in obj_ai_tree_planner?
 //agrid_curcell = undefined // the cell we are currently at
 
 //agrid_mp_grid = mp_grid_create(0, 0, room_width/agrid_cell_size, room_height/agrid_cell_size, agrid_cell_size, agrid_cell_size) // motion planning grid to perform GM engine A* in
 //mp_grid_add_rectangle(agrid_mp_grid, 0, 0, room_width, room_height) // mark all cells as forbidden by default
 
 agrid_grid = ds_grid_create(room_width/agrid_cell_size, room_height/agrid_cell_size) // grid of A* cells
-for (var i = 0; i < ds_grid_width(agrid_grid); i ++)
-	for (var j = 0; j < ds_grid_height(agrid_grid); j ++)
-		agrid_grid[# i, j] = undefined // use undefined as default value (cleaner in code with nullish operator)
+ds_grid_clear(agrid_grid, undefined) // use undefined as default value (cleaner in code with nullish operator)
 		
-agrid_list = ds_list_create() // list of occupied cells
-agrid_list_open = ds_list_create() // list of open cells
-agrid_path_update = false // whether to do a path update, this is set to true be the central AI scheduler object
-agrid_path = ds_list_create() // list of cells representing path to minimal cost node
+//agrid_list = ds_list_create() // list of occupied cells
+//agrid_list_open = ds_list_create() // list of open cells
+//agrid_path_update = false // whether to do a path update, this is set to true be the central AI scheduler object
+//agrid_path = ds_list_create() // list of cells representing path to minimal cost node
 
- // Constructor for A* cell object
+initialize_super = initialize
+/// @description Extend initialize function to add gridcell to grid
+/// @param {AIGridCell} gridcell The gridcell to add
+/// @context obj_ai_grid_planner
+initialize = function(_gridcell) {
+	
+	initialize_super(_gridcell)
+	agrid_grid[# _gridcell.i, _gridcell.j] = _gridcell // put gridcell in grid
+	
+}
+
+add_element_super = add_element
+/// @description Extend add element function to add gridcell to grid
+/// @param {AIGridCell} gridcell The gridcell to add
+/// @context obj_ai_grid_planner
+add_element = function(_gridcell) {
+	if (agrid_grid[# _gridcell.i, _gridcell.j]) // TODO: remove this condition? By design we are checking whether to be placed location is occupied
+		show_error($"Could not add AIGridCell at occupied location {_gridcell.i}, {_gridcell.j}; not allowing AIGridCells to be overwritten.", true)
+	
+	add_element_super(_gridcell)
+	agrid_grid[# _gridcell.i, _gridcell.j] = _gridcell
+
+}
+
+delete_element_super = delete_element
+/// @description Extend add element function to remove gridcell from grid
+/// @param {AIGridCell} gridcell The gridcell to remove
+/// @context obj_ai_grid_planner
+delete_element = function(_gridcell) {
+	
+	delete_element_super(_gridcell)
+	agrid_grid[# _gridcell.i, _gridcell.j] = undefined // remove gridcell from grid
+	
+}
+
+/// @description Explore unoccupied and unobstructed cells 4-neighbours of gridcell (north, east, south, west of gridcell cell)
+/// @param {AIGridCell} gridcell The gridcell whose neighbours to explore
+/// @context obj_ai_grid_planner
+explore_gridcell_4_neighbours = function(_gridcell) {
+	
+	var _obst_grid = obj_ai_topology.grid // MP grid of obstacles from topology manager
+	
+	if (_gridcell.i+1 < ds_grid_width(agrid_grid) // if east is in grid range,
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i+1, _gridcell.j) != -1 // not occupied by obstacle
+	 && !agrid_grid[# _gridcell.i+1, _gridcell.j]) // and not part of the gridcell tree yet
+		add_element(new AIGridCell(_gridcell, _gridcell.i+1, _gridcell.j)) // add to tree
+		
+	if (_gridcell.j+1 < ds_grid_height(agrid_grid)
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i, _gridcell.j+1) != -1
+	 && agrid_grid[# _gridcell.i, _gridcell.j+1] == undefined)
+		add_element(new AIGridCell(_gridcell, _gridcell.i, _gridcell.j+1))
+		
+	if (_gridcell.i-1 >= 0 
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i-1, _gridcell.j) != -1 
+	 && agrid_grid[# _gridcell.i-1, _gridcell.j] == undefined)
+		add_element(new AIGridCell(_gridcell, _gridcell.i-1, _gridcell.j))
+		
+	if (_gridcell.j-1 >= 0 
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i, _gridcell.j-1) != -1 
+	 && agrid_grid[# _gridcell.i, _gridcell.j-1] == undefined)
+		add_element(new AIGridCell(_gridcell, _gridcell.i, _gridcell.j-1))
+		
+}
+
+// Constructor for A* cell object
 agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 	lyer = _lyer // A* grid layer object that cell belongs to
 	parent = _parent // parent cell struct
@@ -152,7 +214,7 @@ cost_field_rrt = function(_x, _y, _th) { // compute cost based on 3D position
 // Draw A* Grid layer
 draw = function(_path_ghost=false) {
 	
-	var _list = _path_ghost ? agrid_path : agrid_list // if path ghost is set, draw only path, otherwise full grid
+	var _list = _path_ghost ? path : elements // if path ghost is set, draw only path, otherwise full grid
 	
 	for (var i = 0; i < ds_list_size(_list); i ++) {
 		var _cell = _list[|i]
@@ -164,23 +226,23 @@ draw = function(_path_ghost=false) {
 	
 		draw_set_colour(
 			_cell == agrid_curcell ? c_yellow :
-			((_path_ghost || ds_list_find_index(agrid_path, _cell) != -1) ? c_lime 
-			: (_cell.open ? c_red : c_blue)))
+			((_path_ghost || ds_list_find_index(path, _cell) != -1) ? c_lime 
+			: c_blue)) //(_cell.open ? c_red : c_blue) TODO: visualize open cells if using open functionality
 	
 		draw_set_alpha(0.2)
 		draw_rectangle(_cell_x, _cell_y, _cell_x + agrid_cell_size, _cell_y + agrid_cell_size, false)
 		draw_set_alpha(1)
 		
-		if (_cell.child_count != undefined) {
+		if (_cell.progeny != undefined) {
 			draw_set_halign(fa_center)
-			draw_text(_cell_cx, _cell_cy, _cell.child_count)
+			draw_text(_cell_cx, _cell_cy, _cell.progeny)
 			draw_set_halign(fa_left)
 		}
 		
 		for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
 			var _child = _cell.children[|j]
 			
-			var _thickness = 0.5 + 0.5 * ceil(_child.child_count / 6.25) // visualising thickness of edge based on childcount of node
+			var _thickness = 0.5 + 0.5 * ceil(_child.progeny / 6.25) // visualising thickness of edge based on childcount of node
 			draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * agrid_cell_size, (_child.j + 0.5) * agrid_cell_size, _thickness) // draw line from cell to child
 		}
 		

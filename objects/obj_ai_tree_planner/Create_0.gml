@@ -19,7 +19,7 @@ alarm[1] = path_update_frames
 /// @description Initializes tree with root element
 /// @param {AITreeElement} element The element that is to become the root
 /// @context obj_ai_tree_planner
-function initialize(_element) {
+initialize = function(_element) {
 	if (root != undefined)
 		show_error("Root must be deleted before re-initializing tree.", true)
 	if (_element.parent)
@@ -34,7 +34,7 @@ function initialize(_element) {
 /// @description Adds a new element to the tree at the parent
 /// @param {AITreeElement} element The new element being added to tree
 /// @context obj_ai_tree_planner
-function add_element(_element) {
+add_element = function(_element) {
 	var _parent = _element.parent
 	if (!_parent)
 		show_error("Could not add element to tree, to undefined parent.", true)
@@ -52,7 +52,7 @@ function add_element(_element) {
 /// @param {AITreeElement} element The element to be removed
 /// @param {bool} decouple Whether to remove element from its parent's children list. Should only be false in recursive calls on children.
 /// @context obj_ai_tree_planner
-function delete_element(_element, decouple=true) {
+delete_element = function(_element, decouple=true) {
 	var _list_i = ds_list_find_index(elements, _element)
 	if (_list_i == -1)
 		show_error("Could not delete element that is not part of tree.", true)
