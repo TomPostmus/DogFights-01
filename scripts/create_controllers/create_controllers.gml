@@ -1,4 +1,4 @@
-function create_controllers(_obj, _vars=undefined) {
+function create_controllers(_obj, _vars={}) {
 
 	if (!layer_exists("Controllers")) {
 		layer_create(-1000, "Controllers")

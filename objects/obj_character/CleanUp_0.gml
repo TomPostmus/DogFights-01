@@ -5,3 +5,4 @@ if (instance_exists(weapon))
 	instance_destroy(body)
 	
 ds_list_destroy(damage_bill)
+ds_list_destroy(observers_kik)

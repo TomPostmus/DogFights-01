@@ -1,9 +1,13 @@
 // Draw in-world HUD elements (e.g. interactable outlines, friendly player health bars)
+if (instance_exists(obj_viewport_controller)) {
+
 for (var i = 0; i < obj_viewport_controller.nr_viewports; i ++) {
 	var _player = obj_viewport_controller.viewport_to_player[i]
-	var _character = _player.character
-	
+	if (!instance_exists(_player))
+		continue
+		
 	// Draw outline of object in interaction focus
+	var _character = _player.character
 	if (instance_exists(_character) && _character.interact_focus != undefined) {
 	with (_character.interact_focus) {
 			
@@ -22,4 +26,6 @@ for (var i = 0; i < obj_viewport_controller.nr_viewports; i ++) {
 		shader_reset()
 			
 	}}
+}
+
 }

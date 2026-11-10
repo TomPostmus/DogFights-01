@@ -1,5 +1,5 @@
 //Initialize graphics
-application_surface_draw_enable(false)
+//application_surface_draw_enable(false)
 global.aspect = clamp(display_get_width()/display_get_height(), 0.5555, 2.3333)
 global.height = display_get_height()
 global.width = global.aspect*global.height
@@ -26,6 +26,7 @@ global.ingame_rooms = [rm_map_josephsfarm, rm_test, rm_ai_demo_landmark_and_enga
 global.ingame = function() {
 	return array_contains(global.ingame_rooms, room)
 } // whether we are in an in-game room
+global.engine_running = false
 
 //Sound
 global.sound_directional = true

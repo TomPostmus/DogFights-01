@@ -8,6 +8,8 @@
 
 //}
 
+if (global.engine_running && instance_exists(obj_viewport_controller)) {
+
 for (var _vp_i = 0; _vp_i < obj_viewport_controller.nr_viewports; _vp_i ++) { // only draw if AI is active player and we are currently drawing to its viewport
 if (obj_viewport_controller.viewport_to_player[_vp_i] == id && view_current == _vp_i) {
 	
@@ -50,3 +52,5 @@ if (obj_viewport_controller.viewport_to_player[_vp_i] == id && view_current == _
 	}
 	
 }}
+
+}

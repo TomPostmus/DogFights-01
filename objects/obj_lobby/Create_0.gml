@@ -26,11 +26,21 @@ repeat (num_ai_players)
 	ds_list_add(players, create_controllers(obj_player_ai))
 
 // Create game
-game = undefined // game object made on basis of game_mode. Life-time managed by obj_lobby
+game = noone // game object made on basis of game_mode. Life-time managed by obj_lobby
 if (game_mode_object_index != undefined) {
 	if (!object_exists(game_mode_object_index) || !object_is_ancestor(game_mode_object_index, obj_game))
 		show_error("Could not start game from lobby: game mode object index is not an object, or not a child of obj_game.", true)
 	game = create_controllers(game_mode_object_index)
+	
+	// Initialisation for team-based game
+	if (object_is_class(game_mode_object_index, obj_game_teambattle)) { // if child of teambattle game
+		game.initialize_teams(teams_number)
+		game.initial_player_team_assignment(players) // do initial player to team assignment
+	}
+	
+	// Pass config to game
+	// TODO: make seperate GameConfig struct that is passed to game instead?
+	game.lives_init = lives_init
 }
 
 /// @function start_game()
@@ -38,5 +48,10 @@ if (game_mode_object_index != undefined) {
 /// @context obj_lobby
 function start_game() {	
 	create_controllers(obj_engine) // kick off engine
+	
+	// Subscribe game to engine startup
+	if (instance_exists(game))
+		ds_list_add(obj_engine.observers_startup, game)
+	
 	obj_engine.start(map_room)
 }

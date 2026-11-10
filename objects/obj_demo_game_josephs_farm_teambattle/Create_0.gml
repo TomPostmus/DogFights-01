@@ -1,7 +1,7 @@
 // Inherit the parent event
 event_inherited();
 
-lobby_configuration.army_size = 12
+lobby_configuration.lives_init = 12
 lobby_configuration.game_mode_object_index = obj_game_teambattle
 lobby_configuration.map_room = rm_map_josephsfarm
 lobby_configuration.teams_number = 2

@@ -1,0 +1,3 @@
+ds_list_destroy(players)
+ds_list_destroy(characters)
+ds_map_destroy(character_to_player)
