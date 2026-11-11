@@ -1,3 +1,5 @@
+event_inherited()
+
 // Inputs from player
 body_x = undefined // the current x,y position of the player
 body_y = undefined
@@ -5,6 +7,11 @@ cost_field = undefined // the cost field in which A* Grid should grow
 
 // Output to player
 cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path
+
+// Timer
+// TODO Issue-011: connect with central scheduler obj_ai_scheduler
+tree_update_frames = 1 // set timer lengths
+path_update_frames = 30
 
 // A* Grid properties
 agrid_cell_size = 16 // TODO: refactor to cell_size
@@ -15,7 +22,7 @@ agrid_max_size = 200 // size that the A* Grid can maximally grow to
 //agrid_mp_grid = mp_grid_create(0, 0, room_width/agrid_cell_size, room_height/agrid_cell_size, agrid_cell_size, agrid_cell_size) // motion planning grid to perform GM engine A* in
 //mp_grid_add_rectangle(agrid_mp_grid, 0, 0, room_width, room_height) // mark all cells as forbidden by default
 
-agrid_grid = ds_grid_create(room_width/agrid_cell_size, room_height/agrid_cell_size) // grid of A* cells
+agrid_grid = ds_grid_create(room_width / AGRID_CELL_SIZE, room_height / AGRID_CELL_SIZE) // grid of A* cells
 ds_grid_clear(agrid_grid, undefined) // use undefined as default value (cleaner in code with nullish operator)
 		
 //agrid_list = ds_list_create() // list of occupied cells
@@ -85,6 +92,18 @@ explore_gridcell_4_neighbours = function(_gridcell) {
 	 && agrid_grid[# _gridcell.i, _gridcell.j-1] == undefined)
 		add_element(new AIGridCell(_gridcell, _gridcell.i, _gridcell.j-1))
 		
+}
+
+/// @description Override computation of H cost function for gridcell
+/// @param {AIGridCell} gridcell The gridcell to compute H cost for
+/// @context obj_ai_grid_planner
+compute_h_cost = function(_gridcell) {
+	
+	if (cost_field)
+		return cost_field(_gridcell.x, _gridcell.y, _gridcell.th)
+		
+	return 0;
+	
 }
 
 // Constructor for A* cell object
@@ -194,8 +213,8 @@ cost_field_rrt = function(_x, _y, _th) { // compute cost based on 3D position
 	for (var i = 0; i < ds_list_size(agrid_path); i ++) {
 		var _cell = agrid_path[|i]
 					
-		var _cell_x = (_cell.i + 0.5) * agrid_cell_size // x, y coordinates of center of cell
-		var _cell_y = (_cell.j + 0.5) * agrid_cell_size
+		var _cell_x = (_cell.i + 0.5) * AGRID_CELL_SIZE // x, y coordinates of center of cell
+		var _cell_y = (_cell.j + 0.5) * AGRID_CELL_SIZE
 					
 		var _dist = point_distance(_x, _y, _cell_x, _cell_y)
 		if (_dist < _least_distance) {
@@ -219,18 +238,18 @@ draw = function(_path_ghost=false) {
 	for (var i = 0; i < ds_list_size(_list); i ++) {
 		var _cell = _list[|i]
 	
-		var _cell_x = _cell.i * agrid_cell_size
-		var _cell_y = _cell.j * agrid_cell_size
-		var _cell_cx = _cell_x + agrid_cell_size / 2
-		var _cell_cy = _cell_y + agrid_cell_size / 2
+		var _cell_x = _cell.i * AGRID_CELL_SIZE
+		var _cell_y = _cell.j * AGRID_CELL_SIZE
+		var _cell_cx = _cell_x + AGRID_CELL_SIZE / 2
+		var _cell_cy = _cell_y + AGRID_CELL_SIZE / 2
 	
 		draw_set_colour(
-			_cell == agrid_curcell ? c_yellow :
+			_cell == root ? c_yellow :
 			((_path_ghost || ds_list_find_index(path, _cell) != -1) ? c_lime 
 			: c_blue)) //(_cell.open ? c_red : c_blue) TODO: visualize open cells if using open functionality
 	
 		draw_set_alpha(0.2)
-		draw_rectangle(_cell_x, _cell_y, _cell_x + agrid_cell_size, _cell_y + agrid_cell_size, false)
+		draw_rectangle(_cell_x, _cell_y, _cell_x + AGRID_CELL_SIZE, _cell_y + AGRID_CELL_SIZE, false)
 		draw_set_alpha(1)
 		
 		if (_cell.progeny != undefined) {
@@ -243,14 +262,14 @@ draw = function(_path_ghost=false) {
 			var _child = _cell.children[|j]
 			
 			var _thickness = 0.5 + 0.5 * ceil(_child.progeny / 6.25) // visualising thickness of edge based on childcount of node
-			draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * agrid_cell_size, (_child.j + 0.5) * agrid_cell_size, _thickness) // draw line from cell to child
+			draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * AGRID_CELL_SIZE, (_child.j + 0.5) * AGRID_CELL_SIZE, _thickness) // draw line from cell to child
 		}
 		
 		//var _r = 5
 		//if (_cell.orientation != undefined)
-		//	draw_arrow(_cell_x + agrid_cell_size/2, _cell_y + agrid_cell_size/2,
-		//		_cell_x + agrid_cell_size/2 + lengthdir_x(_r, _cell.orientation), 
-		//		_cell_y + agrid_cell_size/2 + lengthdir_y(_r, _cell.orientation), 2)
+		//	draw_arrow(_cell_x + AGRID_CELL_SIZE/2, _cell_y + AGRID_CELL_SIZE/2,
+		//		_cell_x + AGRID_CELL_SIZE/2 + lengthdir_x(_r, _cell.orientation), 
+		//		_cell_y + AGRID_CELL_SIZE/2 + lengthdir_y(_r, _cell.orientation), 2)
 	
 	}
 

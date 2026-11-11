@@ -1,4 +1,4 @@
-//if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
+//if (global.engine_running && instance_exists(character) && instance_exists(character.body)) {
 //	var _body = character.body
 //	var _weapon = character.weapon
 	
@@ -22,21 +22,20 @@ if (obj_viewport_controller.viewport_to_player[_vp_i] == id && view_current == _
 	} else if (debug_draw_mode == 2) {
 	
 		// Draw RRT Grid layer
-		//layer_agrid.draw(true)
 		if (instance_exists(layer_rrt))
 			layer_rrt.draw()
 	
 	} else if (debug_draw_mode == 3) {
 		
 		// Draw A* Grid layer
-		if (instance_exists(layer_agrid))
-			layer_agrid.draw()
+		if (instance_exists(grid_planner))
+			grid_planner.draw()
 	
 	} else if (debug_draw_mode == 4) {
 		
 		// Draw both
-		if (instance_exists(layer_agrid))
-			layer_agrid.draw()
+		if (instance_exists(grid_planner))
+			grid_planner.draw()
 		if (instance_exists(layer_rrt))
 			layer_rrt.draw()
 	
