@@ -25,7 +25,7 @@ repeat(3) {
 	var _grow = _agrid_size < agrid_max_size || !irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune grid
 	
 	// chose element to grow from, or prune, by powerlaw weighting
-	var _chosen = ai_powerlaw_weighting(elements, _grow, 1)
+	var _chosen = ai_powerlaw_weighting(elements, _grow, 2)
 	
 	// grow or prune
 	if (_chosen != undefined) {

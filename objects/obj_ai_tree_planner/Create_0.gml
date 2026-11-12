@@ -52,7 +52,7 @@ add_element = function(_element) {
 /// @param {AITreeElement} element The element to be removed
 /// @param {bool} decouple Whether to remove element from its parent's children list. Should only be false in recursive calls on children.
 /// @context obj_ai_tree_planner
-delete_element = function(_element, decouple=true) {
+delete_element = function(_element, _decouple=true) {
 	var _list_i = ds_list_find_index(elements, _element)
 	if (_list_i == -1)
 		show_error("Could not delete element that is not part of tree.", true)
@@ -61,7 +61,7 @@ delete_element = function(_element, decouple=true) {
 	
 	if (_element == root) {
 		root = undefined	
-	} else if (decouple) { // decouple from parent
+	} else if (_decouple) { // decouple from parent
 		_list_i = ds_list_find_index(_element.parent.children, _element) // find element in parent children list		
 		ds_list_delete(_element.parent.children, _list_i)
 		
@@ -129,7 +129,7 @@ function compute_path_flow() {
 
 /// @description Compute H cost
 /// @context obj_ai_tree_planner
-function compute_h_cost(_element) {
+compute_h_cost = function(_element) {
 	show_error("This function is meant to be implemented in inheriting objects.", true)
 }
 

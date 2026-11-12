@@ -8,6 +8,9 @@ cost_field = undefined // the cost field in which A* Grid should grow
 // Output to player
 cost_field_rrt = undefined // cost field, meant for the RRT layer, that is based on the current A* path
 
+// Path mode
+path_mode = AI_PATH_MODE.DESTINATION_BASED
+
 // Timer
 // TODO Issue-011: connect with central scheduler obj_ai_scheduler
 tree_update_frames = 1 // set timer lengths
@@ -57,10 +60,11 @@ add_element = function(_gridcell) {
 delete_element_super = delete_element
 /// @description Extend add element function to remove gridcell from grid
 /// @param {AIGridCell} gridcell The gridcell to remove
+/// @param {bool} decouple Whether to remove element from its parent's children list. Should only be false in recursive calls on children.
 /// @context obj_ai_grid_planner
-delete_element = function(_gridcell) {
+delete_element = function(_gridcell, _decouple=true) {
 	
-	delete_element_super(_gridcell)
+	delete_element_super(_gridcell, _decouple)
 	agrid_grid[# _gridcell.i, _gridcell.j] = undefined // remove gridcell from grid
 	
 }
@@ -99,10 +103,8 @@ explore_gridcell_4_neighbours = function(_gridcell) {
 /// @context obj_ai_grid_planner
 compute_h_cost = function(_gridcell) {
 	
-	if (cost_field)
-		return cost_field(_gridcell.x, _gridcell.y, _gridcell.th)
-		
-	return 0;
+	if (cost_field) 
+		_gridcell.h_cost = cost_field(_gridcell.x, _gridcell.y, _gridcell.th)
 	
 }
 
@@ -252,9 +254,9 @@ draw = function(_path_ghost=false) {
 		draw_rectangle(_cell_x, _cell_y, _cell_x + AGRID_CELL_SIZE, _cell_y + AGRID_CELL_SIZE, false)
 		draw_set_alpha(1)
 		
-		if (_cell.progeny != undefined) {
+		if (_cell.s_cost != undefined) {
 			draw_set_halign(fa_center)
-			draw_text(_cell_cx, _cell_cy, _cell.progeny)
+			draw_text(_cell_cx, _cell_cy, round(_cell.s_cost))
 			draw_set_halign(fa_left)
 		}
 		

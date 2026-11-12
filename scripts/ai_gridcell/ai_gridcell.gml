@@ -13,5 +13,7 @@ function AIGridCell(_parent, _i, _j) : AITreeElement(_parent) constructor {
 	y = j * AGRID_CELL_SIZE	
 	
 	p_cost = undefined // path cost of cell if it is part of A* path
+	
+	g_cost = parent ? (parent.g_cost + AGRID_CELL_SIZE) : 0
 
 }

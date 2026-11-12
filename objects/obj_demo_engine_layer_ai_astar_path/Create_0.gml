@@ -17,7 +17,7 @@ function start() {
 /// @context obj_demo_ai_astar_path
 notify_on_engine_startup = function() {
 	
-	var _character = obj_spawns_controller.spawn_character(64, 64, 315)
+	var _character = obj_spawns_controller.spawn_character(640, 640, 315)
 	demo_player.character = _character
 	
 }
