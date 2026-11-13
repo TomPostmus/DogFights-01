@@ -431,11 +431,11 @@ draw = function(_path_ghost=false) {
 		draw_rectangle(_cell_x, _cell_y, _cell_x + AGRID_CELL_SIZE, _cell_y + AGRID_CELL_SIZE, false)
 		draw_set_alpha(1)
 		
-		//if (_cell.s_cost != undefined) {
-		//	draw_set_halign(fa_center)
-		//	draw_text(_cell_cx, _cell_cy, round(_cell.s_cost))
-		//	draw_set_halign(fa_left)
-		//}
+		if (_cell.p_cost != undefined) {
+			draw_set_halign(fa_center)
+			draw_text(_cell_cx, _cell_cy, round(_cell.p_cost))
+			draw_set_halign(fa_left)
+		}
 		
 		//for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
 		//	var _child = _cell.children[|j]
@@ -444,11 +444,11 @@ draw = function(_path_ghost=false) {
 		//	draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * AGRID_CELL_SIZE, (_child.j + 0.5) * AGRID_CELL_SIZE, _thickness) // draw line from cell to child
 		//}
 		
-		var _r = 5
-		if (_cell.th != undefined)
-			draw_arrow(_cell_x + AGRID_CELL_SIZE/2, _cell_y + AGRID_CELL_SIZE/2,
-				_cell_x + AGRID_CELL_SIZE/2 + lengthdir_x(_r, _cell.th), 
-				_cell_y + AGRID_CELL_SIZE/2 + lengthdir_y(_r, _cell.th), 2)
+		//var _r = 5
+		//if (_cell.th != undefined)
+		//	draw_arrow(_cell_x + AGRID_CELL_SIZE/2, _cell_y + AGRID_CELL_SIZE/2,
+		//		_cell_x + AGRID_CELL_SIZE/2 + lengthdir_x(_r, _cell.th), 
+		//		_cell_y + AGRID_CELL_SIZE/2 + lengthdir_y(_r, _cell.th), 2)
 	
 	}
 

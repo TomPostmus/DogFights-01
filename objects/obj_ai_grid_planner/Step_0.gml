@@ -1,4 +1,53 @@
-//if (body_x != undefined && body_y != undefined && cost_field != undefined) { // check if received inputs from player
+if (body_x != undefined && body_y != undefined && cost_field != undefined && root) { // check if received inputs from player
+	
+	// Check if still has line collision with root
+	for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // check line collision with current node
+		if (instance_exists(collision_line(root.x, root.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
+			delete_element(root) // if no line collision, destroy root, rebuild A* grid
+	
+	// Move through path
+	if (ds_list_size(path) > 1) { // if path is set, and at least 2 long
+		
+		var _cur_dist = point_distance(root.x, root.y, body_x, body_y) // distance from player to current cell
+		
+		var _next_cell = undefined
+		for (var i = 1; i < ds_list_size(path); i ++) { // loop through cells in path that are not current cell
+			
+			var _gridcell = path[|i]
+			
+			var _dist = point_distance(_gridcell.x, _gridcell.y, body_x, body_y) // compute distance
+			
+			var _line_collision = true
+			for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // compute line collision
+				if (instance_exists(collision_line(_gridcell.x, _gridcell.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
+					_line_collision = false
+			
+			if (_line_collision && _dist < _cur_dist) { // if found cell in path that has line collsion with body and that is closer to player than current cell
+				_next_cell = _gridcell // set as next and break
+				break
+			}
+		}
+		
+		if (_next_cell != undefined) { // if found closer cell
+			
+			// TODO: implement new_root/rebase function in tree planner
+			
+			//ds_list_delete(agrid_path, 0) // delete 1st element
+			
+			//var _parent = _next_cell.parent
+			//var _list_i = ds_list_find_index(_parent.children, _next_cell)
+			//ds_list_delete(_parent.children, _list_i) // decouple next cell from its parent cell, to avoid deleting the next cell along with deleting old cell
+			//agrid_curcell.destroy() // destroy old cell
+			//agrid_curcell = _next_cell
+			//agrid_curcell.parent = undefined // new root, so no parent
+				
+			//var _g_cost_before = agrid_curcell.g_cost // remember G cost before reset
+			//for (var i = 0; i < ds_list_size(agrid_list); i ++)			
+			//	agrid_list[|i].g_cost -= _g_cost_before // subtract G cost for every cell	
+				
+		}
+	}
+}
 
 //	// Initialize A* Grid
 //	var _body_cell_i = floor(body_x / agrid_cell_size)
@@ -266,7 +315,7 @@
 //		//					_cur_cell.orientation = _next_orientation + angle_difference(_prev_orientation ?? _next_orientation, _next_orientation) / 2 // cell's orientation is angle between next and previous orientation
 								
 //		//					_cur_cell_x = _next_cell_x // move to next cell
-//		//					_cur_cell_y = _next_cell_y
+//		//					root.y = _next_cell_y
 //		//					_prev_orientation = _next_orientation
 //		//					_path_acc_length += agrid_cell_size
 //		//				}
@@ -281,53 +330,6 @@
 			
 //	}
 		
-//	// Move through path nodes
-//	var _cur_cell_x = (agrid_curcell.i + 0.5) * agrid_cell_size // x, y of current node
-//	var _cur_cell_y = (agrid_curcell.j + 0.5) * agrid_cell_size
-	
-//	for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // check line collision with current node
-//		if (instance_exists(collision_line(_cur_cell_x, _cur_cell_y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
-//			agrid_curcell.destroy() // if no line collision, destroy root cell, rebuild A* grid
-	
-//	if (ds_list_size(agrid_path) > 1) { // if path is set, and at least 2 long
-		
-//		var _cur_dist = point_distance(_cur_cell_x, _cur_cell_y, body_x, body_y) // distance from player to current cell
-		
-//		var _next_cell = undefined
-//		for (var i = 1; i < ds_list_size(agrid_path); i ++) { // loop through cells in path that are not current cell
-//			var _cell = agrid_path[|i]
-			
-//			var _cell_x = (_cell.i + 0.5) * agrid_cell_size
-//			var _cell_y = (_cell.j + 0.5) * agrid_cell_size
-//			var _dist = point_distance(_cell_x, _cell_y, body_x, body_y)
-			
-//			var _line_collision = true
-//			for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // check line collision with cell
-//				if (instance_exists(collision_line(_cell_x, _cell_y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
-//					_line_collision = false
-			
-//			if (_line_collision && _dist < _cur_dist) { // if found cell in path that has line collsion with body and that is closer to player than current cell
-//				_next_cell = _cell // set as next and break
-//				break
-//			}
-//		}
-		
-//		if (_next_cell != undefined) { // if found closer cell
-			
-//			ds_list_delete(agrid_path, 0) // delete 1st element
-			
-//			var _parent = _next_cell.parent
-//			var _list_i = ds_list_find_index(_parent.children, _next_cell)
-//			ds_list_delete(_parent.children, _list_i) // decouple next cell from its parent cell, to avoid deleting the next cell along with deleting old cell
-//			agrid_curcell.destroy() // destroy old cell
-//			agrid_curcell = _next_cell
-//			agrid_curcell.parent = undefined // new root, so no parent
-				
-//			var _g_cost_before = agrid_curcell.g_cost // remember G cost before reset
-//			for (var i = 0; i < ds_list_size(agrid_list); i ++)			
-//				agrid_list[|i].g_cost -= _g_cost_before // subtract G cost for every cell	
-				
-//		}
-//	}
+
 	
 //}
