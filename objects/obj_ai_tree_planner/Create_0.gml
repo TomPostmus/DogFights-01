@@ -91,7 +91,7 @@ function update_progeny_upstream(_element, _added_progeny) {
 /// @description Computes a path from the root to the destination node by backtracking
 /// @param {AITreeElement} destination The destination element to compute path towards
 /// @context obj_ai_tree_planner
-function compute_path(_destination) {
+compute_path = function(_destination) {
 	if (ds_list_find_index(elements, _destination) == -1)
 		show_error("Could not compute path to destination that is not part of tree.", true)
 		
@@ -106,7 +106,7 @@ function compute_path(_destination) {
 /// @function compute_path_flow()
 /// @description Compute a path, starting from root, following the flow, or maximaly progeny counts, of the tree
 /// @context obj_ai_tree_planner
-function compute_path_flow() {
+compute_path_flow = function() {
 	ds_list_clear(path) // clear 
 	var _max_progeny, _next_elem
 	var _cur_elem = root

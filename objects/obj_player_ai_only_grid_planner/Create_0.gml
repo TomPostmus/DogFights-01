@@ -14,6 +14,6 @@ notify_on_engine_startup = function() {
 	
 	// Initialize only grid and motion planning layers
 	grid_planner = create_controllers(obj_ai_grid_planner)
-	layer_rrt = create_controllers(obj_ai_motion_planner)	
+	motion_planner = create_controllers(obj_ai_motion_planner)	
 	
 }

@@ -69,6 +69,53 @@ delete_element = function(_gridcell, _decouple=true) {
 	
 }
 
+compute_path_super = compute_path
+/// @description Extend compute path function to also compute path attributes afterwards
+/// @param {AIGridCell} destination The destination element to compute path towards
+/// @context obj_ai_grid_planner
+compute_path = function(_destination) {
+	
+	compute_path_super(_destination)
+	compute_path_attributes()
+	
+}
+
+compute_path_flow_super = compute_path_flow
+/// @description Extend compute path flow function to also compute path attributes afterwards
+/// @context obj_ai_grid_planner
+compute_path_flow = function() {
+	
+	compute_path_flow_super()
+	compute_path_attributes()
+	
+}
+
+/// @description Compute orientations and path costs for gridcells that are part of path
+/// @context obj_ai_grid_planner
+compute_path_attributes = function() {
+
+	var _p_cost_acc = 0
+	var _cur_cell, _prev_cell
+	var _next_orientation = undefined // orientation from current cell to next cell
+	var _prev_orientation = undefined // orientation from previous cell to current cell
+	for (var i = ds_list_size(path)-1; i >= 0; i --) { // loop backwards through path
+	
+		_cur_cell = path[|i]
+		_prev_cell = (i - 1 >= 0) ? path[|i-1] : undefined
+		_prev_orientation = _prev_cell ? point_direction(_prev_cell.x, _prev_cell.y, _cur_cell.x, _cur_cell.y) : 0
+			
+		_cur_cell.th = _next_orientation == undefined ? (_prev_orientation ?? 0) : 
+			(_next_orientation + angle_difference(_prev_orientation ?? _next_orientation, _next_orientation) / 2) // cell's orientation is angle between next and previous orientation
+		_cur_cell.p_cost = _p_cost_acc
+		
+		_next_orientation = _prev_orientation
+		if (_prev_cell)
+			_p_cost_acc += point_distance(_prev_cell.x, _prev_cell.y, _cur_cell.x, _cur_cell.y)
+						
+	}
+
+}
+
 
 /// @description Explore unoccupied and unobstructed cells 4-neighbours of gridcell (north, east, south, west of gridcell cell)
 /// @param {AIGridCell} gridcell The gridcell whose neighbours to explore
@@ -337,13 +384,13 @@ agrid_cell = function(_lyer, _parent, _i, _j) constructor {
 // Cost field for RRT layer
 cost_field_rrt = function(_x, _y, _th) { // compute cost based on 3D position
 	
-	if (ds_list_size(agrid_path) == 0) // if no path, return zero cost
+	if (ds_list_size(path) == 0) // if no path, return zero cost
 		return 0
 				
 	var _least_distance = infinity
 	var _nearest_cell
-	for (var i = 0; i < ds_list_size(agrid_path); i ++) {
-		var _cell = agrid_path[|i]
+	for (var i = 0; i < ds_list_size(path); i ++) {
+		var _cell = path[|i]
 					
 		var _cell_x = (_cell.i + 0.5) * AGRID_CELL_SIZE // x, y coordinates of center of cell
 		var _cell_y = (_cell.j + 0.5) * AGRID_CELL_SIZE
@@ -356,7 +403,7 @@ cost_field_rrt = function(_x, _y, _th) { // compute cost based on 3D position
 	}
 				
 	// compute cost as distance to nearest path cell plus path cost of that cell, plus angle difference with orientation
-	var _orientation_cost = 50 * (1 - dcos(angle_difference(_th, _nearest_cell.orientation)))
+	var _orientation_cost = 50 * (1 - dcos(angle_difference(_th, _nearest_cell.th)))
 	return 0.3 *_least_distance + 1.0 * _nearest_cell.p_cost + _orientation_cost
 			
 }
@@ -384,24 +431,24 @@ draw = function(_path_ghost=false) {
 		draw_rectangle(_cell_x, _cell_y, _cell_x + AGRID_CELL_SIZE, _cell_y + AGRID_CELL_SIZE, false)
 		draw_set_alpha(1)
 		
-		if (_cell.s_cost != undefined) {
-			draw_set_halign(fa_center)
-			draw_text(_cell_cx, _cell_cy, round(_cell.s_cost))
-			draw_set_halign(fa_left)
-		}
+		//if (_cell.s_cost != undefined) {
+		//	draw_set_halign(fa_center)
+		//	draw_text(_cell_cx, _cell_cy, round(_cell.s_cost))
+		//	draw_set_halign(fa_left)
+		//}
 		
-		for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
-			var _child = _cell.children[|j]
+		//for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
+		//	var _child = _cell.children[|j]
 			
-			var _thickness = 0.5 + 0.5 * ceil(_child.progeny / 6.25) // visualising thickness of edge based on childcount of node
-			draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * AGRID_CELL_SIZE, (_child.j + 0.5) * AGRID_CELL_SIZE, _thickness) // draw line from cell to child
-		}
+		//	var _thickness = 0.5 + 0.5 * ceil(_child.progeny / 6.25) // visualising thickness of edge based on childcount of node
+		//	draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * AGRID_CELL_SIZE, (_child.j + 0.5) * AGRID_CELL_SIZE, _thickness) // draw line from cell to child
+		//}
 		
-		//var _r = 5
-		//if (_cell.orientation != undefined)
-		//	draw_arrow(_cell_x + AGRID_CELL_SIZE/2, _cell_y + AGRID_CELL_SIZE/2,
-		//		_cell_x + AGRID_CELL_SIZE/2 + lengthdir_x(_r, _cell.orientation), 
-		//		_cell_y + AGRID_CELL_SIZE/2 + lengthdir_y(_r, _cell.orientation), 2)
+		var _r = 5
+		if (_cell.th != undefined)
+			draw_arrow(_cell_x + AGRID_CELL_SIZE/2, _cell_y + AGRID_CELL_SIZE/2,
+				_cell_x + AGRID_CELL_SIZE/2 + lengthdir_x(_r, _cell.th), 
+				_cell_y + AGRID_CELL_SIZE/2 + lengthdir_y(_r, _cell.th), 2)
 	
 	}
 

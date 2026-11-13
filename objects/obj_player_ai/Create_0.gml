@@ -7,7 +7,7 @@ debug_draw_mode = 0
 vision = noone // reference to vision object, initialized upon Room Start
 action_planner = noone // references to planning layers
 grid_planner = noone
-layer_rrt = noone
+motion_planner = noone
 
 /// @description On engine startup event
 /// @context obj_player_ai
@@ -22,6 +22,6 @@ notify_on_engine_startup = function() {
 	action_planner.player = self;
 	
 	grid_planner = create_controllers(obj_ai_grid_planner) 
-	layer_rrt = create_controllers(obj_ai_motion_planner)
+	motion_planner = create_controllers(obj_ai_motion_planner)
 	
 }
