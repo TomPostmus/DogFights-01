@@ -12,7 +12,7 @@ if (!root
 	&& _body_cell_i >= 0 && _body_cell_i < ds_grid_width(agrid_grid)
 	&& _body_cell_j >= 0 && _body_cell_j < ds_grid_height(agrid_grid)) {
 
-	initialize(new AIGridCell(undefined, _body_cell_i, _body_cell_j)) // initialize tree with root element
+	initialize(new AIGridCell4Neighbours(undefined, _body_cell_i, _body_cell_j)) // initialize tree with root element
 	
 }
 
@@ -32,7 +32,7 @@ repeat(3) {
 	
 		if (_grow) { // if grow
 			
-			explore_gridcell_4_neighbours(_chosen)
+			explore_gridcell_8_neighbours(_chosen)
 			
 		} else { // if prune
 			

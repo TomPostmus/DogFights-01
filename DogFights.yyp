@@ -482,6 +482,7 @@
     {"id":{"name":"spr_bed1","path":"sprites/spr_bed1/spr_bed1.yy",},},
     {"id":{"name":"spr_bed2","path":"sprites/spr_bed2/spr_bed2.yy",},},
     {"id":{"name":"spr_block","path":"sprites/spr_block/spr_block.yy",},},
+    {"id":{"name":"spr_bones","path":"sprites/spr_bones/spr_bones.yy",},},
     {"id":{"name":"spr_bullet_medium_colourmask","path":"sprites/spr_bullet_medium_colourmask/spr_bullet_medium_colourmask.yy",},},
     {"id":{"name":"spr_bullet_medium_tail","path":"sprites/spr_bullet_medium_tail/spr_bullet_medium_tail.yy",},},
     {"id":{"name":"spr_bullet_medium_tailmask","path":"sprites/spr_bullet_medium_tailmask/spr_bullet_medium_tailmask.yy",},},

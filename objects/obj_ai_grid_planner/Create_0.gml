@@ -69,6 +69,7 @@ delete_element = function(_gridcell, _decouple=true) {
 	
 }
 
+
 /// @description Explore unoccupied and unobstructed cells 4-neighbours of gridcell (north, east, south, west of gridcell cell)
 /// @param {AIGridCell} gridcell The gridcell whose neighbours to explore
 /// @context obj_ai_grid_planner
@@ -78,23 +79,120 @@ explore_gridcell_4_neighbours = function(_gridcell) {
 	
 	if (_gridcell.i+1 < ds_grid_width(agrid_grid) // if east is in grid range,
 	 && mp_grid_get_cell(_obst_grid, _gridcell.i+1, _gridcell.j) != -1 // not occupied by obstacle
-	 && !agrid_grid[# _gridcell.i+1, _gridcell.j]) // and not part of the gridcell tree yet
-		add_element(new AIGridCell(_gridcell, _gridcell.i+1, _gridcell.j)) // add to tree
-		
+	 && !agrid_grid[# _gridcell.i+1, _gridcell.j]) { // and not part of the gridcell tree yet
+		var _new_gridcell = new AIGridCell4Neighbours(_gridcell, _gridcell.i+1, _gridcell.j)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost // compute S cost
+		add_element(_new_gridcell) // add to tree
+	}
+	
 	if (_gridcell.j+1 < ds_grid_height(agrid_grid)
 	 && mp_grid_get_cell(_obst_grid, _gridcell.i, _gridcell.j+1) != -1
-	 && agrid_grid[# _gridcell.i, _gridcell.j+1] == undefined)
-		add_element(new AIGridCell(_gridcell, _gridcell.i, _gridcell.j+1))
+	 && agrid_grid[# _gridcell.i, _gridcell.j+1] == undefined) {
+		var _new_gridcell = new AIGridCell4Neighbours(_gridcell, _gridcell.i, _gridcell.j+1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
 		
 	if (_gridcell.i-1 >= 0 
 	 && mp_grid_get_cell(_obst_grid, _gridcell.i-1, _gridcell.j) != -1 
-	 && agrid_grid[# _gridcell.i-1, _gridcell.j] == undefined)
-		add_element(new AIGridCell(_gridcell, _gridcell.i-1, _gridcell.j))
+	 && agrid_grid[# _gridcell.i-1, _gridcell.j] == undefined) {
+		var _new_gridcell = new AIGridCell4Neighbours(_gridcell, _gridcell.i-1, _gridcell.j)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
 		
 	if (_gridcell.j-1 >= 0 
 	 && mp_grid_get_cell(_obst_grid, _gridcell.i, _gridcell.j-1) != -1 
-	 && agrid_grid[# _gridcell.i, _gridcell.j-1] == undefined)
-		add_element(new AIGridCell(_gridcell, _gridcell.i, _gridcell.j-1))
+	 && agrid_grid[# _gridcell.i, _gridcell.j-1] == undefined) {
+		var _new_gridcell = new AIGridCell4Neighbours(_gridcell, _gridcell.i, _gridcell.j-1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+		
+}
+
+/// @description Explore unoccupied and unobstructed cells 8-neighbours of gridcell (north, north-east, east, etc)
+/// @param {AIGridCell} gridcell The gridcell whose neighbours to explore
+/// @context obj_ai_grid_planner
+explore_gridcell_8_neighbours = function(_gridcell) {
+	
+	var _obst_grid = obj_ai_topology.grid // MP grid of obstacles from topology manager
+	
+	if (_gridcell.i+1 < ds_grid_width(agrid_grid) // if east is in grid range,
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i+1, _gridcell.j) != -1 // not occupied by obstacle
+	 && !agrid_grid[# _gridcell.i+1, _gridcell.j]) { // and not part of the gridcell tree yet
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i+1, _gridcell.j)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost // compute S cost
+		add_element(_new_gridcell) // add to tree
+	}
+	
+	if (_gridcell.i+1 < ds_grid_width(agrid_grid) && _gridcell.j+1 < ds_grid_height(agrid_grid) // south-east
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i+1, _gridcell.j+1) != -1
+	 && !agrid_grid[# _gridcell.i+1, _gridcell.j+1]) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i+1, _gridcell.j+1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+	
+	if (_gridcell.j+1 < ds_grid_height(agrid_grid) // south
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i, _gridcell.j+1) != -1
+	 && agrid_grid[# _gridcell.i, _gridcell.j+1] == undefined) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i, _gridcell.j+1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+	
+	if (_gridcell.j+1 < ds_grid_height(agrid_grid) && _gridcell.i-1 >= 0 // south-west
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i-1, _gridcell.j+1) != -1
+	 && agrid_grid[# _gridcell.i-1, _gridcell.j+1] == undefined) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i-1, _gridcell.j+1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+		
+	if (_gridcell.i-1 >= 0 // west
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i-1, _gridcell.j) != -1 
+	 && agrid_grid[# _gridcell.i-1, _gridcell.j] == undefined) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i-1, _gridcell.j)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+	
+	if (_gridcell.i-1 >= 0 && _gridcell.j-1 >= 0 // nort-west
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i-1, _gridcell.j-1) != -1 
+	 && agrid_grid[# _gridcell.i-1, _gridcell.j-1] == undefined) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i-1, _gridcell.j-1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+		
+	if (_gridcell.j-1 >= 0 // north
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i, _gridcell.j-1) != -1 
+	 && agrid_grid[# _gridcell.i, _gridcell.j-1] == undefined) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i, _gridcell.j-1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
+	
+	if (_gridcell.j-1 >= 0 && _gridcell.i+1 < ds_grid_width(agrid_grid) // north-east
+	 && mp_grid_get_cell(_obst_grid, _gridcell.i+1, _gridcell.j-1) != -1 
+	 && agrid_grid[# _gridcell.i+1, _gridcell.j-1] == undefined) {
+		var _new_gridcell = new AIGridCell8Neighbours(_gridcell, _gridcell.i+1, _gridcell.j-1)
+		compute_h_cost(_new_gridcell)
+		_new_gridcell.s_cost =_new_gridcell.h_cost + _new_gridcell.g_cost
+		add_element(_new_gridcell)
+	}
 		
 }
 
@@ -106,6 +204,38 @@ compute_h_cost = function(_gridcell) {
 	if (cost_field) 
 		_gridcell.h_cost = cost_field(_gridcell.x, _gridcell.y, _gridcell.th)
 	
+}
+
+/// @description Insert GM A* path into gridcell tree. Resets tree to single branch which is path.
+/// @param {path} path The path to insert. Path is cleaned and unusable after calling this function.
+/// @context obj_ai_grid_planner
+insert_path = function(_path) {
+	
+	if (root)
+		delete_element(root) // delete tree
+	
+	// Loop through path points, creating cells on the way
+	var _cur_cell = undefined
+	for (var i = 0; i < path_get_number(_path); i ++) {
+		var _cur_cell_x = path_get_point_x(_path, i) // x, y of point
+		var _cur_cell_y = path_get_point_y(_path, i)
+		var _cur_cell_i = floor(_cur_cell_x / AGRID_CELL_SIZE) // column, row indices of point
+		var _cur_cell_j = floor(_cur_cell_y / AGRID_CELL_SIZE)
+		
+		if (!_cur_cell) {
+			_cur_cell = new AIGridCell8Neighbours(undefined, _cur_cell_i, _cur_cell_j) // create cell at point
+			initialize(_cur_cell)
+		} else {
+			_cur_cell = new AIGridCell8Neighbours(_cur_cell, _cur_cell_i, _cur_cell_j)
+			add_element(_cur_cell)
+		}
+	}
+	
+	path_delete(_path) // finally delete path
+	
+	// Compute path along single branch
+	compute_path_flow()
+				
 }
 
 // Constructor for A* cell object
