@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"test_obj_ai_tree_planner",
   "parent":{
-    "name":"utils",
-    "path":"folders/Code/test/player_ai/planning_layers/utils.yy",
+    "name":"planning_layers",
+    "path":"folders/Code/test/player_ai/planning_layers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -240,6 +240,66 @@ suite(function () {
 			instance_destroy(_planner)
 			
 		})
+		
+		test("reroot_at_cut", function() {
+			
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			var _element1 = new AITreeElement(_root)
+			var _element11 = new AITreeElement(_element1) // elements rooted at element 1
+			var _element12 = new AITreeElement(_element1)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_element1)
+			_planner.add_element(_element11)
+			_planner.add_element(_element12)
+			
+			// Make up G costs
+			_root.g_cost = 0
+			var _element1_g_cost = 10
+			_element1.g_cost = _element1_g_cost
+			var _element11_g_cost = 20
+			_element11.g_cost = _element11_g_cost
+			var _element12_g_cost = 30
+			_element12.g_cost = _element12_g_cost
+			
+			// Act
+			_planner.reroot_at_cut(_element1)
+			
+			// Assert
+			expect(_planner.root).toBe(_element1)
+			expect(ds_list_find_index(_planner.elements, _root)).toBeEqual(-1)
+			expect(_element1.parent).toBe(undefined)
+			
+			expect(_element1.g_cost).toBeEqual(0)
+			expect(_element11.g_cost).toBeEqual(_element11_g_cost - _element1_g_cost)
+			expect(_element12.g_cost).toBeEqual(_element12_g_cost - _element1_g_cost)
+			
+			// Cleanup
+			instance_destroy(_planner)
+		
+		})
+		
+		test("reroot_at_cut_outside_tree_throws", function() {
+		
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			var _root = new AITreeElement(undefined)
+			var _element1 = new AITreeElement(_root)
+			var _element2 = new AITreeElement(_root)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_element1) // only add element 1; not element 2
+			
+			// Assert
+			expect(_planner.reroot_at_cut, [_element2]).toThrow(
+				"Could not reroot at element that is not part of tree.")
+			
+			// Cleanup
+			instance_destroy(_planner)
+		
+		})
 				
 		test("compute_path_goodweather", function() {	
 					

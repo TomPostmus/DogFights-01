@@ -87,6 +87,34 @@ function update_progeny_upstream(_element, _added_progeny) {
 	}
 }
 
+/// @description Make a cutting at a given element that is part of the tree and is to become new root
+/// @param {AITreeElement} element The element that is to become the new root
+/// @context obj_ai_tree_planner
+reroot_at_cut = function(_element) {
+	var _list_i = ds_list_find_index(elements, _element)
+	if (_list_i == -1)
+		show_error("Could not reroot at element that is not part of tree.", true)
+	
+	// Decouple from parent
+	var _parent = _element.parent
+	if (!_parent)
+		return; // element already is root, return
+	
+	_list_i = ds_list_find_index(_parent.children, _element)
+	ds_list_delete(_parent.children, _list_i) 
+	
+	// Delete root (leaving decoupled element intact)
+	delete_element(root) 
+	root = _element // new root is element
+	root.parent = undefined // new root, so no parent
+	
+	// Update G costs
+	var _g_cost_before = _element.g_cost // remember G cost of element
+	for (var i = 0; i < ds_list_size(elements); i ++)			
+		elements[|i].g_cost -= _g_cost_before // subtract G cost for every element
+	
+}
+
 /// @function compute_path(destination)
 /// @description Computes a path from the root to the destination node by backtracking
 /// @param {AITreeElement} destination The destination element to compute path towards
