@@ -1,4 +1,3 @@
+event_inherited()
+
 instance_destroy(colslider)
-ds_list_destroy(rrt_branches)
-ds_list_destroy(rrt_branches_open)
-ds_list_destroy(rrt_path)

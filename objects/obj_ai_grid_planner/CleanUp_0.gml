@@ -1,4 +1,3 @@
+event_inherited()
+
 ds_grid_destroy(agrid_grid)
-//ds_list_destroy(agrid_list)
-//ds_list_destroy(agrid_list_open)
-//ds_list_destroy(agrid_path)

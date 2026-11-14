@@ -297,6 +297,7 @@
     {"id":{"name":"ai_gridcell","path":"scripts/ai_gridcell/ai_gridcell.yy",},},
     {"id":{"name":"ai_poi","path":"scripts/ai_poi/ai_poi.yy",},},
     {"id":{"name":"ai_powerlaw_weighting","path":"scripts/ai_powerlaw_weighting/ai_powerlaw_weighting.yy",},},
+    {"id":{"name":"ai_rrt_branch","path":"scripts/ai_rrt_branch/ai_rrt_branch.yy",},},
     {"id":{"name":"ai_tree_element","path":"scripts/ai_tree_element/ai_tree_element.yy",},},
     {"id":{"name":"ai_whole_state","path":"scripts/ai_whole_state/ai_whole_state.yy",},},
     {"id":{"name":"anim_lupara_reload_end","path":"scripts/anim_lupara_reload_end/anim_lupara_reload_end.yy",},},

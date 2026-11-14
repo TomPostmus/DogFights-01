@@ -1,17 +1,4 @@
-#macro RRT_LEFT 1 // RRT element steering and gear macros
-#macro RRT_RIGHT -1
-#macro RRT_FORWARD 1
-#macro RRT_BACKWARD -1
-#macro RRT_TURN 0 // RRT element type macros
-#macro RRT_STRAIGHT 1
-#macro RRT_ARC 2
-#macro RRT_R 50 // turning radius for arcs (in pixels)
-#macro RRT_V 2 // assumed speed of player (pixels/step)
-#macro RRT_TURN_TIME 141 // assumed number of frames for making full turn
-#macro RRT_GEARSHIFT_PEN 0 // constants for how much to penalise gear shifts and steering shifts in G cost
-#macro RRT_STEERSHIFT_PEN 0
-#macro RRT_REVERSE_PEN 0 // how much to penalise reverse gear elements
-
+event_inherited()
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned RRT paths (it 'slides' over the RRT paths)
 obstr_objects = tag_get_asset_ids("AIObstruction", asset_object) // array of objects that are considered obstructions for AI motion planning
@@ -26,20 +13,112 @@ cost_field = undefined // the cost field in which RRT should grow
 move_input = 0 // the move (forwards, backwards) and turn input the motion planner sends to player
 turn_input = 0
 
+// Path mode
+path_mode = AI_PATH_MODE.DESTINATION_BASED
+
+// Timer
+// TODO Issue-011: connect with central scheduler obj_ai_scheduler
+tree_update_frames = 1 // set timer lengths
+path_update_frames = 30
+
 // RRT (Rapid Random Tree) layer properties
-rrt_curbranch = undefined // current RRT* branch we're walking
-rrt_path = ds_list_create() // list of branches representing path to minimal cost branch
-rrt_branches = ds_list_create() // all branches of RRT
-rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
-rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
-rrt_steershift_pen = 0
+//rrt_curbranch = undefined // current RRT* branch we're walking
+//rrt_path = ds_list_create() // list of branches representing path to minimal cost branch
+//rrt_branches = ds_list_create() // all branches of RRT
+//rrt_branches_open = ds_list_create() // list of branches that are still open, no connections at end point yet
+//rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
+//rrt_steershift_pen = 0
 rrt_branch_completed = false // whether current branch we're walking has been completed
 rrt_max_size = 50 // maximum size tree can grow to
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_walk_timer = rrt_walk_maxtime // timer for keeping completion time of element in check
 
-rrt_straight_len = 20 // lengths of straight and arc elements tree is built with
-rrt_arc_len = 20
+//rrt_straight_len = 20 // lengths of straight and arc elements tree is built with
+//rrt_arc_len = 20
+
+/// @description Explore motion possibilities from a branch and add as new branches
+explore_branch = function(_branch) {
+	// TODO: array with fixed positions for children to check if already has children for those positions
+	
+	var _nr_added = 0 // how many branches are added to branch
+				
+	if !(_branch.type == RRT_TYPE.STRAIGHT && _branch.gear == RRT_GEAR_BACKWARD) { // check element type of how it came here
+		var _straight_f = new AIRRTBranchStraight(_branch, RRT_GEAR_FORWARD) // make forward straight element
+		if (_straight_f.collision_free(colslider)) { // check has no collision
+			add_element(_straight_f)
+			_nr_added ++
+		}
+	}
+				
+	if !(_branch.type == RRT_TYPE.STRAIGHT && _branch.gear == RRT_GEAR_FORWARD) {
+		var _straight_b = new AIRRTBranchStraight(_branch, RRT_GEAR_BACKWARD)
+		if (_straight_b.collision_free(colslider)) {
+			add_element(_straight_b)
+			_nr_added ++
+		} 
+	}
+				
+	if !(_branch.steering == RRT_STEERING_LEFT && _branch.gear == RRT_GEAR_BACKWARD) {
+		var _arc_left_f = new AIRRTBranchArc(_branch, RRT_GEAR_FORWARD, RRT_STEERING_LEFT) // make forward left arc
+		if (_arc_left_f.collision_free(colslider)) {
+			add_element(_arc_left_f)
+			_nr_added ++
+		}
+	}
+				
+	if !(_branch.steering == RRT_STEERING_LEFT && _branch.gear == RRT_GEAR_FORWARD) {
+		var _arc_left_b = new AIRRTBranchArc(_branch, RRT_GEAR_BACKWARD, RRT_STEERING_LEFT) // make backward left arc
+		if (_arc_left_b.collision_free(colslider)) {
+			add_element(_arc_left_b)
+			_nr_added ++
+		}
+	}
+				
+	if !(_branch.steering == RRT_STEERING_RIGHT && _branch.gear == RRT_GEAR_BACKWARD) {
+		var _arc_right_f = new AIRRTBranchArc(_branch, RRT_GEAR_FORWARD, RRT_STEERING_RIGHT) // make forward right arc
+		if (_arc_right_f.collision_free(colslider)) {
+			add_element(_arc_right_f)
+			_nr_added ++
+		}
+	}
+				
+	if !(_branch.steering == RRT_STEERING_RIGHT && _branch.gear == RRT_GEAR_FORWARD) {
+		var _arc_right_b = new AIRRTBranchArc(_branch, RRT_GEAR_BACKWARD, RRT_STEERING_RIGHT) // make backward right arc
+		if (_arc_right_b.collision_free(colslider)) {
+			add_element(_arc_right_b)
+			_nr_added ++
+		}
+	}
+			
+	// TODO: add retrieval of lowest cost direction information from cost field
+	//if (_chosen.type != RRT_TURN) {
+	//	var _mani_dist = point_distance(0, 0, _chosen.mani_tang_x, _chosen.mani_tang_y) // magnitude and direction of projected normal vector of tangent plane
+	//	var _mani_dir = point_direction(0, 0, _chosen.mani_tang_x, _chosen.mani_tang_y)
+	//	//if (_mani_dist >= 0.001) { // if tangent plane is sufficiently inclined
+	//		var _turn = new rrt_turn_element(_chosen, _chosen.x_end, _chosen.y_end, _chosen.th_end, _mani_dir) // make turn element in direction of tangent plane slope
+	//		if (_turn.collision_free(colslider, obstr_objects)) {
+	//			ds_list_add(_bundle, _turn) // add to list
+	//		} else {
+	//			ds_list_destroy(_turn.links) // else destroy
+	//		}
+	//	//}
+	//}
+			
+	// if only 1 open branch and 0 branches could be added
+	if (ds_list_size(elements) == 1 && _nr_added == 0) {
+		delete_element(root) // destroy root, player is likely stuck or drifted away from tree root position
+	}
+}
+
+/// @description Override computation of H cost function for RRT branch
+/// @param {AIRRTBranch} branch The branch to compute H cost for
+/// @context obj_ai_motion_planner
+compute_h_cost = function(_branch) {
+	
+	if (cost_field) 
+		_branch.h_cost = cost_field(_branch.x, _branch.y, _branch.th)
+	
+}
 
 function rrt_branch(_parent, _x, _y, _th) constructor { // parent constructor for branch object
 	parent = _parent
@@ -263,33 +342,33 @@ function rrt_arc_element(_parent, _x, _y, _th, _l, _steering, _gear) : rrt_branc
 draw = function() {
 
 	// Draw RRT* tree
-	for (var i = 0; i < ds_list_size(rrt_branches); i ++) {
-		var _branch = rrt_branches[|i]
+	for (var i = 0; i < ds_list_size(elements); i ++) {
+		var _branch = elements[|i]
 		
 		draw_set_colour(
-			_branch == rrt_curbranch ? c_yellow 
-			: (ds_list_find_index(rrt_path, _branch) != -1 ? c_lime 
+			_branch == root ? c_yellow 
+			: (ds_list_find_index(path, _branch) != -1 ? c_lime 
 			: c_blue))
 		
 		_branch.draw()
 		
-		if (_branch.open) { // draw open endpoint in red
-			draw_set_colour(c_red)
-			draw_circle(_branch.x_end, _branch.y_end, 1, false)
-		}
+		//if (_branch.open) { // draw open endpoint in red
+		//	draw_set_colour(c_red)
+		//	draw_circle(_branch.x_end, _branch.y_end, 1, false)
+		//}
 	}
 	
-	if (rrt_curbranch != undefined) {
+	if (root) {
 		draw_set_colour(c_yellow)
-		rrt_curbranch.draw()
+		root.draw()
 	}
 	
 	// Draw cost every N iterations
-	draw_set_colour(c_lime)
-	draw_set_font(ft_small)
-	for (var i = 0; i < ds_list_size(rrt_branches); i += 20) {
-		var _branch = rrt_branches[|i]
-		draw_text(_branch.x, _branch.y, _branch.g_cost)
-	}
+	//draw_set_colour(c_lime)
+	//draw_set_font(ft_small)
+	//for (var i = 0; i < ds_list_size(elements); i += 20) {
+	//	var _branch = elements[|i]
+	//	draw_text(_branch.x, _branch.y, _branch.g_cost)
+	//}
 	
 }

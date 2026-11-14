@@ -14,31 +14,35 @@ if (!root
 
 	initialize(new AIGridCell4Neighbours(undefined, _body_cell_i, _body_cell_j)) // initialize tree with root element
 	
-}
+} 
 
-// Grow or prune
-repeat(3) {
+if (root) {
+
+	// Grow or prune
+	repeat(3) {
 	
-	// choose whether to grow or prune
-	var _agrid_size = ds_list_size(elements)
-	var _prune_chance = max(0, (_agrid_size / agrid_max_size - 0.75) * 4) // random chance for pruning
-	var _grow = _agrid_size < agrid_max_size || !irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune grid
+		// choose whether to grow or prune
+		var _agrid_size = ds_list_size(elements)
+		var _prune_chance = max(0, (_agrid_size / agrid_max_size - 0.75) * 4) // random chance for pruning
+		var _grow = _agrid_size < agrid_max_size || !irandom(1000 * (1 - _prune_chance)) == 0 // whether to prune grid
 	
-	// chose element to grow from, or prune, by powerlaw weighting
-	var _chosen = ai_powerlaw_weighting(elements, _grow, 2)
+		// chose element to grow from, or prune, by powerlaw weighting
+		var _chosen = ai_powerlaw_weighting(elements, _grow, 2)
 	
-	// grow or prune
-	if (_chosen != undefined) {
+		// grow or prune
+		if (_chosen != undefined) {
 	
-		if (_grow) { // if grow
+			if (_grow) { // if grow
 			
-			explore_gridcell_8_neighbours(_chosen)
+				explore_gridcell_8_neighbours(_chosen)
 			
-		} else { // if prune
+			} else { // if prune
 			
-			delete_element(_chosen)
+				delete_element(_chosen)
 			
+			}
+	
 		}
-	
 	}
+
 }
