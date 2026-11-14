@@ -15,15 +15,15 @@ if (global.engine_running && instance_exists(character) && instance_exists(chara
 	}
 	
 	// Send body 3D position and cost field to motion planner and get movement output
-	//if (instance_exists(grid_planner)) {
-	//	motion_planner.body_x = _body_x // send body 3D (x,y,th) position to RRT
-	//	motion_planner.body_y = _body_y
-	//	motion_planner.body_th = _body_rot
-	//	motion_planner.cost_field = grid_planner.cost_field_rrt // pass through cost field computed in A* Grid layer to RRT layer
+	if (instance_exists(grid_planner)) {
+		motion_planner.body_x = _body_x // send body 3D (x,y,th) position to RRT
+		motion_planner.body_y = _body_y
+		motion_planner.body_th = _body_rot
+		motion_planner.cost_field = grid_planner.cost_field_rrt // pass through cost field computed in A* Grid layer to RRT layer
 	
-	//	move_input = motion_planner.move_input // extract move outputs from RRT layer
-	//	turn_input = motion_planner.turn_input
-	//}
+		move_input = motion_planner.move_input // extract move outputs from RRT layer
+		turn_input = motion_planner.turn_input
+	}
 	
 	// LOWER TWO LINES ARE PURELY FOR DEBUGGING: manual player controls
 	//move_input = get_key(KEY_P2_FORWARD, KEYACTION_HOLD) - get_key(KEY_P2_BACKWARD, KEYACTION_HOLD)

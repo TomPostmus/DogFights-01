@@ -1,12 +1,17 @@
 if (body_x != undefined && body_y != undefined && cost_field != undefined && root) { // check if received inputs from player
 	
 	// Check if still has line collision with root
-	for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // check line collision with current node
-		if (instance_exists(collision_line(root.x, root.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
+	var _line_collision = true
+	for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) { // check line collision with current node
+		if (instance_exists(collision_line(root.x, root.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true))) {
+			_line_collision = false
 			delete_element(root) // if no line collision, destroy root, rebuild A* grid
+			break
+		}
+	}
 	
 	// Move through path
-	if (ds_list_size(path) > 1) { // if path is set, and at least 2 long
+	if (_line_collision && ds_list_size(path) > 1) { // if path is set, and at least 2 long
 		
 		var _cur_dist = point_distance(root.x, root.y, body_x, body_y) // distance from player to current cell
 		
@@ -17,10 +22,13 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined && roo
 			
 			var _dist = point_distance(_gridcell.x, _gridcell.y, body_x, body_y) // compute distance
 			
-			var _line_collision = true
-			for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) // compute line collision
-				if (instance_exists(collision_line(_gridcell.x, _gridcell.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true)))
+			_line_collision = true
+			for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) { // compute line collision
+				if (instance_exists(collision_line(_gridcell.x, _gridcell.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true))) {
 					_line_collision = false
+					break
+				}
+			}
 			
 			if (_line_collision && _dist < _cur_dist) { // if found cell in path that has line collsion with body and that is closer to player than current cell
 				_next_cell = _gridcell // set as next and break
@@ -30,20 +38,7 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined && roo
 		
 		if (_next_cell != undefined) { // if found closer cell
 			
-			// TODO: implement new_root/rebase function in tree planner
-			
-			//ds_list_delete(agrid_path, 0) // delete 1st element
-			
-			//var _parent = _next_cell.parent
-			//var _list_i = ds_list_find_index(_parent.children, _next_cell)
-			//ds_list_delete(_parent.children, _list_i) // decouple next cell from its parent cell, to avoid deleting the next cell along with deleting old cell
-			//agrid_curcell.destroy() // destroy old cell
-			//agrid_curcell = _next_cell
-			//agrid_curcell.parent = undefined // new root, so no parent
-				
-			//var _g_cost_before = agrid_curcell.g_cost // remember G cost before reset
-			//for (var i = 0; i < ds_list_size(agrid_list); i ++)			
-			//	agrid_list[|i].g_cost -= _g_cost_before // subtract G cost for every cell	
+			reroot_at_cut(_next_cell) // reroot at that cell
 				
 		}
 	}

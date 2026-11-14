@@ -20,10 +20,6 @@ path_update_frames = 30
 agrid_cell_size = 16 // TODO: refactor to cell_size
 agrid_max_size = 200 // size that the A* Grid can maximally grow to
 	// TODO: generic max size for growing or pruning choice in obj_ai_tree_planner?
-//agrid_curcell = undefined // the cell we are currently at
-
-//agrid_mp_grid = mp_grid_create(0, 0, room_width/agrid_cell_size, room_height/agrid_cell_size, agrid_cell_size, agrid_cell_size) // motion planning grid to perform GM engine A* in
-//mp_grid_add_rectangle(agrid_mp_grid, 0, 0, room_width, room_height) // mark all cells as forbidden by default
 
 agrid_grid = ds_grid_create(room_width / AGRID_CELL_SIZE, room_height / AGRID_CELL_SIZE) // grid of A* cells
 ds_grid_clear(agrid_grid, undefined) // use undefined as default value (cleaner in code with nullish operator)
@@ -437,12 +433,12 @@ draw = function(_path_ghost=false) {
 			draw_set_halign(fa_left)
 		}
 		
-		//for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
-		//	var _child = _cell.children[|j]
+		for (var j = 0; j < ds_list_size(_cell.children); j ++) { // loop through children
+			var _child = _cell.children[|j]
 			
-		//	var _thickness = 0.5 + 0.5 * ceil(_child.progeny / 6.25) // visualising thickness of edge based on childcount of node
-		//	draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * AGRID_CELL_SIZE, (_child.j + 0.5) * AGRID_CELL_SIZE, _thickness) // draw line from cell to child
-		//}
+			var _thickness = 0.5 + 0.5 * ceil(_child.progeny / 6.25) // visualising thickness of edge based on childcount of node
+			draw_line_width(_cell_cx, _cell_cy, (_child.i + 0.5) * AGRID_CELL_SIZE, (_child.j + 0.5) * AGRID_CELL_SIZE, _thickness) // draw line from cell to child
+		}
 		
 		//var _r = 5
 		//if (_cell.th != undefined)

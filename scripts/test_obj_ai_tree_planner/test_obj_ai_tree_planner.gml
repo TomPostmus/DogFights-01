@@ -200,7 +200,6 @@ suite(function () {
 		
 		})
 		
-		
 		test("delete_element_outside_tree", function() {	
 					
 			// Arrange
@@ -235,6 +234,31 @@ suite(function () {
 			
 			// Assert
 			expect(_root.progeny).toBe(0)
+			
+			// Cleanup
+			instance_destroy(_planner)
+			
+		})
+		
+		test("delete_element_from_path", function() {
+			
+			// Arrange
+			var _planner = create(0, 0, obj_ai_tree_planner)
+			
+			var _root = new AITreeElement(undefined)
+			var _element1 = new AITreeElement(_root)
+			var _element2 = new AITreeElement(_root)
+			
+			_planner.initialize(_root)
+			_planner.add_element(_element1)
+			_planner.add_element(_element2)
+			_planner.compute_path(_element1) // path to element 1
+			
+			// Act
+			_planner.delete_element(_element1)
+			
+			// Assert
+			expect(ds_list_find_index(_planner.path, _element1)).toBeEqual(-1)
 			
 			// Cleanup
 			instance_destroy(_planner)

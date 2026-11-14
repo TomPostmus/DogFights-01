@@ -57,17 +57,26 @@ delete_element = function(_element, _decouple=true) {
 	if (_list_i == -1)
 		show_error("Could not delete element that is not part of tree.", true)
 	
+	// Delete from elements
 	ds_list_delete(elements, _list_i)
 	
+	// Delete from path
+	_list_i = ds_list_find_index(path, _element)
+	if (_list_i != -1)
+		ds_list_delete(path, _list_i)
+	
+	// Reset root
 	if (_element == root) {
 		root = undefined	
-	} else if (_decouple) { // decouple from parent
+	// Decouple from parent
+	} else if (_decouple) {
 		_list_i = ds_list_find_index(_element.parent.children, _element) // find element in parent children list		
 		ds_list_delete(_element.parent.children, _list_i)
 		
 		update_progeny_upstream(_element.parent, -1 - _element.progeny) // subtract self and children from upstream progeny
 	}
 	
+	// Delete children
 	for (var i = 0; i < ds_list_size(_element.children); i ++) // delete children recursively
 		delete_element(_element.children[|i], false)
 		
