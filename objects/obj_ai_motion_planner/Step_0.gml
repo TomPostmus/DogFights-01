@@ -1,3 +1,105 @@
+// Move through RRT path
+if (body_x != undefined && body_y != undefined && body_th != undefined && cost_field != undefined && root) {
+	
+	var _abort = false // abort flag for aborting RRT, e.g. in case player has drifted too far from the tree
+	var _abortion_tolerance = 20 // deviation distance from current element, from which to abort path
+	
+	// Check timer for completing element
+	if (rrt_walk_timer <= 0)
+		_abort = true // maximal time for completing element elapsed, abort RRT tree
+	else 
+		rrt_walk_timer --
+			
+	// Determine move input per type of element
+	if (root.type == RRT_TYPE.ROOT) {
+		rrt_branch_completed = true
+	} else if (root.type == RRT_TYPE.TURN) { // execute turn					
+		move_input = 0
+		turn_input = sign(angle_difference(root.th, body_th))
+					
+		// RRT path abortion
+		if (point_distance(body_x, body_y, root.x, root.y) > _abortion_tolerance)
+			_abort = true // raise flag
+					
+		// check completion
+		var _completion_tolerance = 3 // completion tolerance (in degrees) on when turn is considered to be completed
+		if (abs(angle_difference(root.th, body_th)) < _completion_tolerance) {
+			rrt_branch_completed = true
+		}
+	} else if (root.type == RRT_TYPE.STRAIGHT) {
+		move_input = root.gear // move according to gear
+		turn_input = 0
+				
+		var _to_player_dir = point_direction(root.x, root.y, body_x, body_y) // direction and distance from line base to player
+		var _to_player_dist = point_distance(root.x, root.y, body_x, body_y)
+		var _center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, root.th)) // offset of player from line (treat this lengthdir_y as a sin())
+		var _progression = root.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, root.th)) // progression on line (treat this lengthdir_x as cosine)
+					
+		// RRT path abortion
+		if (abs(_center_offset) > _abortion_tolerance)
+			_abort = true // raise flag
+		if (_progression < -_abortion_tolerance || _progression > RRT_STRAIGHT_LEN + _abortion_tolerance)
+			_abort = true
+				
+		// check completion
+		var _completion_tolerance = 2 // tolerance (in pixels) on when line is considered to be completed
+		if (_progression >=  max(0, RRT_STRAIGHT_LEN - _completion_tolerance)) { // if progression exceeds is on line segment length
+			rrt_branch_completed = true
+		}
+	} else if (root.type == RRT_TYPE.ARC) {
+		move_input = root.gear // move according to gear and steering
+		turn_input = root.gear * root.steering
+				
+		var _to_player_dist = point_distance(root.center_x, root.center_y, body_x, body_y) // distance and direction from arc center to player
+		var _progression = angle_difference(body_th, root.th_begin) * root.steering * root.gear // progression is measure as difference with start angle of arc, normalized to 0, arc_length
+			
+		// RRT path abortion
+		var _abrt_angle_tolerance = 10 // tolerance in degrees for arc angle progression
+		if (_to_player_dist > RRT_R + _abortion_tolerance || _to_player_dist < RRT_R - _abortion_tolerance) // if distance from arc too large
+			_abort = true // raise flag
+		if ( _progression < -_abrt_angle_tolerance || _progression > RRT_ARC_LEN + _abrt_angle_tolerance)
+			_abort = true
+				
+		// check completion
+		var _completion_tolerance = 1 // tolerance on when path element is considered to be completed
+		if (_progression >= RRT_ARC_LEN - _completion_tolerance) {
+			rrt_branch_completed = true
+		}
+	}
+		
+	if (rrt_branch_completed) {
+		
+		// Recompute path
+		event_perform(ev_alarm, 1) // perform Path update event
+			
+		// Choose next branch from the path as current branch
+		if (ds_list_size(path) > 1) { // if more elements in path than element we just completed
+			
+			var _next_branch = path[|1] // next branch in path
+			reroot_at_cut(_next_branch) // reroot at next branch
+			
+		} else {
+			
+			_abort = true
+		
+		}
+		
+		// Lower completion flag, reset timer
+		rrt_branch_completed = false 
+		rrt_walk_timer = rrt_walk_maxtime
+	
+	}
+	
+	// Check if abort flag was raised
+	if (_abort) {
+		delete_element(root) // destroy RRT
+	}
+
+}
+
+
+// Old code before generic obj_tree_planner refactor:
+
 //if (body_x != undefined && body_y != undefined && body_th != undefined && cost_field != undefined) { // check if received inputs from player
 
 //	// Update RRT

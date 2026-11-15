@@ -19,7 +19,7 @@ path_mode = AI_PATH_MODE.DESTINATION_BASED
 // Timer
 // TODO Issue-011: connect with central scheduler obj_ai_scheduler
 tree_update_frames = 1 // set timer lengths
-path_update_frames = 30
+path_update_frames = -1 // disable timer; handled in step upon completing RRT branch
 
 // RRT (Rapid Random Tree) layer properties
 //rrt_curbranch = undefined // current RRT* branch we're walking
@@ -29,7 +29,8 @@ path_update_frames = 30
 //rrt_gearshift_pen = 0 // penalty variables in G cost for gearshift or steershift between RRT node and its parent. The higher the shift penalties, the more it preserves momentum.
 //rrt_steershift_pen = 0
 rrt_branch_completed = false // whether current branch we're walking has been completed
-rrt_max_size = 50 // maximum size tree can grow to
+	// TODO: make rrt_branch_completed local in Step?
+rrt_max_size = 200 // maximum size tree can grow to
 rrt_walk_maxtime = 80 // how many steps maximally to wait for completing element
 rrt_walk_timer = rrt_walk_maxtime // timer for keeping completion time of element in check
 

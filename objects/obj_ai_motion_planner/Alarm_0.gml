@@ -8,7 +8,7 @@ if (!root)
 	initialize(new AIRRTBranchRoot(body_x, body_y, body_th))
 	
 // Grow or prune
-repeat(1) {
+repeat(3) {
 	
 	// choose whether to grow or prune
 	var _agrid_size = ds_list_size(elements)

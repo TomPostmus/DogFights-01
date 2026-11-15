@@ -1,7 +1,7 @@
 // Inherit the parent event
 event_inherited();
 
-debug_draw_mode = 3 // immediately enable draw of grid layer
+debug_draw_mode = 4 // immediately enable draw of grid layer
 
 /// @description Override on engine startup
 /// @context obj_player_ai
