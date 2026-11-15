@@ -1,3 +1,4 @@
+/// @description
 event_inherited()
 
 colslider = create_groundhigh(x, y, obj_ai_collision_slider) // create collision slider for checking collisions on planned RRT paths (it 'slides' over the RRT paths)
@@ -22,7 +23,7 @@ tree_update_frames = 1 // set timer lengths
 path_update_frames = -1 // disable timer; handled in step upon completing RRT branch
 
 // State machine
-sm_h_cost_threshold = AGRID_CELL_SIZE
+sm_h_cost_threshold = 10
 
 // RRT (Rapid Random Tree) layer properties
 //rrt_curbranch = undefined // current RRT* branch we're walking
@@ -122,6 +123,18 @@ compute_h_cost = function(_branch) {
 	if (cost_field) 
 		_branch.h_cost = cost_field(_branch.x, _branch.y, _branch.th)
 	
+}
+
+/// @description Recenter RRT on body 3D position
+/// @context obj_ai_motion_planner
+recenter_rrt_on_body = function(_body_x, _body_y, _body_th) {
+	
+	var _x_delta = _body_x - root.x_begin // difference between root coordinates and body coordinates
+	var _y_delta = _body_y - root.y_begin
+	var _th_delta = angle_difference(_body_th, root.th_begin)
+
+	for (var i = 0; i < ds_list_size(elements); i ++)
+		elements[|i].move(_x_delta, _y_delta, _th_delta)
 }
 
 function rrt_branch(_parent, _x, _y, _th) constructor { // parent constructor for branch object
@@ -349,11 +362,7 @@ draw = function() {
 	for (var i = 0; i < ds_list_size(elements); i ++) {
 		var _branch = elements[|i]
 		
-		draw_set_colour(
-			_branch == root ? c_yellow 
-			: (ds_list_find_index(path, _branch) != -1 ? c_lime 
-			: c_blue))
-		
+		draw_set_colour(c_blue)
 		_branch.draw()
 		
 		//if (_branch.open) { // draw open endpoint in red
@@ -362,9 +371,11 @@ draw = function() {
 		//}
 	}
 	
-	if (root) {
-		draw_set_colour(c_yellow)
-		root.draw()
+	for (var i = 0; i < ds_list_size(path); i ++) {
+		var _branch = path[|i]
+		
+		draw_set_colour(_branch == root ? c_yellow : c_lime)
+		_branch.draw()
 	}
 	
 	// Draw cost every N iterations

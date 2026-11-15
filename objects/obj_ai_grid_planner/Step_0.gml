@@ -2,13 +2,13 @@ if (body_x != undefined && body_y != undefined && cost_field != undefined && roo
 	
 	// Check if still has line collision with root
 	var _line_collision = true
-	for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) { // check line collision with current node
-		if (instance_exists(collision_line(root.x, root.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true))) {
-			_line_collision = false
-			delete_element(root) // if no line collision, destroy root, rebuild A* grid
-			break
-		}
-	}
+	//for (var j = 0; j < array_length(obj_ai_topology.obstr_objects); j ++) { // check line collision with current node
+	//	if (instance_exists(collision_line(root.x, root.y, body_x, body_y, obj_ai_topology.obstr_objects[j], false, true))) {
+	//		_line_collision = false
+	//		delete_element(root) // if no line collision, destroy root, rebuild A* grid
+	//		break
+	//	}
+	//}
 	
 	// Move through path
 	if (_line_collision && ds_list_size(path) > 1) { // if path is set, and at least 2 long

@@ -38,6 +38,10 @@ function AIRRTBranchRoot(_x, _y, _th) : AITreeElement(undefined) constructor {
 	y = _y
 	th = _th
 	
+	x_begin = _x
+	y_begin = _y
+	th_begin = _th
+	
 	g_cost = 0
 	
 	/// @description Draw root element as circle with arrow
@@ -53,6 +57,19 @@ function AIRRTBranchRoot(_x, _y, _th) : AITreeElement(undefined) constructor {
 	/// @context AIRRTBranchRoot
 	collision_free = function(_col_slider) {
 		return true
+	}
+	
+	/// @description Move element with delta
+	/// @param {real}
+	move = function(_x_delta, _y_delta, _th_delta) {
+	
+		x += _x_delta
+		y += _y_delta
+		th += _th_delta
+		x_begin += _x_delta
+		y_begin += _y_delta
+		th_begin += _th_delta
+	
 	}
 
 }
@@ -74,6 +91,8 @@ function AIRRTBranchTurn(_parent, _th) : AITreeElement(_parent) constructor {
 	y = _parent.y
 	th = _th
 	
+	x_begin = x
+	y_begin = y
 	th_begin = _parent.th
 	
 	// Compute G cost
@@ -118,6 +137,18 @@ function AIRRTBranchTurn(_parent, _th) : AITreeElement(_parent) constructor {
 			_d += _precision
 		}
 	}
+	
+	move = function(_x_delta, _y_delta, _th_delta) {
+	
+		x += _x_delta
+		y += _y_delta
+		th += _th_delta
+		
+		x_begin += _x_delta
+		y_begin += _y_delta
+		th_begin += _th_delta
+	
+	}
 
 }
 
@@ -137,6 +168,7 @@ function AIRRTBranchStraight(_parent, _gear) : AITreeElement(_parent) constructo
 	
 	x_begin = _parent.x
 	y_begin = _parent.y
+	th_begin = th
 	
 	// Compute G cost
 	var _time = RRT_STRAIGHT_LEN / RRT_V // est. time (in steps) to complete element
@@ -166,6 +198,18 @@ function AIRRTBranchStraight(_parent, _gear) : AITreeElement(_parent) constructo
 		return true
 	}
 	
+	move = function(_x_delta, _y_delta, _th_delta) {
+	
+		x += _x_delta
+		y += _y_delta
+		th += _th_delta
+		
+		x_begin += _x_delta
+		y_begin += _y_delta
+		th_begin += _th_delta
+	
+	}
+	
 }
 
 /// @param {AIRRTBranch} parent The parent branch to which element is attached
@@ -186,6 +230,8 @@ function AIRRTBranchArc(_parent, _gear, _steering) : AITreeElement(_parent) cons
 	y = center_y + lengthdir_y(RRT_R, _parent.th - _steering * 90 + _gear * _steering * RRT_ARC_LEN)
 	th = _parent.th + gear * steering * RRT_ARC_LEN
 	
+	x_begin = _parent.x
+	y_begin = _parent.y
 	th_begin = _parent.th
 	
 	// Compute G cost
@@ -240,6 +286,21 @@ function AIRRTBranchArc(_parent, _gear, _steering) : AITreeElement(_parent) cons
 		}
 		
 		return true
+	}
+	
+	move = function(_x_delta, _y_delta, _th_delta) {
+	
+		x += _x_delta
+		y += _y_delta
+		th += _th_delta
+		
+		x_begin += _x_delta
+		y_begin += _y_delta
+		th_begin += _th_delta
+		
+		center_x += _x_delta
+		center_y += _y_delta
+	
 	}
 	
 }
