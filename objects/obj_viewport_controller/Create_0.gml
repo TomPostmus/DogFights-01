@@ -1,5 +1,6 @@
 nr_viewports = 1
 viewport_to_player = array_create(8, noone) // array mapping a viewport id to a player
+viewport_mode = array_create(8, "follow_player")
 
 /// @function activate_viewports(room_index)
 /// @description Enable viewports for a given room
@@ -15,6 +16,9 @@ function activate_viewports(_room_index) {
 }
 
 /// @description Follow a player with a viewport
+/// @param {int} viewport_id The id of the viewport which to update the camera for
+/// @param {obj_player} player The player to follow
+/// @context obj_viewport_controller
 function follow_player(_viewport_id, _player) {
 	viewport_to_player[_viewport_id] = _player // set/update mapping
 	
@@ -25,4 +29,25 @@ function follow_player(_viewport_id, _player) {
 		camera_set_view_size(gm_camera, _camera.get_width(), _camera.get_height()) // set size to correspond to player camera size
 		camera_set_view_pos(gm_camera, _camera.x - _camera.get_width()/2, _camera.y - _camera.get_height()/2) // same for position
 	}
+}
+
+/// @description Set the mode of a viewport to follow player
+/// @param {int} viewport_id The id of the viewport for which to set the mode
+/// @context obj_viewport_controller
+function set_viewport_follow_player_mode(_viewport_id) {
+	
+	viewport_mode[_viewport_id] = "follow_player" // set mode to follow player
+	
+}
+
+/// @description Set the mode of a viewport to overview, to capture the full room
+/// @param {int} viewport_id The id of the viewport for which to set the mode
+/// @context obj_viewport_controller
+function set_viewport_overview_mode(_viewport_id) {
+	
+	viewport_mode[_viewport_id] = "overview"
+	
+	var gm_camera = view_get_camera(_viewport_id);
+	camera_set_view_size(gm_camera, room_width, room_height) // scale and position camera to capture room
+	camera_set_view_pos(gm_camera, 0, 0)
 }

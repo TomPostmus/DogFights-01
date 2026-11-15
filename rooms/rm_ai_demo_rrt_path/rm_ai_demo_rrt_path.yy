@@ -60,7 +60,7 @@
   "resourceVersion":"2.0",
   "roomSettings":{
     "Height":768,
-    "inheritRoomSettings":true,
+    "inheritRoomSettings":false,
     "persistent":false,
     "Width":1366,
   },

@@ -18,11 +18,6 @@ enum RRT_TYPE { // RRT element types
 	ARC
 }
 
-//function AIRRTBranch(_parent, _x, _y, _th) : AITreeElement(_parent) {
-
-
-//}
-
 /// @param {real} x The x coordinate of the root element
 /// @param {real} y The y coordinate of the root element
 /// @param {real} th The theta/orientation of the root element
@@ -66,6 +61,7 @@ function AIRRTBranchRoot(_x, _y, _th) : AITreeElement(undefined) constructor {
 		x += _x_delta
 		y += _y_delta
 		th += _th_delta
+		
 		x_begin += _x_delta
 		y_begin += _y_delta
 		th_begin += _th_delta
@@ -86,14 +82,14 @@ function AIRRTBranchTurn(_parent, _th) : AITreeElement(_parent) constructor {
 
 	gear = 0
 	steering = sign(turn_ang_diff)
-
-	x = _parent.x
-	y = _parent.y
-	th = _th
 	
-	x_begin = x
-	y_begin = y
+	x_begin = _parent.x
+	y_begin = _parent.y
 	th_begin = _parent.th
+
+	x = x_begin
+	y = y_begin	
+	th = th_begin + turn_ang_diff
 	
 	// Compute G cost
 	var _time = turn_ang_len / 360 * RRT_TURN_TIME // est. time (in steps) to complete element

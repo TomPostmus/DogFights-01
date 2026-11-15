@@ -1,5 +1,5 @@
 // Compute movement
-if (sm_state == "done") {
+if (!root || sm_state == "done") {
 	
 	move_input = 0
 	turn_input = 0
@@ -37,8 +37,8 @@ if (sm_state == "done") {
 			move_input = root.gear // move according to gear
 			turn_input = 0
 				
-			var _to_player_dir = point_direction(root.x, root.y, body_x, body_y) // direction and distance from line base to player
-			var _to_player_dist = point_distance(root.x, root.y, body_x, body_y)
+			var _to_player_dir = point_direction(root.x_begin, root.y_begin, body_x, body_y) // direction and distance from line base to player
+			var _to_player_dist = point_distance(root.x_begin, root.y_begin, body_x, body_y)
 			var _center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, root.th)) // offset of player from line (treat this lengthdir_y as a sin())
 			var _progression = root.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, root.th)) // progression on line (treat this lengthdir_x as cosine)
 					

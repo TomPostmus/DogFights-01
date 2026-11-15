@@ -1,15 +1,26 @@
 // Follow active player with viewport
 if (instance_exists(obj_lobby)) {
+	
 	for (var i = 0; i < nr_viewports; i ++) {
-		if (i >= ds_list_size(obj_lobby.players_active)) // if less active players than viewports, break
-			break
+		if (viewport_mode[i] == "follow_player") {
 			
-		follow_player(i, obj_lobby.players_active[|i]) // follow corresponding active player
+			if (i >= ds_list_size(obj_lobby.players_active)) // if less active players than viewports, break
+				break
+			
+			follow_player(i, obj_lobby.players_active[|i]) // follow corresponding active player
+		
+		}
 	}
+	
 // Otherwise follow first best player with a camera
 } else {
 	var _vp_i = 0
 	with (obj_player) {
+		if (other.viewport_mode[_vp_i] != "follow_player") { // check mode is follow player
+			_vp_i ++
+			continue
+		}
+		
 		if (instance_exists(camera)) {
 			other.follow_player(_vp_i, id)
 			_vp_i ++

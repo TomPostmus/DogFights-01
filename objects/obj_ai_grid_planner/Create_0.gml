@@ -404,7 +404,7 @@ cost_field_rrt = function(_x, _y, _th) { // compute cost based on 3D position
 				
 	// compute cost as distance to nearest path cell plus path cost of that cell, plus angle difference with orientation
 	var _orientation_cost = 30 * (1 - dcos(angle_difference(_th, _nearest_cell.th)))
-	return 0.3 *_least_distance + 1.0 * _nearest_cell.p_cost + _orientation_cost
+	return 1 *_least_distance + 1.0 * _nearest_cell.p_cost + _orientation_cost
 			
 }
 		

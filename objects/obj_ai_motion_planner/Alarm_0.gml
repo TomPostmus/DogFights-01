@@ -1,11 +1,11 @@
 /// @description RRT update
 event_inherited();
 
-if (!root && body_x != undefined && body_y != undefined && body_th != undefined)
-	initialize(new AIRRTBranchRoot(body_x, body_y, body_th))
-
 if (sm_state != "explore" && sm_state != "optimize")
 	exit // only grow tree in explore and optimize states
+
+if (!root && body_x != undefined && body_y != undefined && body_th != undefined)
+	initialize(new AIRRTBranchRoot(body_x, body_y, body_th))
 	
 // Grow or prune
 repeat(3) {

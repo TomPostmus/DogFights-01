@@ -67,4 +67,7 @@ notify_on_engine_startup = function() {
 	
 	var _character = obj_spawns_controller.spawn_character(_spawn.x, _spawn.y, _spawn.image_angle)
 	demo_player.character = _character
+	
+	obj_viewport_controller.set_viewport_overview_mode(0) // set overview mode of viewport
+	
 }
