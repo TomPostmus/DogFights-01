@@ -21,6 +21,9 @@ path_mode = AI_PATH_MODE.DESTINATION_BASED
 tree_update_frames = 1 // set timer lengths
 path_update_frames = -1 // disable timer; handled in step upon completing RRT branch
 
+// State machine
+sm_h_cost_threshold = AGRID_CELL_SIZE
+
 // RRT (Rapid Random Tree) layer properties
 //rrt_curbranch = undefined // current RRT* branch we're walking
 //rrt_path = ds_list_create() // list of branches representing path to minimal cost branch

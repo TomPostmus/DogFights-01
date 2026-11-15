@@ -16,6 +16,10 @@ path_mode = AI_PATH_MODE.DESTINATION_BASED
 tree_update_frames = 1 // set timer lengths
 path_update_frames = 30
 
+// State machine
+sm_state = "freeze"
+sm_h_cost_threshold = AGRID_CELL_SIZE * 2
+
 // A* Grid properties
 agrid_cell_size = 16 // TODO: refactor to cell_size
 agrid_max_size = 200 // size that the A* Grid can maximally grow to

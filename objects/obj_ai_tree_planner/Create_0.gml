@@ -9,6 +9,10 @@ enum AI_PATH_MODE {
 }
 path_mode = AI_PATH_MODE.FLOW_BASED
 
+// State machine
+sm_state = "explore"
+sm_h_cost_threshold = 50 // below which threshold destination is considered to be found
+
 // Timers
 tree_update_frames = 1 // after how many frames to do tree update (grow or prune)
 alarm[0] = tree_update_frames

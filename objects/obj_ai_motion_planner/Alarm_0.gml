@@ -1,6 +1,9 @@
 /// @description RRT update
 event_inherited();
 
+if (sm_state != "explore" && sm_state != "optimize")
+	exit // only grow tree in explore and optimize states
+
 if (body_x == undefined || body_y == undefined || body_th == undefined || cost_field == undefined)
 	exit
 	
