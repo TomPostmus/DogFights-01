@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ai_tree_element",
   "parent":{
-    "name":"utils",
-    "path":"folders/Code/src/player/player_ai/planning_layers/utils.yy",
+    "name":"tree_planner",
+    "path":"folders/Code/src/player/player_ai/planning_layers/tree_planner.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

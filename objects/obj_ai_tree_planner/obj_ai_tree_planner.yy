@@ -11,8 +11,8 @@
   "name":"obj_ai_tree_planner",
   "overriddenProperties":[],
   "parent":{
-    "name":"utils",
-    "path":"folders/Code/src/player/player_ai/planning_layers/utils.yy",
+    "name":"tree_planner",
+    "path":"folders/Code/src/player/player_ai/planning_layers/tree_planner.yy",
   },
   "parentObjectId":null,
   "persistent":false,

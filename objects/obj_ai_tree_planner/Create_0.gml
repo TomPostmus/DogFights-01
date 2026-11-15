@@ -19,7 +19,7 @@ alarm[1] = path_update_frames
 /// @description Initializes tree with root element
 /// @param {AITreeElement} element The element that is to become the root
 /// @context obj_ai_tree_planner
-function initialize(_element) {
+initialize = function(_element) {
 	if (root != undefined)
 		show_error("Root must be deleted before re-initializing tree.", true)
 	if (_element.parent)
@@ -34,7 +34,7 @@ function initialize(_element) {
 /// @description Adds a new element to the tree at the parent
 /// @param {AITreeElement} element The new element being added to tree
 /// @context obj_ai_tree_planner
-function add_element(_element) {
+add_element = function(_element) {
 	var _parent = _element.parent
 	if (!_parent)
 		show_error("Could not add element to tree, to undefined parent.", true)
@@ -52,22 +52,31 @@ function add_element(_element) {
 /// @param {AITreeElement} element The element to be removed
 /// @param {bool} decouple Whether to remove element from its parent's children list. Should only be false in recursive calls on children.
 /// @context obj_ai_tree_planner
-function delete_element(_element, decouple=true) {
+delete_element = function(_element, _decouple=true) {
 	var _list_i = ds_list_find_index(elements, _element)
 	if (_list_i == -1)
 		show_error("Could not delete element that is not part of tree.", true)
 	
+	// Delete from elements
 	ds_list_delete(elements, _list_i)
 	
+	// Delete from path
+	_list_i = ds_list_find_index(path, _element)
+	if (_list_i != -1)
+		ds_list_delete(path, _list_i)
+	
+	// Reset root
 	if (_element == root) {
 		root = undefined	
-	} else if (decouple) { // decouple from parent
+	// Decouple from parent
+	} else if (_decouple) {
 		_list_i = ds_list_find_index(_element.parent.children, _element) // find element in parent children list		
 		ds_list_delete(_element.parent.children, _list_i)
 		
 		update_progeny_upstream(_element.parent, -1 - _element.progeny) // subtract self and children from upstream progeny
 	}
 	
+	// Delete children
 	for (var i = 0; i < ds_list_size(_element.children); i ++) // delete children recursively
 		delete_element(_element.children[|i], false)
 		
@@ -87,11 +96,39 @@ function update_progeny_upstream(_element, _added_progeny) {
 	}
 }
 
+/// @description Make a cutting at a given element that is part of the tree and is to become new root
+/// @param {AITreeElement} element The element that is to become the new root
+/// @context obj_ai_tree_planner
+reroot_at_cut = function(_element) {
+	var _list_i = ds_list_find_index(elements, _element)
+	if (_list_i == -1)
+		show_error("Could not reroot at element that is not part of tree.", true)
+	
+	// Decouple from parent
+	var _parent = _element.parent
+	if (!_parent)
+		return; // element already is root, return
+	
+	_list_i = ds_list_find_index(_parent.children, _element)
+	ds_list_delete(_parent.children, _list_i) 
+	
+	// Delete root (leaving decoupled element intact)
+	delete_element(root) 
+	root = _element // new root is element
+	root.parent = undefined // new root, so no parent
+	
+	// Update G costs
+	var _g_cost_before = _element.g_cost // remember G cost of element
+	for (var i = 0; i < ds_list_size(elements); i ++)			
+		elements[|i].g_cost -= _g_cost_before // subtract G cost for every element
+	
+}
+
 /// @function compute_path(destination)
 /// @description Computes a path from the root to the destination node by backtracking
 /// @param {AITreeElement} destination The destination element to compute path towards
 /// @context obj_ai_tree_planner
-function compute_path(_destination) {
+compute_path = function(_destination) {
 	if (ds_list_find_index(elements, _destination) == -1)
 		show_error("Could not compute path to destination that is not part of tree.", true)
 		
@@ -106,7 +143,7 @@ function compute_path(_destination) {
 /// @function compute_path_flow()
 /// @description Compute a path, starting from root, following the flow, or maximaly progeny counts, of the tree
 /// @context obj_ai_tree_planner
-function compute_path_flow() {
+compute_path_flow = function() {
 	ds_list_clear(path) // clear 
 	var _max_progeny, _next_elem
 	var _cur_elem = root
@@ -129,7 +166,7 @@ function compute_path_flow() {
 
 /// @description Compute H cost
 /// @context obj_ai_tree_planner
-function compute_h_cost(_element) {
+compute_h_cost = function(_element) {
 	show_error("This function is meant to be implemented in inheriting objects.", true)
 }
 

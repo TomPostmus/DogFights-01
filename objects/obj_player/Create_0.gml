@@ -2,6 +2,8 @@
 // Has a character that it controls
 // Player object represents human player (or AI player that simulates human player)
 
+persistent = true
+
 // References
 character = noone
 profile = noone

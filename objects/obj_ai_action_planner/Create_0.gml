@@ -10,7 +10,7 @@ path_update_frames = 120
 
 /// @description Compute H cost for AIAction element
 /// @context obj_ai_action_planner
-function compute_h_cost(_action) {
+compute_h_cost = function(_action) {
 	_action.h_cost = -wstate_weights.w_hp * _action.expected_wstate.hp 
 			- wstate_weights.w_defense_power * _action.expected_wstate.defense_power
 			- wstate_weights.w_mission_success * _action.expected_wstate.mission_success

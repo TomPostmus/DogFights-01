@@ -1,6 +1,6 @@
 event_inherited()
 
-if (global.ingame() && instance_exists(character) && instance_exists(character.body)) {
+if (global.engine_running && instance_exists(character) && instance_exists(character.body)) {
 	var _body = character.body
 	var _weapon = character.weapon
 	
@@ -8,23 +8,26 @@ if (global.ingame() && instance_exists(character) && instance_exists(character.b
 	var _body_y = _body.get_y()
 	var _body_rot = _body.get_rotation()	
 	
-	// Send inputs to lower level layer and get outputs
-	//layer_agrid.body_x = _body_x // send body 2D (x,y) position to A* Grid
-	//layer_agrid.body_y = _body_y
-	//layer_agrid.cost_field = apf_cost_field_2d // send 2D cost field from APF layer to A* Grid
+	// Send body 2D position to grid planner
+	if (instance_exists(grid_planner)) {
+		grid_planner.body_x = _body_x // send body 2D (x,y) position to A* Grid
+		grid_planner.body_y = _body_y
+	}
 	
-	//layer_rrt.body_x = _body_x // send body 3D (x,y,th) position to RRT
-	//layer_rrt.body_y = _body_y
-	//layer_rrt.body_th = _body_rot
-	//layer_rrt.cost_field = layer_agrid.cost_field_rrt // pass through cost field computed in A* Grid layer to RRT layer
+	// Send body 3D position and cost field to motion planner and get movement output
+	if (instance_exists(grid_planner)) {
+		motion_planner.body_x = _body_x // send body 3D (x,y,th) position to RRT
+		motion_planner.body_y = _body_y
+		motion_planner.body_th = _body_rot
+		motion_planner.cost_field = grid_planner.cost_field_rrt // pass through cost field computed in A* Grid layer to RRT layer
 	
-	move_input = layer_rrt.move_input // extract move outputs from RRT layer
-	turn_input = layer_rrt.turn_input
+		move_input = motion_planner.move_input // extract move outputs from RRT layer
+		turn_input = motion_planner.turn_input
+	}
 	
 	// LOWER TWO LINES ARE PURELY FOR DEBUGGING: manual player controls
 	//move_input = get_key(KEY_P2_FORWARD, KEYACTION_HOLD) - get_key(KEY_P2_BACKWARD, KEYACTION_HOLD)
 	//turn_input = get_key(KEY_P2_LEFT, KEYACTION_HOLD) - get_key(KEY_P2_RIGHT, KEYACTION_HOLD)
-	
 	
 	// Send to character
 	character.interact = input_interact

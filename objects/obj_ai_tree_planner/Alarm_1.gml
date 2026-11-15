@@ -13,13 +13,23 @@ for (var i = 0; i < ds_list_size(elements); i ++) {
 // Compute path
 if (path_mode == AI_PATH_MODE.DESTINATION_BASED) {
 	
+	// H cost-based
 	var _destination = undefined
-	var _s_cost_min = infinity
+	var _h_cost_min = infinity
 	for (var i = 0; i < ds_list_size(elements); i ++) // find destination first
-		if (elements[|i].s_cost < _s_cost_min) {
-			_s_cost_min = elements[|i].s_cost
+		if (elements[|i].h_cost < _h_cost_min) {
+			_h_cost_min = elements[|i].h_cost
 			_destination = elements[|i]
 		}
+		
+	// S cost-based
+	//var _destination = undefined
+	//var _s_cost_min = infinity
+	//for (var i = 0; i < ds_list_size(elements); i ++) // find destination first
+	//	if (elements[|i].s_cost < _s_cost_min) {
+	//		_s_cost_min = elements[|i].s_cost
+	//		_destination = elements[|i]
+	//	}
 	
 	if (_destination)
 		compute_path(_destination)
