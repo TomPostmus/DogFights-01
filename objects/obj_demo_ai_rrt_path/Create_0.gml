@@ -4,6 +4,47 @@ event_inherited();
 demo_player = undefined
 path_inserted = false
 
+function motion_planner_insert_rrt_path(_motion_planner, _path) {
+
+	// Build tree from path
+	_motion_planner.initialize(_path[|0])
+	for (var i = 1; i < ds_list_size(_path); i ++)
+		_motion_planner.add_element(_path[|i])
+	
+	ds_list_destroy(_path) // delete list
+	
+	_motion_planner.compute_path_flow() // compute path as single branch
+
+}
+
+function rrt_path_straight_u_turn_straight(_body_x, _body_y, _body_th) {
+	
+	var _path = ds_list_create()
+	ds_list_add(_path, new AIRRTBranchRoot(_body_x, _body_y, _body_th))
+	
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	ds_list_add(_path, new AIRRTBranchArc(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD, RRT_STEERING_RIGHT))
+	
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+	
+	return _path
+
+}
+
 /// @function start()
 /// @description Starts demo
 /// @context obj_demo_ai_astar_path

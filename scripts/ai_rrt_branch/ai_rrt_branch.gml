@@ -9,7 +9,7 @@
 #macro RRT_STEERSHIFT_PEN 0
 #macro RRT_REVERSE_PEN 0 // how much to penalise reverse gear elements
 #macro RRT_STRAIGHT_LEN 20 // lengths of straight branches tree is built with
-#macro RRT_ARC_LEN 20 // length of arc branches in degrees
+#macro RRT_ARC_LEN 22.5 // length of arc branches in degrees
 
 enum RRT_TYPE { // RRT element types
 	ROOT,

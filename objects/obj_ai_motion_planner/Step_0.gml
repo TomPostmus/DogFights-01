@@ -4,7 +4,7 @@ if (sm_state == "done") {
 	move_input = 0
 	turn_input = 0
 
-} else if (sm_state == "explore" || sm_state == "optimize") {
+} else if (sm_state == "explore" || sm_state == "optimize" || sm_state == "freeze") {
 
 	if (body_x != undefined && body_y != undefined && body_th != undefined && root) {
 	
