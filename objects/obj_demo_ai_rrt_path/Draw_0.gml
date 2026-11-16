@@ -1,7 +1,13 @@
 // Draw RRT for each player
-if (instance_exists(demo_player) && instance_exists(demo_player.character) && instance_exists(demo_player.character.body) 
- && instance_exists(demo_player.motion_planner)) {
- 
-	demo_player.motion_planner.draw()
- 
- }
+if (demo_players != undefined) {
+
+	for (var i = 0; i < array_length(demo_players); i ++) {
+
+		if (!instance_exists(demo_players[i].motion_planner))
+			continue
+			
+		demo_players[i].motion_planner.draw()
+		
+	}
+
+}

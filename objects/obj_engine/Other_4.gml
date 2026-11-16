@@ -7,6 +7,8 @@ if (state == "startup" || state == "running") {
 	global.engine_running = true // set global
 	
 	// Notify observers
+	with (obj_player)
+		notify_on_engine_startup()
 	for (var i = 0; i < ds_list_size(observers_startup); i ++)
 		observers_startup[|i].notify_on_engine_startup()
 

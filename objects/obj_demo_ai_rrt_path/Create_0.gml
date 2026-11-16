@@ -1,8 +1,8 @@
 // Inherit the parent event
 event_inherited();
 
-demo_player = undefined
-path_inserted = false
+demo_players = undefined
+path_inserted = undefined
 
 function motion_planner_insert_rrt_path(_motion_planner, _path) {
 
@@ -48,11 +48,8 @@ function rrt_path_straight_u_turn_straight(_body_x, _body_y, _body_th) {
 /// @function start()
 /// @description Starts demo
 /// @context obj_demo_ai_astar_path
-function start() {
-	demo_player = create_controllers(obj_player_ai_only_rrt)
-	
+function start() {	
 	start_engine(rm_ai_demo_rrt_path)
-	ds_list_add(obj_engine.observers_startup, demo_player) // subscribe player to engine startup
 }
 
 /// @description Spawn player on startup
@@ -60,13 +57,21 @@ function start() {
 notify_on_engine_startup = function() {
 	
 	path_inserted = false
+	demo_players = array_create(0)
 	
-	var _spawn = instance_find(obj_marker_spawn_player, 0)
-	if (!instance_exists(_spawn))
-		show_error("Could not start demo obj_demo_engine_layer_ai_astar_path; Spawn marker for player not found.", true)
+	// Spawn demo player on every spawn marker
+	var i = 0
+	with (obj_marker_spawn_player) {
+		other.demo_players[i] = create_controllers(obj_player_ai_only_rrt)
+		other.demo_players[i].notify_on_engine_startup() // TODO: handle initialization differently?
+		
+		var _character = obj_spawns_controller.spawn_character(x, y, image_angle)
+		other.demo_players[i].character = _character
+		
+		i ++
+	}
 	
-	var _character = obj_spawns_controller.spawn_character(_spawn.x, _spawn.y, _spawn.image_angle)
-	demo_player.character = _character
+	path_inserted = array_create(i, false)
 	
 	obj_viewport_controller.set_viewport_overview_mode(0) // set overview mode of viewport
 	

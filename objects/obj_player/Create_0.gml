@@ -34,7 +34,7 @@ observers_kik = ds_list_create()
 /// @param {obj_character} character The character that is kikked
 /// @param {obj_player} kikker The player that is the offender that caused the kik
 /// @context obj_player
-notify_on_character_kik = function (_character, _kikker) {
+notify_on_character_kik = function(_character, _kikker) {
 	
 	if (_character != character) // if called for another character; ignore
 		return;
@@ -43,6 +43,12 @@ notify_on_character_kik = function (_character, _kikker) {
 	for (var i = 0; i < ds_list_size(observers_kik); i ++)
 		observers_kik[|i].notify_on_player_kik(id, character, _kikker)
 	
+}
+
+/// @description On even that engine starts up (each Room Start)
+/// @context obj_player
+notify_on_engine_startup = function() {
+	// implemented in children
 }
 
 //alive = false				//if type dog, whether alive or dead, or not yet spawned

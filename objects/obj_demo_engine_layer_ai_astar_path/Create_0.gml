@@ -12,7 +12,6 @@ function start() {
 	demo_player = create_controllers(obj_player_ai_only_grid_planner)
 	
 	start_engine(rm_ai_demo_astar_path)
-	ds_list_add(obj_engine.observers_startup, demo_player) // subscribe player to engine startup
 }
 
 cost_field = function(_x, _y, _th) {

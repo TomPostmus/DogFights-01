@@ -68,7 +68,7 @@ if (!root || sm_state == "done") {
 				_abort = true
 				
 			// check completion
-			var _completion_tolerance = 1 // tolerance on when path element is considered to be completed
+			var _completion_tolerance = 2 // tolerance on when path element is considered to be completed
 			if (_progression >= RRT_ARC_LEN - _completion_tolerance) {
 				rrt_branch_completed = true
 			}
@@ -84,7 +84,7 @@ if (!root || sm_state == "done") {
 			
 				var _next_branch = path[|1] // next branch in path
 				reroot_at_cut(_next_branch) // reroot at next branch
-				root.recenter(body_x, body_y, body_th) // recenter tree on body coordinates
+				//root.recenter(body_x, body_y, body_th) // recenter tree on body coordinates
 			
 			} else {			
 				_abort = true
