@@ -84,7 +84,7 @@ if (!root || sm_state == "done") {
 			
 				var _next_branch = path[|1] // next branch in path
 				reroot_at_cut(_next_branch) // reroot at next branch
-				recenter_rrt_on_body(body_x, body_y, body_th) // recenter tree on body coordinates
+				root.recenter(body_x, body_y, body_th) // recenter tree on body coordinates
 			
 			} else {			
 				_abort = true

@@ -127,15 +127,15 @@ compute_h_cost = function(_branch) {
 
 /// @description Recenter RRT on body 3D position
 /// @context obj_ai_motion_planner
-recenter_rrt_on_body = function(_body_x, _body_y, _body_th) {
+//recenter_rrt_on_body = function(_body_x, _body_y, _body_th) {
 	
-	var _x_delta = _body_x - root.x_begin // difference between root coordinates and body coordinates
-	var _y_delta = _body_y - root.y_begin
-	var _th_delta = angle_difference(_body_th, root.th_begin)
+//	var _x_delta = _body_x - root.x_begin // difference between root coordinates and body coordinates
+//	var _y_delta = _body_y - root.y_begin
+//	var _th_delta = angle_difference(_body_th, root.th_begin)
 
-	for (var i = 0; i < ds_list_size(elements); i ++)
-		elements[|i].move(_x_delta, _y_delta, _th_delta)
-}
+//	for (var i = 0; i < ds_list_size(elements); i ++)
+//		elements[|i].move(_x_delta, _y_delta, _th_delta)
+//}
 
 function rrt_branch(_parent, _x, _y, _th) constructor { // parent constructor for branch object
 	parent = _parent

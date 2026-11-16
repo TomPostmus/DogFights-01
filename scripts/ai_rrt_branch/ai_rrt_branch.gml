@@ -29,14 +29,24 @@ function AIRRTBranchRoot(_x, _y, _th) : AITreeElement(undefined) constructor {
 	gear = 0
 	steering = 0
 	
-	x = _x
-	y = _y
-	th = _th
-	
+	// Begin point
 	x_begin = _x
 	y_begin = _y
 	th_begin = _th
 	
+	/// @description Compute endpoint based on begin point
+	/// @context AIRRTBranchRoot
+	compute_endpoint = function() {
+	
+		x = x_begin
+		y = y_begin
+		th = th_begin
+	
+	}
+	
+	compute_endpoint()
+	
+	// Compute G cost
 	g_cost = 0
 	
 	/// @description Draw root element as circle with arrow
@@ -54,19 +64,23 @@ function AIRRTBranchRoot(_x, _y, _th) : AITreeElement(undefined) constructor {
 		return true
 	}
 	
-	/// @description Move element with delta
-	/// @param {real}
-	move = function(_x_delta, _y_delta, _th_delta) {
-	
-		x += _x_delta
-		y += _y_delta
-		th += _th_delta
+	/// @description Recenter element on 3D coordinate
+	/// @param {real} x The new x of the begin point of the element
+	/// @param {real} y The new y of the begin point of the element
+	/// @param {real} th The new th of the begin point of the element
+	/// @context AIRRTBranchRoot
+	recenter = function(_x, _y, _th) {
 		
-		x_begin += _x_delta
-		y_begin += _y_delta
-		th_begin += _th_delta
+		x_begin = _x
+		y_begin = _y
+		th_begin = _th
+		
+		compute_endpoint()
+		
+		for (var i = 0; i < ds_list_size(children); i ++)
+			children[|i].recenter(x, y, th)
 	
-	}
+	} // TODO: place this function in generic AIRRTBranch parent?
 
 }
 
@@ -83,13 +97,22 @@ function AIRRTBranchTurn(_parent, _th) : AITreeElement(_parent) constructor {
 	gear = 0
 	steering = sign(turn_ang_diff)
 	
-	x_begin = _parent.x
+	// Begin point
+	x_begin = _parent.x 
 	y_begin = _parent.y
 	th_begin = _parent.th
-
-	x = x_begin
-	y = y_begin	
-	th = th_begin + turn_ang_diff
+	
+	/// @description Compute endpoint based on begin point
+	/// @context AIRRTBranchTurn
+	compute_endpoint = function() {
+	
+		x = x_begin
+		y = y_begin	
+		th = th_begin + turn_ang_diff
+	
+	}
+	
+	compute_endpoint()
 	
 	// Compute G cost
 	var _time = turn_ang_len / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
@@ -134,15 +157,21 @@ function AIRRTBranchTurn(_parent, _th) : AITreeElement(_parent) constructor {
 		}
 	}
 	
-	move = function(_x_delta, _y_delta, _th_delta) {
-	
-		x += _x_delta
-		y += _y_delta
-		th += _th_delta
+	/// @description Recenter element on 3D coordinate
+	/// @param {real} x The new x of the begin point of the element
+	/// @param {real} y The new y of the begin point of the element
+	/// @param {real} th The new th of the begin point of the element
+	/// @context AIRRTBranchTurn
+	recenter = function(_x, _y, _th) {
 		
-		x_begin += _x_delta
-		y_begin += _y_delta
-		th_begin += _th_delta
+		x_begin = _x
+		y_begin = _y
+		th_begin = _th
+		
+		compute_endpoint()
+		
+		for (var i = 0; i < ds_list_size(children); i ++)
+			children[|i].recenter(x, y, th)
 	
 	}
 
@@ -158,13 +187,22 @@ function AIRRTBranchStraight(_parent, _gear) : AITreeElement(_parent) constructo
 	gear = _gear
 	steering = 0
 	
-	x = _parent.x + lengthdir_x(gear * RRT_STRAIGHT_LEN, _parent.th) // coordinates of endpoint
-	y = _parent.y + lengthdir_y(gear * RRT_STRAIGHT_LEN, _parent.th)
-	th = _parent.th
-	
+	// Begin point
 	x_begin = _parent.x
 	y_begin = _parent.y
-	th_begin = th
+	th_begin = _parent.th
+		
+	/// @description Compute endpoint based on begin point
+	/// @context AIRRTBranchTurn
+	compute_endpoint = function() {
+	
+		x = x_begin + lengthdir_x(gear * RRT_STRAIGHT_LEN, th_begin)
+		y = y_begin + lengthdir_y(gear * RRT_STRAIGHT_LEN, th_begin)
+		th = th_begin	
+	
+	}
+	
+	compute_endpoint()	
 	
 	// Compute G cost
 	var _time = RRT_STRAIGHT_LEN / RRT_V // est. time (in steps) to complete element
@@ -194,15 +232,22 @@ function AIRRTBranchStraight(_parent, _gear) : AITreeElement(_parent) constructo
 		return true
 	}
 	
-	move = function(_x_delta, _y_delta, _th_delta) {
-	
-		x += _x_delta
-		y += _y_delta
-		th += _th_delta
+	/// @description Recenter element on 3D coordinate
+	/// @param {real} x The new x of the begin point of the element
+	/// @param {real} y The new y of the begin point of the element
+	/// @param {real} th The new th of the begin point of the element
+	/// @context AIRRTBranchStraight
+	recenter = function(_x, _y, _th) {
 		
-		x_begin += _x_delta
-		y_begin += _y_delta
-		th_begin += _th_delta
+		// Begin point
+		x_begin = _x
+		y_begin = _y
+		th_begin = _th
+	
+		compute_endpoint()
+		
+		for (var i = 0; i < ds_list_size(children); i ++)
+			children[|i].recenter(x, y, th)
 	
 	}
 	
@@ -219,16 +264,24 @@ function AIRRTBranchArc(_parent, _gear, _steering) : AITreeElement(_parent) cons
 	gear = _gear
 	steering = _steering
 	
-	center_x = _parent.x + lengthdir_x(RRT_R, _parent.th + _steering * 90) // center position of arc
-	center_y = _parent.y + lengthdir_y(RRT_R, _parent.th + _steering * 90) // either left or right from start pos (depending on left or right steering)
-	
-	x = center_x + lengthdir_x(RRT_R, _parent.th - _steering * 90 + _gear * _steering * RRT_ARC_LEN)
-	y = center_y + lengthdir_y(RRT_R, _parent.th - _steering * 90 + _gear * _steering * RRT_ARC_LEN)
-	th = _parent.th + gear * steering * RRT_ARC_LEN
-	
+	// Begin point
 	x_begin = _parent.x
 	y_begin = _parent.y
 	th_begin = _parent.th
+		
+	/// @description Compute endpoint based on begin point
+	/// @context AIRRTBranchTurn
+	compute_endpoint = function() {
+	
+		center_x = x_begin + lengthdir_x(RRT_R, th_begin + steering * 90) // center position of arc
+		center_y = y_begin + lengthdir_y(RRT_R, th_begin + steering * 90) // either left or right from start pos (depending on left or right steering)
+		x = center_x + lengthdir_x(RRT_R, th_begin - steering * 90 + gear * steering * RRT_ARC_LEN)
+		y = center_y + lengthdir_y(RRT_R, th_begin - steering * 90 + gear * steering * RRT_ARC_LEN)
+		th = th_begin + gear * steering * RRT_ARC_LEN
+	
+	}
+	
+	compute_endpoint()
 	
 	// Compute G cost
 	var _time = RRT_ARC_LEN / 360 * RRT_TURN_TIME // est. time (in steps) to complete element
@@ -283,19 +336,24 @@ function AIRRTBranchArc(_parent, _gear, _steering) : AITreeElement(_parent) cons
 		
 		return true
 	}
-	
-	move = function(_x_delta, _y_delta, _th_delta) {
-	
-		x += _x_delta
-		y += _y_delta
-		th += _th_delta
 		
-		x_begin += _x_delta
-		y_begin += _y_delta
-		th_begin += _th_delta
+	/// @description Recenter element on 3D coordinate
+	/// @param {real} x The new x of the begin point of the element
+	/// @param {real} y The new y of the begin point of the element
+	/// @param {real} th The new th of the begin point of the element
+	/// @context AIRRTBranchArc
+	recenter = function(_x, _y, _th) {
 		
-		center_x += _x_delta
-		center_y += _y_delta
+		// Begin point
+		x_begin = _x
+		y_begin = _y
+		th_begin = _th
+	
+		// End point
+		compute_endpoint()
+		
+		for (var i = 0; i < ds_list_size(children); i ++)
+			children[|i].recenter(x, y, th)
 	
 	}
 	
