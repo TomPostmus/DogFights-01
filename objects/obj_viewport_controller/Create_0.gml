@@ -1,3 +1,4 @@
+/// @description
 nr_viewports = 1
 viewport_to_player = array_create(8, noone) // array mapping a viewport id to a player
 viewport_mode = array_create(8, "follow_player")
@@ -48,6 +49,19 @@ function set_viewport_overview_mode(_viewport_id) {
 	viewport_mode[_viewport_id] = "overview"
 	
 	var gm_camera = view_get_camera(_viewport_id);
-	camera_set_view_size(gm_camera, room_width, room_height) // scale and position camera to capture room
-	camera_set_view_pos(gm_camera, 0, 0)
+	
+	// Determine view size to capture room, while perserving screen aspect ratio
+	var _view_w, _view_h
+	var _room_aspect = room_width / room_height
+	if (_room_aspect >= global.aspect) {
+		_view_w = room_width // fit to room width
+		_view_h = _view_w / global.aspect
+	} else {
+		_view_h = room_height // fit to room height
+		_view_w = _view_h * global.aspect
+	}
+	
+	// Set view size and position
+	camera_set_view_size(gm_camera, _view_w, _view_h) // scale and position camera to capture room
+	camera_set_view_pos(gm_camera, (room_width - _view_w) / 2, (room_height - _view_h) / 2)
 }
