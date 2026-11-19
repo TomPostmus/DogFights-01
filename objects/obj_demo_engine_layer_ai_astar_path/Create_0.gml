@@ -24,9 +24,9 @@ cost_field = function(_x, _y, _th) {
 
 }
 
-/// @description Spawn player on startup
+/// @description Spawn player on room start
 /// @context obj_demo_ai_astar_path
-notify_on_engine_startup = function() {
+notify_on_engine_room_start = function() {
 	
 	path_inserted = false
 	

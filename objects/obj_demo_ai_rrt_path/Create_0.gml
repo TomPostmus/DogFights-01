@@ -1,8 +1,6 @@
 // Inherit the parent event
 event_inherited();
 
-demo_players = undefined
-
 /// @description Returns a deep copy of WholeState, where children is a unique list with unique branches
 /// @returns {AIRRTBranch} The deep copied RRT branch
 /// @context obj_demo_ai_rrt_path
@@ -98,30 +96,36 @@ array_push(cyclic_path_generators, function(_body_x, _body_y, _body_th) {
 
 })
 
-cyclic_paths = array_create(array_length(cyclic_path_generators), undefined) // list of cyclic (reference) paths generated
+number_of_paths = array_length(cyclic_path_generators)
+cyclic_paths = array_create(0)
 
 /// @function start()
 /// @description Starts demo
 /// @context obj_demo_ai_astar_path
-function start() {	
+function start() {
+	demo_players = array_create(number_of_paths)
+	for (var i = 0; i < number_of_paths; i ++)
+		demo_players[i] = create_controllers(obj_player_ai_only_rrt)
+	
 	start_engine(rm_ai_demo_rrt_path)
 }
 
 /// @description Spawn player on startup
 /// @context obj_demo_ai_astar_path
-notify_on_engine_startup = function() {
-	demo_players = array_create(0)
+notify_on_engine_room_start = function() {
 	
-	// Spawn demo player on every spawn marker
-	var i = 0
-	with (obj_marker_spawn_player) {
-		other.demo_players[i] = create_controllers(obj_player_ai_only_rrt)
-		other.demo_players[i].notify_on_engine_startup() // TODO: handle initialization differently?
+	cyclic_paths = array_create(number_of_paths, undefined) // list of cyclic (reference) paths generated
+	
+	// Spawn demo players on spawn markers
+	for (var i = 0; i < number_of_paths; i ++) {
 		
-		var _character = obj_spawns_controller.spawn_character(x, y, image_angle)
-		other.demo_players[i].character = _character
+		var _marker = instance_find(obj_marker_spawn_player, i)
 		
-		i ++
+		if (instance_exists(_marker)) {
+			var _character = obj_spawns_controller.spawn_character(_marker.x, _marker.y, _marker.image_angle)
+			demo_players[i].character = _character // assign to player
+		}
+		
 	}
 	
 	obj_viewport_controller.set_viewport_overview_mode(0) // set overview mode of viewport

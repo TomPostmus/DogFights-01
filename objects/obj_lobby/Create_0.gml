@@ -51,7 +51,7 @@ function start_game() {
 	
 	// Subscribe game to engine startup
 	if (instance_exists(game))
-		ds_list_add(obj_engine.observers_startup, game)
+		ds_list_add(obj_engine.observers, game)
 	
 	obj_engine.start(map_room)
 }

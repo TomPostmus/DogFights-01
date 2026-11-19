@@ -12,16 +12,15 @@ notify_on_engine_stop = function() {
 	instance_destroy()
 }
 
-/// @description Starts engine and subscribes to engine stop event
+/// @description Starts engine and subscribes to engine events
 /// @param {int} room_index The index of the room to go to
 /// @context obj_demo_engine_layer
-start_engine = function (_room_index) {
+start_engine = function(_room_index) {
 	
 	create_controllers(obj_engine) // kick off engine
 	obj_engine.start(_room_index) // go to demo room
 	
 	// Subscribe to engine notifications
-	ds_list_add(obj_engine.observers_startup, id)
-	ds_list_add(obj_engine.observers_stop, id)
+	ds_list_add(obj_engine.observers, id)
 	
 }

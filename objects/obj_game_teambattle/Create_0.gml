@@ -27,9 +27,9 @@ notify_on_character_kik = function (_character, _kikker) {
 	
 }
 
-/// @description On event that engine has started up
+/// @description On event that engine has started room
 /// @context obj_game_teambattle
-notify_on_engine_startup = function () {
+notify_on_engine_room_start = function () {
 
 	for (var i = 0; i < ds_list_size(teams); i ++) {
 		var _team = teams[|i]

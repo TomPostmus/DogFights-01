@@ -22,6 +22,6 @@ function start() {
 	lobby.start_game() // start the game
 	
 	// Subscribe to engine stop notification
-	ds_list_add(obj_engine.observers_stop, id)
+	ds_list_add(obj_engine.observers, id)
 	
 }

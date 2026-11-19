@@ -3,9 +3,9 @@ event_inherited();
 
 debug_draw_mode = 4 // immediately enable draw of grid layer
 
-/// @description Override on engine startup
+/// @description Override on engine room start
 /// @context obj_player_ai
-notify_on_engine_startup = function() {
+notify_on_engine_room_start = function() {
 	
 	// Simple cost field that is distance to mouse
 	//var _cost_field_mouse = function(_x, _y, _th) {

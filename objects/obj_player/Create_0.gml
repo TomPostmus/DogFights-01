@@ -45,9 +45,9 @@ notify_on_character_kik = function(_character, _kikker) {
 	
 }
 
-/// @description On even that engine starts up (each Room Start)
+/// @description On even that engine gives room start event
 /// @context obj_player
-notify_on_engine_startup = function() {
+notify_on_engine_room_start = function() {
 	// implemented in children
 }
 

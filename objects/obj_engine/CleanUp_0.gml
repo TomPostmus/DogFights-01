@@ -1,5 +1,4 @@
-ds_list_destroy(observers_startup)
-ds_list_destroy(observers_stop)
+ds_list_destroy(observers)
 
 // Destroy managed components
 with (spawns_controller)

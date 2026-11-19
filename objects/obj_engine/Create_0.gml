@@ -6,9 +6,8 @@ hud = noone
 
 state = "uninitialized"
 
-// Observers startup
-observers_startup = ds_list_create()
-observers_stop = ds_list_create()
+// Observers 
+observers = ds_list_create()
 
 /// @function start(room_index)
 /// @description Creates controller objects and transitions to game room
@@ -28,9 +27,15 @@ function start(_room_index) {
 /// @context obj_engine
 function stop() {
 	
-	// Notify observers
-	for (var i = 0; i < ds_list_size(observers_stop); i ++)
-		observers_stop[|i].notify_on_engine_stop()
+	// Notify observers of engine stop
+	with (obj_player)
+		if (variable_instance_exists(id, "notify_on_engine_stop"))
+			notify_on_engine_stop()
+	for (var i = 0; i < ds_list_size(observers); i ++)
+		if (variable_instance_exists(observers[|i], "notify_on_engine_stop"))
+			observers[|i].notify_on_engine_stop()
+		
+	global.engine_running = false // set global
 	
 	room_goto(rm_menu)
 	instance_destroy()

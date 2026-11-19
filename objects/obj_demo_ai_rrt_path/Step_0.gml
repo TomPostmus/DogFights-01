@@ -2,9 +2,9 @@
 if (demo_players != undefined) {
 	
 	//instance_exists(demo_player.character) && instance_exists(demo_player.character.body) && instance_exists(demo_player.motion_planner)
-	for (var i = 0; i < array_length(demo_players); i ++) {
+	for (var i = 0; i < number_of_paths; i ++) {
 		
-		if (!instance_exists(demo_players[i].motion_planner))
+		if (!instance_exists(demo_players[i].motion_planner) || !instance_exists(demo_players[i].character))
 			continue
 		
 		if (cyclic_paths[i] == undefined) {

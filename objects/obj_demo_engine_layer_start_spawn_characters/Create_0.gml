@@ -18,7 +18,7 @@ function start() {
 
 /// @description Spawn team
 /// @context obj_demo_ai_astar_path
-notify_on_engine_startup = function() {
+notify_on_engine_room_start = function() {
 
 	team.start_spawn_team_characters(n_characters)
 

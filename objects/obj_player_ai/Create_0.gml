@@ -9,9 +9,9 @@ action_planner = noone // references to planning layers
 grid_planner = noone
 motion_planner = noone
 
-/// @description On engine startup event
+/// @description On engine room start event
 /// @context obj_player_ai
-notify_on_engine_startup = function() {
+notify_on_engine_room_start = function() {
 	
 	// Initialize vision
 	vision = create_controllers(obj_ai_vision) 
