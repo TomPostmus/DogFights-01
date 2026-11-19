@@ -18,6 +18,12 @@ enum RRT_TYPE { // RRT element types
 	ARC
 }
 
+function AIRRTBranch(_parent) : AITreeElement(_parent) constructor {
+
+	
+
+}
+
 /// @param {real} x The x coordinate of the root element
 /// @param {real} y The y coordinate of the root element
 /// @param {real} th The theta/orientation of the root element
