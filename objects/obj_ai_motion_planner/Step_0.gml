@@ -17,16 +17,23 @@ if (!root || sm_state == "done") {
 		else 
 			rrt_walk_timer --
 			
+		// Base input
+		move_input = root.gear
+		turn_input = root.steering
+			
 		// Determine move input per type of element
+		var _steering_offset = 0 // offset from element angle to steering, left is positive, right negative
+		var _center_offset = 0 // offset from center of path line
+		var _line_completion = 0
+		
 		if (root.type == RRT_TYPE.ROOT) {
 			rrt_branch_completed = true
-		} else if (root.type == RRT_TYPE.TURN) { // execute turn					
-			move_input = 0
-			turn_input = sign(angle_difference(root.th, body_th))
-					
+		} else if (root.type == RRT_TYPE.TURN) { // execute turn
+			_center_offset = point_distance(body_x, body_y, root.x, root.y)
+			
 			// RRT path abortion
-			if (point_distance(body_x, body_y, root.x, root.y) > _abortion_tolerance)
-				_abort = true // raise flag
+			//if (point_distance(body_x, body_y, root.x, root.y) > _abortion_tolerance)
+			//	_abort = true // raise flag
 					
 			// check completion
 			var _completion_tolerance = 3 // completion tolerance (in degrees) on when turn is considered to be completed
@@ -34,45 +41,54 @@ if (!root || sm_state == "done") {
 				rrt_branch_completed = true
 			}
 		} else if (root.type == RRT_TYPE.STRAIGHT) {
-			move_input = root.gear // move according to gear
-			turn_input = 0
-				
 			var _to_player_dir = point_direction(root.x_begin, root.y_begin, body_x, body_y) // direction and distance from line base to player
 			var _to_player_dist = point_distance(root.x_begin, root.y_begin, body_x, body_y)
-			var _center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, root.th)) // offset of player from line (treat this lengthdir_y as a sin())
+			
+			_steering_offset = angle_difference(body_th, root.th)
+			_center_offset = lengthdir_y(_to_player_dist, angle_difference(_to_player_dir, root.th)) // offset of player from line (treat this lengthdir_y as a sin())
+			
 			var _progression = root.gear * lengthdir_x(_to_player_dist,  angle_difference(_to_player_dir, root.th)) // progression on line (treat this lengthdir_x as cosine)
 					
 			// RRT path abortion
-			if (abs(_center_offset) > _abortion_tolerance)
-				_abort = true // raise flag
+			//if (abs(_center_offset) > _abortion_tolerance)
+			//	_abort = true // raise flag
 			if (_progression < -_abortion_tolerance || _progression > RRT_STRAIGHT_LEN + _abortion_tolerance)
 				_abort = true
 				
 			// check completion
-			var _completion_tolerance = 2 // tolerance (in pixels) on when line is considered to be completed
+			var _completion_tolerance = 1 // tolerance (in pixels) on when line is considered to be completed
 			if (_progression >=  max(0, RRT_STRAIGHT_LEN - _completion_tolerance)) { // if progression exceeds is on line segment length
 				rrt_branch_completed = true
 			}
-		} else if (root.type == RRT_TYPE.ARC) {
-			move_input = root.gear // move according to gear and steering
-			turn_input = root.gear * root.steering
-				
-			var _to_player_dist = point_distance(root.center_x, root.center_y, body_x, body_y) // distance and direction from arc center to player
+		} else if (root.type == RRT_TYPE.ARC) {				
+			var _center_to_player_dist = point_distance(root.center_x, root.center_y, body_x, body_y) // distance and direction from arc center to player
+			var _center_to_player_dir =  point_direction(root.center_x, root.center_y, body_x, body_y)
+			
+			_steering_offset = angle_difference(body_th, _center_to_player_dir + root.steering * 90)
+			_center_offset = (RRT_R - _center_to_player_dist) * root.steering
+			
 			var _progression = angle_difference(body_th, root.th_begin) * root.steering * root.gear // progression is measure as difference with start angle of arc, normalized to 0, arc_length
 			
 			// RRT path abortion
 			var _abrt_angle_tolerance = 10 // tolerance in degrees for arc angle progression
-			if (_to_player_dist > RRT_R + _abortion_tolerance || _to_player_dist < RRT_R - _abortion_tolerance) // if distance from arc too large
-				_abort = true // raise flag
+			//if (_center_to_player_dist > RRT_R + _abortion_tolerance || _center_to_player_dist < RRT_R - _abortion_tolerance) // if distance from arc too large
+			//	_abort = true // raise flag
 			if ( _progression < -_abrt_angle_tolerance || _progression > RRT_ARC_LEN + _abrt_angle_tolerance)
 				_abort = true
 				
 			// check completion
-			var _completion_tolerance = 2 // tolerance on when path element is considered to be completed
+			var _completion_tolerance = 4 // tolerance on when path element is considered to be completed
 			if (_progression >= RRT_ARC_LEN - _completion_tolerance) {
 				rrt_branch_completed = true
 			}
 		}
+		
+		// Check whether to abort RRT
+		var _center_offset_tolerance = 10 // center offset threshold over which to abort path
+		var _steering_offset_tolerance = 20 // steering offset threshold
+		if (abs(_center_offset) > _center_offset_tolerance
+		 || abs(_steering_offset) > _steering_offset_tolerance)
+			_abort = true
 		
 		if (rrt_branch_completed) {
 		

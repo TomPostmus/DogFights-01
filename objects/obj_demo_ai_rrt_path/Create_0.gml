@@ -96,6 +96,22 @@ array_push(cyclic_path_generators, function(_body_x, _body_y, _body_th) {
 
 })
 
+// Rectangle
+array_push(cyclic_path_generators, function(_body_x, _body_y, _body_th) {
+	
+	var _path = ds_list_create()
+	ds_list_add(_path, new AIRRTBranchRoot(_body_x, _body_y, _body_th))
+	
+	repeat(4) {
+		ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+		ds_list_add(_path, new AIRRTBranchStraight(_path[|ds_list_size(_path)-1], RRT_GEAR_FORWARD))
+		ds_list_add(_path, new AIRRTBranchTurn(_path[|ds_list_size(_path)-1], _path[|ds_list_size(_path)-1].th-90))	
+	}
+	
+	
+	return _path
+})
+
 number_of_paths = array_length(cyclic_path_generators)
 cyclic_paths = array_create(0)
 
